@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NJ Coffee — One Bean. One Remarkable Journey.</title>
+<meta name="description" content="Follow one extraordinary Ethiopian coffee bean from the mist-covered mountains of Yirgacheffe to a perfectly crafted cup of NJ Coffee." />
+<meta property="og:title" content="NJ Coffee — One Bean. One Remarkable Journey." />
+<meta property="og:description" content="Single-origin Yirgacheffe, roasted every Tuesday. One bean, from highland to cup." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet" />
+<script type="importmap">
+{
+  "imports": {
+    "three": "./three.module.min.js",
+    "three/addons/": "./jsm/"
+  }
+}
+</script>
+<!-- NOTE (build): the brief specifies the jsDelivr CDN import map for three r186.
+     Headless Chrome in this environment cannot reach the CDN at all (verified:
+     dump-dom of the CDN URL returns empty), so the preview build uses the proven
+     local r160 three.module.min.js + local jsm/ addons (same files the live v9
+     site already ships). The code is version-agnostic; to deploy with the CDN,
+     swap this import map back to the jsDelivr r186 URLs — one edit, no code change. -->
+<style>
+  :root {
+    --bg: #132039;          /* deep navy field — Diego Aranda 60/30/10: navy reads, never black */
+    --navy: #132039;        /* 30% deep navy */
+    --cream: #ECE9E4;       /* 60% warm cream */
+    --coral: #FF6A5C;       /* 10% coral accent */
+    --ink: #070B14;
+    --muted: rgba(236, 228, 228, 0.62);
+    --line: rgba(236, 228, 228, 0.16);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-rise: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-settle: cubic-bezier(0.3, 1.25, 0.5, 1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: auto; }
+  html, body { background: var(--bg); }
+  body {
+    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+    color: var(--cream);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--coral); color: var(--bg); }
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- Loader: black, one pulsing cream dot (Fernhollow) ---------- */
+  #loader {
+    position: fixed; inset: 0; z-index: 100; background: #000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    transition: opacity 1s ease; pointer-events: all;
+  }
+  #loader.done { opacity: 0; pointer-events: none; }
+  #loader .dot {
+    width: 12px; height: 12px; border-radius: 50%; background: var(--cream);
+    animation: pulse 1.1s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.9); opacity: 0.45; } }
+  #loader .word { font-family: "Antonio", sans-serif; font-size: 15px; letter-spacing: 0.42em; text-transform: uppercase; color: var(--cream); }
+  #loader .sub { font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); }
+  #loader .count { font-family: "Antonio", sans-serif; font-size: 13px; letter-spacing: 0.2em; color: var(--coral); }
+
+  /* ---------- Fixed 3D canvas + atmosphere layers ----------
+     The canvas sits ABOVE the page copy (z 10, pointer-events none) so the 3D
+     hero object overlaps the headline letters (Claude fix #4) — clicks pass
+     through to the DOM below. Vignette + grain sit above the canvas. */
+  #scene { position: fixed; inset: 0; z-index: 10; width: 100%; height: 100%; display: block; pointer-events: none; }
+  .vignette {
+    position: fixed; inset: 0; z-index: 12; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+    opacity: var(--vig, 0.85); transition: opacity 0.3s linear;
+  }
+  .grain {
+    position: fixed; inset: -50%; z-index: 13; pointer-events: none; opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    animation: grain 0.9s steps(4) infinite;
+  }
+  @keyframes grain { 0% { transform: translate(0,0); } 25% { transform: translate(-2%,1%); } 50% { transform: translate(1%,-2%); } 75% { transform: translate(-1%,2%); } 100% { transform: translate(0,0); } }
+  .glow { position: fixed; z-index: 1; pointer-events: none; border-radius: 50%; filter: blur(70px); }
+  .glow-a { width: 52vw; height: 52vw; left: 38vw; top: 18vh; background: radial-gradient(circle, rgba(255,106,92,0.12), transparent 65%); }
+  .glow-b { width: 38vw; height: 38vw; left: 8vw; top: 55vh; background: radial-gradient(circle, rgba(19,32,57,0.85), transparent 65%); }
+  .glow-c { width: 30vw; height: 30vw; right: 4vw; top: 8vh; background: radial-gradient(circle, rgba(236,228,228,0.10), transparent 65%); }
+
+  /* ---------- Nav ---------- */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 4vw; transition: background 0.6s ease, backdrop-filter 0.6s ease, padding 0.6s ease;
+  }
+  header.scrolled { background: rgba(19,32,57,0.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 14px 4vw; border-bottom: 1px solid var(--line); }
+  .wordmark { font-family: "Antonio", sans-serif; font-size: 22px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream); }
+  .wordmark b { color: var(--coral); font-weight: 600; }
+  nav.links { display: flex; gap: 30px; align-items: center; }
+  nav.links a { font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); transition: color 0.3s; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    font-family: "DM Sans", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 16px 30px; border-radius: 999px; border: 1px solid transparent; cursor: pointer;
+    transition: transform 0.9s var(--ease-out), background 0.9s var(--ease-out), color 0.9s var(--ease-out), border-color 0.9s var(--ease-out), box-shadow 0.9s var(--ease-out);
+    will-change: transform;
+  }
+  /* Primary CTA pop (mouse rules): one spring-eased hover/pop — scale 1.05,
+     slight lift, 180ms, transform/opacity only. Never 1:1, never layout. */
+  .btn-solid { background: var(--coral); color: var(--bg); transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 180ms cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease; }
+  .btn-solid:focus-visible { transform: translateY(-2px) scale(1.05); box-shadow: 0 18px 40px -14px rgba(255,106,92,0.65); outline: 2px solid var(--cream); outline-offset: 3px; }
+  .btn-solid:active { transform: translateY(0) scale(1.02); }
+  .btn-ghost { background: transparent; color: var(--cream); border-color: rgba(236,228,228,0.4); transition: transform 200ms ease, border-color 200ms ease, background 200ms ease, color 200ms ease; }
+  .btn-ghost:focus-visible { transform: translateY(-2px); border-color: var(--cream); outline: 2px solid var(--cream); outline-offset: 3px; }
+  .btn-ghost:active { transform: translateY(0); }
+  .btn-sm { padding: 11px 22px; font-size: 11px; }
+  /* Hover-only effects are gated to fine pointers (touch never gets a stuck
+     hover, and no menu/price/CTA info is ever hidden behind a hover). */
+  @media (hover: hover) and (pointer: fine) {
+    nav.links a:hover { color: var(--cream); }
+    .btn-solid:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 18px 40px -14px rgba(255,106,92,0.65); }
+    .btn-ghost:hover { transform: translateY(-2px); border-color: var(--cream); }
+    footer .f-links a:hover { color: var(--cream); }
+  }
+
+  /* ---------- Chapters: one continuous scroll, ~700vh ---------- */
+  main { position: relative; z-index: 11; }
+  .chapter {
+    position: relative; min-height: 100vh; min-height: 100svh;
+    display: flex; align-items: center; padding: 120px 6vw 90px;
+  }
+  /* Hero: tighter vertical spacing so all 3 headline lines + subcopy + CTAs
+     fit in the first viewport at 1280×720. */
+  #arrival { padding-top: 96px; padding-bottom: 64px; }
+  .chapter-inner { max-width: 1240px; margin: 0 auto; width: 100%; position: relative; z-index: 11; }
+  .chapter-inner.center { text-align: center; }
+  .eyebrow {
+    font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--coral);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 22px; font-weight: 700;
+  }
+  .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--coral); display: inline-block; }
+  .chapter-inner.center .eyebrow { justify-content: center; }
+  .chapter-inner.center .eyebrow::after { content: ""; width: 34px; height: 1px; background: var(--coral); display: inline-block; }
+
+  /* Hero split (developer.jot reel): product BIG left-of-centre, headline right.
+     The 3D bean occupies the left half of the frame; the copy sits right. */
+  .chapter-inner.hero-split { margin-left: auto; margin-right: 0; max-width: 640px; text-align: left; }
+  .chapter-inner.hero-split .eyebrow { justify-content: flex-start; }
+  .chapter-inner.hero-split .eyebrow::after { display: none; }
+  .hero-split h1.hero { text-align: left; }
+  .hero-split .hero-sub { margin-left: 0; margin-right: 0; text-align: left; }
+  .hero-split .hero-ctas { justify-content: flex-start; }
+  h1.hero {
+    font-family: "Antonio", sans-serif; font-weight: 400; text-transform: uppercase;
+    font-size: clamp(3rem, 8vw, 8rem); line-height: 0.92; letter-spacing: 0.01em;
+    color: var(--cream); text-align: center;
+  }
+  h1.hero .line { display: block; overflow: hidden; }
+  h1.hero .line span { display: block; transform: translateY(110%); transition: transform 1.1s var(--ease-rise); }
+  h1.hero.in .line span { transform: translateY(0); }
+  h1.hero .line:nth-child(2) span { transition-delay: 0.12s; }
+  h1.hero .line:nth-child(3) span { transition-delay: 0.24s; }
+  h1.hero em { font-style: normal; color: var(--cream); }
+  .hero-sub { max-width: 52ch; margin: 28px auto 0; font-size: 17px; line-height: 1.7; color: var(--muted); text-align: center; }
+  .hero-ctas { display: flex; gap: 16px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+
+  /* Section headlines (Playfair) + copy */
+  h2.display {
+    font-family: "Playfair Display", serif; font-weight: 500;
+    font-size: clamp(2.4rem, 5.6vw, 4.6rem); line-height: 1.04; letter-spacing: -0.01em; color: var(--cream);
+  }
+  h2.display em { font-style: italic; color: var(--coral); }
+  .lede { margin-top: 20px; max-width: 46ch; font-size: 17px; line-height: 1.75; color: var(--muted); }
+  .chapter-inner.center .lede { margin-left: auto; margin-right: auto; }
+  .stat-row { display: flex; gap: 44px; margin-top: 34px; flex-wrap: wrap; }
+  .stat b { display: block; font-family: "Antonio", sans-serif; font-size: 34px; font-weight: 500; color: var(--cream); letter-spacing: 0.02em; }
+  .stat span { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+  .coral { color: var(--coral); }
+
+  /* Giant outlined numeral (Claude fix #9) */
+  .stat-giant {
+    font-family: "Antonio", sans-serif; font-weight: 400;
+    font-size: clamp(8rem, 22vw, 20rem); line-height: 0.9;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(236,228,228,0.55);
+    user-select: none; margin-top: 6px;
+  }
+  .stat-giant small { display: block; font-size: clamp(1rem, 2vw, 1.4rem); letter-spacing: 0.3em; -webkit-text-stroke: 0; color: var(--muted); margin-top: 14px; }
+
+  /* Chapter transitions: previous scales to 0.94 + dims to 60% (Claude fix #6) */
+  .chapter .chapter-inner { transition: transform 1s var(--ease-out), opacity 1s var(--ease-out); }
+  .chapter.leaving .chapter-inner { transform: scale(0.94); opacity: 0.6; }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s var(--ease-out), transform 1s var(--ease-out); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Light chapter (final + form) */
+  .chapter.light { color: var(--ink); }
+  .chapter.light h2.display, .chapter.light .lede { color: var(--ink); }
+  .chapter.light .lede { color: rgba(7,11,20,0.68); }
+  .chapter.light .eyebrow { color: var(--coral); }
+  .chapter.light .stat b { color: var(--ink); }
+  .chapter.light .stat span { color: rgba(7,11,20,0.55); }
+  .chapter.light .stat-giant { -webkit-text-stroke: 1.5px rgba(7,11,20,0.4); }
+  .chapter.light .stat-giant small { color: rgba(7,11,20,0.55); }
+
+  /* ---------- Menu carousel (Chapter 6) ---------- */
+  .menu-wrap { margin-top: 40px; }
+  .menu-row {
+    display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 10px 4px 22px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .menu-row::-webkit-scrollbar { display: none; }
+  .menu-item {
+    flex: 0 0 260px; scroll-snap-align: center; text-align: left; cursor: pointer;
+    background: rgba(19,32,57,0.55); border: 1px solid var(--line); border-radius: 22px; padding: 26px;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transform: scale(0.78); opacity: 0.4;
+    transition: transform 0.9s var(--ease-out), opacity 0.9s var(--ease-out), border-color 0.9s var(--ease-out), background 0.9s var(--ease-out);
+  }
+  .menu-item.is-centre { transform: scale(1); opacity: 1; border-color: rgba(255,106,92,0.6); background: rgba(19,32,57,0.8); }
+  .menu-item .tag { font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--coral); font-weight: 700; }
+  .menu-item h3 { font-family: "Playfair Display", serif; font-size: 26px; font-weight: 500; margin: 10px 0 6px; color: var(--cream); }
+  .menu-item p { font-size: 14px; line-height: 1.6; color: var(--muted); }
+  .menu-item .price { margin-top: 14px; font-family: "Antonio", sans-serif; font-size: 22px; color: var(--cream); letter-spacing: 0.04em; }
+  .menu-dots { display: flex; justify-content: center; gap: 8px; margin-top: 6px; }
+  .menu-dots .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(236,228,228,0.35); transition: background 0.4s, transform 0.4s; }
+  .menu-dots .dot.on { background: var(--coral); transform: scale(1.4); }
+  .menu-note { text-align: center; margin-top: 14px; font-size: 13px; color: var(--muted); letter-spacing: 0.08em; }
+  .menu-note b { color: var(--coral); }
+
+  /* ---------- Order form (Chapter 7) ---------- */
+  .visit-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 60px; align-items: start; }
+  .form-card {
+    background: var(--cream); color: var(--ink); border-radius: 28px; padding: 34px;
+    box-shadow: 0 30px 70px -30px rgba(0,0,0,0.6);
+  }
+  .form-card h3 { font-family: "Playfair Display", serif; font-size: 28px; font-weight: 500; margin-bottom: 6px; }
+  .form-card p { font-size: 14px; color: rgba(7,11,20,0.62); margin-bottom: 22px; line-height: 1.6; }
+  .form-card label { display: block; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; margin: 16px 0 7px; color: rgba(7,11,20,0.7); }
+  .form-card input, .form-card select, .form-card textarea {
+    width: 100%; padding: 13px 15px; border-radius: 12px; border: 1px solid rgba(7,11,20,0.2);
+    font-family: "DM Sans", sans-serif; font-size: 15px; color: var(--ink); background: #fff; outline: none;
+  }
+  .form-card input:focus, .form-card select:focus, .form-card textarea:focus { border-color: var(--coral); }
+  .form-card textarea { resize: vertical; min-height: 84px; }
+  .form-card .btn { width: 100%; margin-top: 22px; }
+  .form-ok { display: none; text-align: center; padding: 30px 6px; }
+  .form-ok h4 { font-family: "Playfair Display", serif; font-size: 26px; margin-bottom: 10px; }
+  .form-ok p { color: rgba(7,11,20,0.65); line-height: 1.7; font-size: 15px; }
+  .form-summary { text-align: left; background: rgba(19,32,57,0.06); border: 1px solid rgba(19,32,57,0.14); border-radius: 14px; padding: 16px 18px; margin: 16px 0; font-size: 15px; line-height: 1.9; color: var(--ink); }
+  .form-summary b { color: var(--coral); }
+  .form-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 4px 0 16px; }
+
+  /* ---------- Footer ---------- */
+  footer {
+    position: relative; z-index: 11; padding: 54px 6vw 40px; border-top: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; gap: 26px; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, transparent, rgba(19,32,57,0.9));
+  }
+  footer .f-links { display: flex; gap: 26px; }
+  footer .f-links a { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  footer small { color: var(--muted); font-size: 12px; letter-spacing: 0.06em; }
+
+  /* ---------- Scroll cue (Fernhollow: bottom-right) ---------- */
+  #scroll-cue {
+    position: fixed; right: 4vw; bottom: 28px; z-index: 20; display: flex; align-items: center; gap: 14px;
+    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted);
+    pointer-events: none; transition: opacity 0.8s ease;
+  }
+  #scroll-cue .divider { width: 56px; height: 1px; background: var(--coral); display: inline-block; animation: cue 2.2s ease-in-out infinite; }
+  @keyframes cue { 0%, 100% { transform: scaleX(0.5); transform-origin: left; opacity: 0.5; } 50% { transform: scaleX(1); opacity: 1; } }
+  #scroll-cue.hide { opacity: 0; }
+
+  /* ---------- WebGL fallback ---------- */
+  #no-webgl { display: none; position: fixed; inset: 0; z-index: 4; background: var(--bg); }
+  body.no-webgl #no-webgl { display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+  body.no-webgl #scene { display: none; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    nav.links { display: none; }
+    .visit-grid { grid-template-columns: 1fr; gap: 40px; }
+    .chapter { padding: 110px 6vw 80px; }
+    .menu-item { flex-basis: 230px; }
+    .stat-row { gap: 28px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .grain { animation: none; }
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loader: black, one pulsing cream dot, 0–100 counter -->
+<div id="loader" role="status" aria-label="Loading">
+  <div class="dot" aria-hidden="true"></div>
+  <div class="word">NJ Coffee</div>
+  <div class="sub">Preparing your experience…</div>
+  <div class="count" id="load-count">0%</div>
+</div>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="glow glow-a" aria-hidden="true"></div>
+<div class="glow glow-b" aria-hidden="true"></div>
+<div class="glow glow-c" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header id="site-nav">
+  <a class="wordmark" href="#arrival">NJ <b>Coffee</b></a>
+  <nav class="links" aria-label="Sections">
+    <a href="#arrival">Home</a>
+    <a href="#origin">Origin</a>
+    <a href="#bean">Coffee</a>
+    <a href="#brewing">Menu</a>
+    <a href="#final">Visit</a>
+  </nav>
+  <a class="btn btn-solid btn-sm" href="#final">Order beans →</a>
+</header>
+
+<div id="scroll-cue"><span>Scroll to wander</span><span class="divider"></span></div>
+
+<div id="no-webgl">
+  <div>
+    <h2 class="display">NJ Coffee</h2>
+    <p class="lede" style="margin: 18px auto 0;">Single-origin Yirgacheffe, roasted every Tuesday.<br/>Your browser could not start WebGL, so the 3D journey is paused — the coffee is still here.</p>
+  </div>
+</div>
+
+<main id="story">
+  <!-- Chapter 1 — The Arrival (product-first: bean big, left-of-centre; copy right) -->
+  <section class="chapter" id="arrival" data-chapter="0">
+    <div class="chapter-inner hero-split">
+      <p class="eyebrow reveal">NJ Coffee — Single Origin</p>
+      <h1 class="hero" id="hero-title">
+        <span class="line"><span>Coffee.</span></span>
+        <span class="line"><span>Beyond</span></span>
+        <span class="line"><span><em>Ordinary.</em></span></span>
+      </h1>
+      <p class="hero-sub reveal">An extraordinary journey begins with one remarkable bean.</p>
+      <div class="hero-ctas reveal">
+        <a class="btn btn-solid" href="#origin" data-hover-stop>Explore the origin</a>
+        <a class="btn btn-ghost" href="#brewing">See the menu</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 2 — The Origin -->
+  <section class="chapter" id="origin" data-chapter="1">
+    <div class="chapter-inner">
+      <p class="eyebrow reveal">Chapter 01 — The Origin</p>
+      <h2 class="display reveal">Born in<br/>the <em>Highlands.</em></h2>
+      <div class="stat-giant reveal">2,200 m<small>Yirgacheffe, Ethiopia — high above the clouds</small></div>
+      <p class="lede reveal">High altitude, cool mountain air and patient cultivation give this coffee its character. One origin, grown slowly, picked by hand.</p>
+      <div class="stat-row reveal">
+        <div class="stat"><b>Yirgacheffe</b><span>Ethiopia</span></div>
+        <div class="stat"><b>2,200 m</b><span>Altitude</span></div>
+        <div class="stat"><b>Washed</b><span>Process</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 3 — The Bean (macro) -->
+  <section class="chapter" id="bean" data-chapter="2">
+    <div class="chapter-inner center">
+      <p class="eyebrow reveal">Chapter 02 — The Bean</p>
+      <h2 class="display reveal">Small bean.<br/><em>Extraordinary</em> character.</h2>
+      <p class="lede reveal">One bean, closer than you have ever seen it. Every curve, every crease, every pore — this is where the flavour begins.</p>
+      <div class="stat-row reveal" style="justify-content:center;">
+        <div class="stat"><b>1 bean</b><span>The whole story</span></div>
+        <div class="stat"><b>100%</b><span>Single origin</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 4 — The Roast -->
+  <section class="chapter" id="roast" data-chapter="3">
+    <div class="chapter-inner">
+      <p class="eyebrow reveal">Chapter 03 — The Roast</p>
+      <h2 class="display reveal">Roasted with<br/><em>intention.</em></h2>
+      <p class="lede reveal">Freshly roasted <span class="coral">every Tuesday</span>. Small batches. Thoughtful roasting. Exceptional coffee — the bean darkens, the room fills with warmth, and the character locks in.</p>
+      <div class="stat-row reveal">
+        <div class="stat"><b class="coral">Every Tuesday</b><span>Roast day</span></div>
+        <div class="stat"><b>Small batches</b><span>Never rushed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 5 — The Signature Bag -->
+  <section class="chapter" id="bag" data-chapter="4">
+    <div class="chapter-inner">
+      <p class="eyebrow reveal">Chapter 04 — The Signature Bag</p>
+      <h2 class="display reveal">Your daily ritual,<br/><em>reimagined.</em></h2>
+      <p class="lede reveal">Single-Origin Yirgacheffe Coffee, sealed fresh in a 250g bag. One origin, one remarkable experience — ready for your kitchen.</p>
+      <div class="stat-row reveal">
+        <div class="stat"><b>250g bag</b><span>Single origin</span></div>
+        <div class="stat"><b>$16–$18</b><span>Per bag</span></div>
+      </div>
+      <div class="hero-ctas reveal" style="justify-content:flex-start;">
+        <a class="btn btn-solid" href="#final" data-hover-stop>Order your bag</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 6 — The Brewing Experience + menu carousel -->
+  <section class="chapter" id="brewing" data-chapter="5">
+    <div class="chapter-inner">
+      <p class="eyebrow reveal">Chapter 05 — The Brewing Experience</p>
+      <h2 class="display reveal">Crafted for<br/><em>every moment.</em></h2>
+      <p class="lede reveal">From the grinder to the pour, every cup is built the same way — slowly, carefully, and exactly to order.</p>
+      <div class="menu-wrap">
+        <div class="menu-row" id="menu-row" role="listbox" aria-label="Coffee menu">
+          <div class="menu-item is-centre" role="option" data-drink="0" tabindex="0">
+            <span class="tag">Classic</span><h3>Espresso</h3>
+            <p>Short, intense, and honest. The purest read on the bean.</p>
+            <p class="price">$3.50</p>
+          </div>
+          <div class="menu-item" role="option" data-drink="1" tabindex="0">
+            <span class="tag">Silky</span><h3>Cappuccino</h3>
+            <p>Espresso under a cloud of steamed milk and soft foam.</p>
+            <p class="price">$4.50</p>
+          </div>
+          <div class="menu-item" role="option" data-drink="2" tabindex="0">
+            <span class="tag">Slow</span><h3>Pour Over</h3>
+            <p>Hot water, a paper filter, and patience. Bright and clean.</p>
+            <p class="price">$5.00</p>
+          </div>
+          <div class="menu-item" role="option" data-drink="3" tabindex="0">
+            <span class="tag">Cold</span><h3>Cold Brew</h3>
+            <p>Steeped cold for hours. Smooth, sweet, and quietly strong.</p>
+            <p class="price">$5.50</p>
+          </div>
+          <div class="menu-item" role="option" data-drink="4" tabindex="0">
+            <span class="tag">Velvet</span><h3>Flat White</h3>
+            <p>Double espresso, velvet microfoam, no fuss.</p>
+            <p class="price">$5.00</p>
+          </div>
+        </div>
+        <div class="menu-dots" id="menu-dots" aria-hidden="true">
+          <span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </div>
+        <p class="menu-note">Now pouring: <b id="menu-now">Espresso — $3.50</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter 7 — The Final Moment (light) + order form -->
+  <section class="chapter light" id="final" data-chapter="6">
+    <div class="chapter-inner">
+      <div class="visit-grid">
+        <div>
+          <p class="eyebrow reveal">Chapter 06 — The Final Moment</p>
+          <h2 class="display reveal">Your next<br/><em>favourite</em> cup.</h2>
+          <p class="lede reveal">From the highlands of Yirgacheffe to your everyday coffee ritual. One origin. One remarkable experience.</p>
+          <div class="stat-row reveal">
+            <div class="stat"><b>NJ Coffee</b><span>Single-Origin Yirgacheffe</span></div>
+            <div class="stat"><b>2,200 m</b><span>Yirgacheffe, Ethiopia</span></div>
+            <div class="stat"><b class="coral">Every Tuesday</b><span>Roasted fresh</span></div>
+          </div>
+          <div class="hero-ctas reveal" style="justify-content:flex-start;">
+            <a class="btn btn-solid" href="#order-form" data-hover-stop>Order your coffee</a>
+            <a class="btn btn-ghost" href="#order-form" style="color:var(--ink);border-color:rgba(7,11,20,0.35);">Visit us</a>
+          </div>
+        </div>
+        <div class="form-card reveal" id="order-form">
+          <form id="order" novalidate>
+            <h3>Order beans, or just come in.</h3>
+            <p>Tell us what you want — this is a demo, so your order is summarised right here on this device.</p>
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" placeholder="Your name" required />
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+            <label for="f-service">What do you want?</label>
+            <select id="f-service" name="service">
+              <option>Order beans</option>
+              <option>Book a tasting</option>
+              <option>Wholesale</option>
+              <option>Something else</option>
+            </select>
+            <label for="f-message">Message</label>
+            <textarea id="f-message" name="message" placeholder="250g of Yirgacheffe, please…"></textarea>
+            <button class="btn btn-solid" type="submit">Send the order →</button>
+          </form>
+          <div class="form-ok" id="form-ok">
+            <h4>Thank you — order received.</h4>
+            <p>Your order summary (kept on this device — this is a demo, nothing is sent anywhere):</p>
+            <div class="form-summary" id="form-summary"></div>
+            <div class="form-actions">
+              <button class="btn btn-solid btn-sm" type="button" id="dl-summary">Download summary</button>
+              <button class="btn btn-ghost btn-sm" type="button" id="copy-summary" style="color:var(--ink);border-color:rgba(7,11,20,0.35);">Copy summary</button>
+            </div>
+            <p>We will reply to your email shortly. If you need us sooner, find NJ Coffee on LinkedIn.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <a class="wordmark" href="#arrival">NJ <b>Coffee</b></a>
+  <nav class="f-links" aria-label="Footer">
+    <a href="#arrival">Home</a>
+    <a href="#origin">Origin</a>
+    <a href="#bean">Coffee</a>
+    <a href="#brewing">Menu</a>
+    <a href="#final">Visit</a>
+  </nav>
+  <small>One origin. One remarkable experience. — © 2026 NJ Coffee</small>
+</footer>
+
+<script>
+  /* ---------- Plain script: loader, nav, reveals, menu, form, cursor ---------- */
+  (function () {
+    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* Loader progress (0–100) — advances while the scene boots; never hangs.
+       ?noloader=1 skips the loader entirely (headless-verification aid). */
+    var loader = document.getElementById("loader");
+    var countEl = document.getElementById("load-count");
+    var loadP = 0, loadDone = false;
+    if (new URLSearchParams(location.search).get("noloader") === "1") {
+      if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
+      loadDone = true; loadP = 100;
+      var hero0 = document.getElementById("hero-title");
+      if (hero0) hero0.classList.add("in");
+    }
+    var loadTimer = setInterval(function () {
+      loadP = Math.min(loadDone ? 100 : 92, loadP + Math.random() * 9 + 3);
+      if (countEl) countEl.textContent = Math.floor(loadP) + "%";
+      if (loadP >= 100) { clearInterval(loadTimer); finishLoad(); }
+    }, 140);
+    function finishLoad() {
+      if (!loader || loader.classList.contains("done")) return;
+      loader.classList.add("done");
+      var hero = document.getElementById("hero-title");
+      if (hero) hero.classList.add("in");
+      setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 1200);
+    }
+    window.__auroraSceneReady = function () { loadDone = true; loadP = Math.max(loadP, 96); };
+    /* Safety: never hang indefinitely. */
+    setTimeout(function () { loadDone = true; loadP = 100; }, 9000);
+
+    /* Nav blur on scroll. */
+    var nav = document.getElementById("site-nav");
+    var cue = document.getElementById("scroll-cue");
+    function onScrollUI() {
+      if (nav) nav.classList.toggle("scrolled", window.scrollY > 40);
+      if (cue) cue.classList.toggle("hide", window.scrollY > window.innerHeight * 0.5);
+    }
+    window.addEventListener("scroll", onScrollUI, { passive: true });
+    onScrollUI();
+
+    /* Reveal on entry. */
+    var els = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) {
+      els.forEach(function (el) { el.classList.add("visible"); });
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      els.forEach(function (el) { io.observe(el); });
+    }
+
+    /* Chapter transitions: previous scales to 0.94 + dims to 60% as the next enters. */
+    var chapters = Array.prototype.slice.call(document.querySelectorAll(".chapter"));
+    if ("IntersectionObserver" in window) {
+      var cio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          var idx = chapters.indexOf(e.target);
+          if (!e.isIntersecting && e.boundingClientRect.top < 0 && idx >= 0 && idx < chapters.length - 1) {
+            e.target.classList.add("leaving");
+          } else {
+            e.target.classList.remove("leaving");
+          }
+        });
+      }, { threshold: 0.15 });
+      chapters.forEach(function (c) { cio.observe(c); });
+    }
+
+    /* Menu carousel: centre item enlarged, dots follow, 3D cups follow via custom event. */
+    var drinks = ["Espresso — $3.50", "Cappuccino — $4.50", "Pour Over — $5.00", "Cold Brew — $5.50", "Flat White — $5.00"];
+    var row = document.getElementById("menu-row");
+    var dots = Array.prototype.slice.call(document.querySelectorAll("#menu-dots .dot"));
+    var nowEl = document.getElementById("menu-now");
+    var items = row ? Array.prototype.slice.call(row.querySelectorAll(".menu-item")) : [];
+    var activeDrink = 0;
+    function setDrink(i, scrollInto) {
+      activeDrink = (i + items.length) % items.length;
+      items.forEach(function (it, j) { it.classList.toggle("is-centre", j === activeDrink); });
+      dots.forEach(function (d, j) { d.classList.toggle("on", j === activeDrink); });
+      if (nowEl) nowEl.textContent = drinks[activeDrink];
+      if (scrollInto && items[activeDrink]) items[activeDrink].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      window.dispatchEvent(new CustomEvent("aurora:drink", { detail: { index: activeDrink } }));
+    }
+    items.forEach(function (it, i) {
+      it.addEventListener("click", function () { setDrink(i, true); });
+      it.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setDrink(i, true); } });
+    });
+    if (row) {
+      var ticking = false;
+      row.addEventListener("scroll", function () {
+        if (ticking) return; ticking = true;
+        requestAnimationFrame(function () {
+          ticking = false;
+          var mid = row.scrollLeft + row.clientWidth / 2, best = 0, bestD = Infinity;
+          items.forEach(function (it, i) {
+            var cx = it.offsetLeft + it.offsetWidth / 2, d = Math.abs(cx - mid);
+            if (d < bestD) { bestD = d; best = i; }
+          });
+          if (best !== activeDrink) setDrink(best, false);
+        });
+      }, { passive: true });
+    }
+
+    /* Order form — LOCAL on-device summary (Fahad, 2026-11-11: the demo site is
+       only a showcase, not a real shop; a local summary never breaks when the
+       n8n trial lapses). Nothing is sent anywhere. */
+    var form = document.getElementById("order");
+    var lastSummaryText = "";
+    if (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var name = document.getElementById("f-name").value.trim();
+        var email = document.getElementById("f-email").value.trim();
+        if (!name || !email) { alert("Please add your name and email so we can reply."); return; }
+        var service = document.getElementById("f-service").value;
+        var message = document.getElementById("f-message").value.trim();
+        lastSummaryText = "NJ Coffee — order summary (demo, kept on this device)\n" +
+          "Name: " + name + "\nEmail: " + email + "\nWhat: " + service + "\nMessage: " + (message || "—");
+        var sum = document.getElementById("form-summary");
+        if (sum) {
+          sum.innerHTML = "";
+          [["Name", name], ["Email", email], ["What", service], ["Message", message || "—"]].forEach(function (row) {
+            var d = document.createElement("div");
+            var b = document.createElement("b"); b.textContent = row[0] + ": ";
+            var s = document.createElement("span"); s.textContent = row[1];
+            d.appendChild(b); d.appendChild(s); sum.appendChild(d);
+          });
+        }
+        form.style.display = "none";
+        var ok = document.getElementById("form-ok");
+        if (ok) ok.style.display = "block";
+      });
+    }
+    /* Download the on-device summary as a .txt file (no network). */
+    var dlBtn = document.getElementById("dl-summary");
+    if (dlBtn) {
+      dlBtn.addEventListener("click", function () {
+        if (!lastSummaryText) return;
+        var blob = new Blob([lastSummaryText], { type: "text/plain" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url; a.download = "nj-coffee-order.txt";
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      });
+    }
+    /* Copy the on-device summary to the clipboard (no network). */
+    var copyBtn = document.getElementById("copy-summary");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", function () {
+        if (!lastSummaryText) return;
+        var done = function () {
+          var old = copyBtn.textContent;
+          copyBtn.textContent = "Copied ✓";
+          setTimeout(function () { copyBtn.textContent = old; }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(lastSummaryText).then(done, function () { fallbackCopy(); });
+        } else { fallbackCopy(); }
+        function fallbackCopy() {
+          var ta = document.createElement("textarea");
+          ta.value = lastSummaryText; ta.setAttribute("readonly", "");
+          ta.style.position = "absolute"; ta.style.left = "-9999px";
+          document.body.appendChild(ta); ta.select();
+          try { document.execCommand("copy"); done(); } catch (err) { /* clipboard unavailable */ }
+          ta.remove();
+        }
+      });
+    }
+
+    /* Hero-only parallax (mouse rules, @kamrann.ai reel): the mouse owns ONLY
+       this small clamped DOM parallax (±8px on the hero headline). Scroll owns
+       the 3D camera — the two never drive the same transform. Mousemove only
+       writes a target; a rAF loop lerps toward it (damping 0.1); the loop runs
+       only while the hero is in view (IntersectionObserver) and only for fine
+       pointers with motion allowed. Native cursor throughout. */
+    var heroTitle = document.getElementById("hero-title");
+    var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    var heroInView = false, pxTarget = { x: 0, y: 0 }, pxCur = { x: 0, y: 0 }, pxRaf = null;
+    function pxTick() {
+      pxRaf = null;
+      if (!heroInView) { if (heroTitle) heroTitle.style.transform = ""; return; }
+      pxCur.x += (pxTarget.x - pxCur.x) * 0.1;
+      pxCur.y += (pxTarget.y - pxCur.y) * 0.1;
+      heroTitle.style.transform = "translate3d(" + (pxCur.x * 8).toFixed(2) + "px," + (pxCur.y * 8).toFixed(2) + "px,0)";
+      pxRaf = requestAnimationFrame(pxTick);
+    }
+    if (heroTitle && finePointer && !reduced) {
+      document.addEventListener("mousemove", function (e) {
+        pxTarget.x = (e.clientX / window.innerWidth) * 2 - 1;
+        pxTarget.y = (e.clientY / window.innerHeight) * 2 - 1;
+      }, { passive: true });
+      var heroSection = document.getElementById("arrival");
+      if (heroSection && "IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+          heroInView = entries[0].isIntersecting;
+          if (heroInView && !pxRaf) pxRaf = requestAnimationFrame(pxTick);
+        }, { threshold: 0 }).observe(heroSection);
+      } else { heroInView = true; pxRaf = requestAnimationFrame(pxTick); }
+    }
+  })();
+</script>
+
+<script src="./vendor/gsap.min.js"></script>
+<script src="./vendor/ScrollTrigger.min.js"></script>
+<script src="./vendor/lenis.min.js"></script>
+<script type="module">
+import * as THREE from "three";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isMobile = window.matchMedia("(max-width: 900px)").matches;
+const canvas = document.getElementById("scene");
+
+/* ---------- WebGL availability ---------- */
+let renderer = null;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+  renderer.setClearColor(0x000000, 0);
+} catch (e) { renderer = null; }
+if (!renderer || !window.WebGLRenderingContext) {
+  document.body.classList.add("no-webgl");
+  if (window.__auroraSceneReady) window.__auroraSceneReady();
+  document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("visible"); });
+  var heroT = document.getElementById("hero-title"); if (heroT) heroT.classList.add("in");
+} else {
+
+/* ---------- Renderer / scene / camera ---------- */
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+const scene = new THREE.Scene();
+/* Transparent canvas: the CSS body provides the background colour (lerped per
+   chapter in the tick), so the DOM copy shows through the canvas. An opaque
+   scene.background would hide the headline under the fixed canvas. */
+scene.background = null;
+scene.fog = new THREE.FogExp2(0x132039, 0.04);
+
+/* Chapter gating: each chapter's 3D set scales smoothly in as its chapter
+   approaches and out as it leaves, so the hero shows ONLY the bean (no terrain,
+   roaster, bag or brew gear cluttering the frame). Scale-lerp avoids the
+   material-sharing problem of opacity fades (cupMat is shared by brew + final). */
+let terrainGate = 0, roasterGate = 0, bagGate = 0, brewGate = 0, finalGate = 0;
+function gateGroup(group, pe, pIn, pOut, cur) {
+  const target = (pe >= pIn && pe <= pOut) ? 1 : 0.001;
+  const next = cur + (target - cur) * 0.08;
+  group.scale.setScalar(Math.max(next, 0.001));
+  group.visible = next > 0.02;
+  return next;
+}
+
+const camera = new THREE.PerspectiveCamera(46, window.innerWidth / window.innerHeight, 0.1, 120);
+camera.position.set(0, 1.1, 10);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+/* ---------- Lights ---------- */
+const hemi = new THREE.HemisphereLight(0xece9e4, 0x132039, 0.5);
+scene.add(hemi);
+const key = new THREE.DirectionalLight(0xdfe8ff, 2.0);          /* cool key */
+key.position.set(-5, 7, 6);
+scene.add(key);
+const rim = new THREE.PointLight(0xff6a5c, 22, 18, 1.8);        /* coral rim */
+rim.position.set(4, 2.5, 2);
+scene.add(rim);
+const ember = new THREE.PointLight(0xe07a2e, 30, 20, 1.8);      /* warm ember */
+ember.position.set(0, 1.5, -2);
+scene.add(ember);
+const cursorLight = new THREE.PointLight(0xffe9c4, 0, 9, 1.6);  /* follows the mouse */
+cursorLight.position.set(0, 2, 3);
+scene.add(cursorLight);
+
+/* ---------- Helpers ---------- */
+function softTexture(size, inner, outer) {
+  const c = document.createElement("canvas"); c.width = c.height = size;
+  const g = c.getContext("2d");
+  const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  grad.addColorStop(0, inner); grad.addColorStop(1, outer);
+  g.fillStyle = grad; g.fillRect(0, 0, size, size);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+const dotTex = softTexture(64, "rgba(255,255,255,1)", "rgba(255,255,255,0)");
+const rayTex = softTexture(256, "rgba(255,220,170,0.55)", "rgba(255,220,170,0)");
+function mulberry(seed) { let a = seed >>> 0; return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const rand = mulberry(20261111);
+
+/* ---------- Composer: bloom + split-RGB noise ----------
+   ?lite=1 skips the composer (direct render) — SwiftShader verification aid
+   and a fallback for very low-end GPUs. Full bloom runs in a real browser. */
+const useComposer = !new URLSearchParams(location.search).has("lite");
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.65, 0.82);
+composer.addPass(bloom);
+const rgbShiftShader = {
+  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uShift: { value: 0.0012 }, uNoise: { value: 0.035 } },
+  vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
+  fragmentShader: [
+    "uniform sampler2D tDiffuse; uniform float uTime; uniform float uShift; uniform float uNoise; varying vec2 vUv;",
+    "float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }",
+    "void main(){",
+    "  vec2 d = (vUv - 0.5) * uShift;",
+    "  float r = texture2D(tDiffuse, vUv + d).r;",
+    "  float g = texture2D(tDiffuse, vUv).g;",
+    "  float b = texture2D(tDiffuse, vUv - d).b;",
+    "  float n = hash(vUv * (uTime + 1.0)) * uNoise;",
+    "  gl_FragColor = vec4(r + n, g + n, b + n, 1.0);",
+    "}"
+  ].join("\n")
+};
+const rgbPass = new ShaderPass(rgbShiftShader);
+composer.addPass(rgbPass);
+composer.addPass(new OutputPass());
+
+/* ---------- The ONE bean (Kepaso 3-pass procedural deformation) ---------- */
+function makeBeanGeometry() {
+  const geo = new THREE.SphereGeometry(1, 96, 64);
+  const pos = geo.attributes.position;
+  const v = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    /* Pass 1 — squash to ellipsoid. */
+    v.x *= 1.0; v.y *= 0.72; v.z *= 0.78;
+    /* Pass 2 — Gaussian valley crease along the X axis (the bean's crease). */
+    const valley = Math.exp(-Math.pow(v.z / 0.22, 2)) * Math.exp(-Math.pow(v.x / 0.85, 2));
+    v.y -= valley * 0.22 * (v.y > 0 ? 1 : 0.4);
+    /* Pass 3 — slight wave so the crease is not dead straight. */
+    v.y += Math.sin(v.x * 3.1) * 0.03;
+    v.z += Math.cos(v.y * 4.0) * 0.015;
+    pos.setXYZ(i, v.x, v.y, v.z);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+const beanGeo = makeBeanGeometry();
+const beanMat = new THREE.MeshPhysicalMaterial({
+  color: 0xc8a165, roughness: 0.42, metalness: 0.0, clearcoat: 0.65, clearcoatRoughness: 0.3,
+  sheen: 0.5, sheenRoughness: 0.6, sheenColor: 0xffe9c4, envMapIntensity: 1.15,
+  emissive: 0x000000, emissiveIntensity: 0
+});
+const bean = new THREE.Mesh(beanGeo, beanMat);
+bean.castShadow = false;
+const beanGroup = new THREE.Group();
+beanGroup.add(bean);
+/* Warm contact glow under the bean. */
+const beanGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: rayTex, color: 0xff8a5c, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }));
+beanGlow.scale.set(3.2, 1.6, 1);
+beanGlow.position.y = -0.9;
+beanGroup.add(beanGlow);
+scene.add(beanGroup);
+
+/* Floor reflection: a mirrored bean clone under the glossy floor (cheap, no Reflector).
+   Follows the bean's position/scale/rotation each frame, mirrored across y=-1.4. */
+const beanMirrorMat = new THREE.MeshPhysicalMaterial({
+  color: 0xc8a165, roughness: 0.4, metalness: 0, clearcoat: 0.5,
+  transparent: true, opacity: 0.16, depthWrite: false
+});
+const beanMirror = new THREE.Mesh(beanGeo, beanMirrorMat);
+beanMirror.scale.set(1.85, -1.85, 1.85);
+scene.add(beanMirror);
+
+/* Soft contact shadow: a radial-gradient dark disc on the floor that follows the
+   bean's x/z and fades as the bean rises (developer.jot render-quality bar). */
+function contactShadowTexture() {
+  const c = document.createElement("canvas"); c.width = c.height = 256;
+  const g = c.getContext("2d");
+  const grad = g.createRadialGradient(128, 128, 8, 128, 128, 128);
+  grad.addColorStop(0, "rgba(0,0,0,0.55)"); grad.addColorStop(0.55, "rgba(0,0,0,0.28)"); grad.addColorStop(1, "rgba(0,0,0,0)");
+  g.fillStyle = grad; g.fillRect(0, 0, 256, 256);
+  return new THREE.CanvasTexture(c);
+}
+const contactShadow = new THREE.Mesh(
+  new THREE.PlaneGeometry(3.4, 3.4),
+  new THREE.MeshBasicMaterial({ map: contactShadowTexture(), transparent: true, opacity: 0.8, depthWrite: false })
+);
+contactShadow.rotation.x = -Math.PI / 2;
+contactShadow.position.y = -1.38;
+scene.add(contactShadow);
+
+/* Depth planes of beans (near large/blurred/dim, far small/sharp) — shared geometry. */
+const beanToneA = new THREE.MeshPhysicalMaterial({ color: 0x4a2c1e, roughness: 0.6, clearcoat: 0.15 });
+const beanToneB = new THREE.MeshPhysicalMaterial({ color: 0x3a2217, roughness: 0.6, clearcoat: 0.15 });
+const beanToneC = new THREE.MeshPhysicalMaterial({ color: 0x2e1b12, roughness: 0.6, clearcoat: 0.15 });
+function beanField(material, count, area, zMin, zMax, sMin, sMax, minR) {
+  const inst = new THREE.InstancedMesh(beanGeo, material, count);
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), s = new THREE.Vector3(), p = new THREE.Vector3();
+  for (let i = 0; i < count; i++) {
+    let x = 0, y = 0, tries = 0;
+    do {
+      x = (rand() - 0.5) * area[0];
+      y = (rand() - 0.5) * area[1];
+      tries++;
+    } while (minR && Math.hypot(x, y) < minR && tries < 20);
+    p.set(x, y, zMin + rand() * (zMax - zMin));
+    e.set(rand() * Math.PI, rand() * Math.PI, rand() * Math.PI); q.setFromEuler(e);
+    const sc = sMin + rand() * (sMax - sMin); s.set(sc, sc, sc);
+    m.compose(p, q, s); inst.setMatrixAt(i, m);
+  }
+  inst.instanceMatrix.needsUpdate = true;
+  scene.add(inst);
+  return inst;
+}
+beanField(beanToneA, 8, [16, 8], -6, 2, 0.4, 0.7);          /* far, small, sharp */
+beanField(beanToneB, 8, [14, 7], -2, 4, 0.3, 0.5, 2.5);    /* mid, centre kept clear */
+beanField(beanToneC, 6, [12, 6], 2, 6, 0.5, 0.8, 4);       /* near, large, dim — EDGES ONLY */
+
+/* Reflective dark floor (arrival) — glossier so the mirrored bean reads as a reflection. */
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(80, 80),
+  new THREE.MeshStandardMaterial({ color: 0x0a0f1c, metalness: 0.9, roughness: 0.14 })
+);
+floor.rotation.x = -Math.PI / 2; floor.position.set(0, -1.4, -4);
+scene.add(floor);
+
+/* ---------- Chapter 2: highland terrain + plants ---------- */
+const terrainGroup = new THREE.Group();
+{
+  const tg = new THREE.PlaneGeometry(70, 46, 110, 70);
+  const tp = tg.attributes.position;
+  for (let i = 0; i < tp.count; i++) {
+    const x = tp.getX(i), y = tp.getY(i);
+    let z = Math.sin(x * 0.12) * 2.2 + Math.cos(y * 0.16) * 1.8 + Math.sin((x + y) * 0.07) * 2.6;
+    z += Math.sin(x * 0.45) * Math.cos(y * 0.4) * 0.5;
+    z -= Math.max(0, 8 - Math.abs(x)) * 0.12; /* gentle valley centre */
+    tp.setZ(i, z);
+  }
+  tg.computeVertexNormals();
+  const terrain = new THREE.Mesh(tg, new THREE.MeshStandardMaterial({ color: 0x1d2a1e, roughness: 0.95, metalness: 0 }));
+  terrain.rotation.x = -Math.PI / 2;
+  terrainGroup.add(terrain);
+  /* Instanced trees: trunk + canopy cones. */
+  const trunkGeo = new THREE.CylinderGeometry(0.09, 0.14, 1.1, 6);
+  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 0.9 });
+  const canopyGeo = new THREE.ConeGeometry(0.85, 2.2, 8);
+  const canopyMat = new THREE.MeshStandardMaterial({ color: 0x2c4a26, roughness: 0.9 });
+  const trees = 42;
+  const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, trees);
+  const canopies = new THREE.InstancedMesh(canopyGeo, canopyMat, trees);
+  const m4 = new THREE.Matrix4(), q4 = new THREE.Quaternion(), s4 = new THREE.Vector3();
+  /* Terrain height at group-local (x, z): the plane's local y maps to world -z, */
+  /* so the displacement is evaluated at (x, -z). */
+  function terrainH(x, z) {
+    const y = -z;
+    let h = Math.sin(x * 0.12) * 2.2 + Math.cos(y * 0.16) * 1.8 + Math.sin((x + y) * 0.07) * 2.6;
+    h += Math.sin(x * 0.45) * Math.cos(y * 0.4) * 0.5;
+    h -= Math.max(0, 8 - Math.abs(x)) * 0.12;
+    return h;
+  }
+  for (let i = 0; i < trees; i++) {
+    const x = (rand() - 0.5) * 56, z = (rand() - 0.5) * 34;
+    const sc = 0.7 + rand() * 1.1;
+    const gy = terrainH(x, z);
+    m4.compose(new THREE.Vector3(x, gy + 0.55 * sc, z), q4, s4.set(sc, sc, sc));
+    trunks.setMatrixAt(i, m4);
+    m4.compose(new THREE.Vector3(x, gy + 1.1 * sc + 0.9 * sc, z), q4, s4.set(sc, sc, sc));
+    canopies.setMatrixAt(i, m4);
+  }
+  trunks.instanceMatrix.needsUpdate = true; canopies.instanceMatrix.needsUpdate = true;
+  terrainGroup.add(trunks); terrainGroup.add(canopies);
+  /* Coffee cherries: small red instanced spheres on low bushes. */
+  const cherryGeo = new THREE.SphereGeometry(0.09, 8, 6);
+  const cherryMat = new THREE.MeshStandardMaterial({ color: 0xb03a2e, roughness: 0.4 });
+  const cherries = new THREE.InstancedMesh(cherryGeo, cherryMat, 90);
+  for (let i = 0; i < 90; i++) {
+    const x = (rand() - 0.5) * 34, z = (rand() - 0.5) * 20;
+    const gy = terrainH(x, z);
+    m4.compose(new THREE.Vector3(x, gy + 0.35 + rand() * 0.5, z), q4, s4.set(1, 1, 1));
+    cherries.setMatrixAt(i, m4);
+  }
+  cherries.instanceMatrix.needsUpdate = true;
+  terrainGroup.add(cherries);
+}
+terrainGroup.position.set(0, -2.4, -8);
+scene.add(terrainGroup);
+
+/* ---------- Chapter 4: roaster (procedural, rotating drum) ---------- */
+const roaster = new THREE.Group();
+const drumMat = new THREE.MeshStandardMaterial({ color: 0x8a8f98, metalness: 0.9, roughness: 0.35 });
+const drum = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.05, 1.7, 32), drumMat);
+drum.rotation.z = Math.PI / 2;
+roaster.add(drum);
+const drumInner = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.92, 0.92, 1.72, 32, 1, true),
+  new THREE.MeshStandardMaterial({ color: 0x1a0f08, metalness: 0.4, roughness: 0.6, side: THREE.BackSide, emissive: 0xe07a2e, emissiveIntensity: 0.25 })
+);
+drumInner.rotation.z = Math.PI / 2;
+roaster.add(drumInner);
+const frameMat = new THREE.MeshStandardMaterial({ color: 0x2a2f38, metalness: 0.85, roughness: 0.4 });
+[-0.95, 0.95].forEach(function (x) {
+  const leg = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.7, 1.9), frameMat);
+  leg.position.set(x, -0.4, 0); roaster.add(leg);
+});
+const ring = new THREE.Mesh(new THREE.TorusGeometry(1.12, 0.07, 12, 40), frameMat);
+ring.rotation.y = Math.PI / 2; ring.position.x = 0.9; roaster.add(ring);
+const drumGlow = new THREE.PointLight(0xe07a2e, 26, 9, 1.8);
+drumGlow.position.set(0, 0, 0); roaster.add(drumGlow);
+roaster.position.set(3, 0.6, -3);
+scene.add(roaster);
+
+/* ---------- Chapter 5: signature bag (procedural, canvas label) ---------- */
+function bagLabelTexture() {
+  const c = document.createElement("canvas"); c.width = 512; c.height = 640;
+  const g = c.getContext("2d");
+  g.fillStyle = "#ECE9E4"; g.fillRect(0, 0, 512, 640);
+  g.fillStyle = "#132039"; g.fillRect(0, 0, 512, 10); g.fillRect(0, 630, 512, 10);
+  g.fillStyle = "#FF6A5C"; g.fillRect(206, 78, 100, 6);
+  g.fillStyle = "#132039"; g.textAlign = "center";
+  g.font = "600 58px Antonio, sans-serif";
+  var njW = g.measureText("NJ ").width, cfW = g.measureText("COFFEE").width;
+  var lx = 256 - (njW + cfW) / 2;
+  g.textAlign = "left";
+  g.fillStyle = "#132039"; g.fillText("NJ ", lx, 200);
+  g.fillStyle = "#FF6A5C"; g.fillText("COFFEE", lx + njW, 200);
+  g.textAlign = "center";
+  g.fillStyle = "#132039"; g.font = "500 26px 'DM Sans', sans-serif";
+  g.fillText("S I N G L E   O R I G I N", 256, 300);
+  g.font = "700 30px 'DM Sans', sans-serif"; g.fillText("YIRGACHEFFE", 256, 352);
+  g.font = "500 26px 'DM Sans', sans-serif"; g.fillText("— ETHIOPIA —", 256, 392);
+  g.strokeStyle = "#132039"; g.lineWidth = 2;
+  g.beginPath(); g.moveTo(106, 440); g.lineTo(406, 440); g.stroke();
+  g.font = "700 44px Antonio, sans-serif"; g.fillText("250 g", 256, 510);
+  g.font = "500 22px 'DM Sans', sans-serif"; g.fillStyle = "rgba(19,32,57,0.6)";
+  g.fillText("ROASTED EVERY TUESDAY", 256, 556);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  return t;
+}
+const bagGroup = new THREE.Group();
+const paperMat = new THREE.MeshStandardMaterial({ color: 0xece9e4, roughness: 0.92, metalness: 0 });
+const bagBody = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.3, 0.75), paperMat);
+bagBody.position.y = 1.15;
+bagGroup.add(bagBody);
+const bagTop = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.42, 0.75), new THREE.MeshStandardMaterial({ color: 0xd8cfc2, roughness: 0.95 }));
+bagTop.position.y = 2.45; bagTop.rotation.z = 0.03;
+bagGroup.add(bagTop);
+const bagSeal = new THREE.Mesh(new THREE.BoxGeometry(1.72, 0.1, 0.77), new THREE.MeshStandardMaterial({ color: 0x132039, roughness: 0.6 }));
+bagSeal.position.y = 2.22;
+bagGroup.add(bagSeal);
+const label = new THREE.Mesh(
+  new THREE.PlaneGeometry(1.35, 1.7),
+  new THREE.MeshStandardMaterial({ map: bagLabelTexture(), roughness: 0.85 })
+);
+label.position.set(0, 1.15, 0.39);
+bagGroup.add(label);
+bagGroup.position.set(-3, 0, -5);
+bagGroup.rotation.y = 0.35;
+scene.add(bagGroup);
+
+/* ---------- Chapter 6: brewing setup (cups, dripper, kettle, grinder, vessel) ---------- */
+const brewGroup = new THREE.Group();
+const cupMat = new THREE.MeshPhysicalMaterial({ color: 0xece9e4, roughness: 0.25, clearcoat: 0.8, clearcoatRoughness: 0.2 });
+const cupProfile = [
+  [0.0, 0.0], [0.30, 0.0], [0.38, 0.04], [0.42, 0.22], [0.44, 0.5], [0.42, 0.52], [0.38, 0.5], [0.36, 0.24], [0.30, 0.08], [0.0, 0.08]
+].map(function (p) { return new THREE.Vector2(p[0], p[1]); });
+const cupGeo = new THREE.LatheGeometry(cupProfile, 40);
+const brewCups = [];
+const drinkCols = [0x2b1a12, 0x6b4a2f, 0x8a5a33, 0x3a2418, 0x4a2f1d];
+for (let i = 0; i < 5; i++) {
+  const cup = new THREE.Group();
+  const body = new THREE.Mesh(cupGeo, cupMat);
+  cup.add(body);
+  const cof = new THREE.Mesh(new THREE.CircleGeometry(0.36, 32), new THREE.MeshStandardMaterial({ color: drinkCols[i], roughness: 0.15 }));
+  cof.rotation.x = -Math.PI / 2; cof.position.y = 0.47; cup.add(cof);
+  const handle = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 10, 24, Math.PI), cupMat);
+  handle.rotation.z = -Math.PI / 2; handle.position.set(0.42, 0.26, 0); cup.add(handle);
+  const saucer = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.05, 32), new THREE.MeshStandardMaterial({ color: 0x132039, roughness: 0.5 }));
+  saucer.position.y = -0.03; cup.add(saucer);
+  cup.position.set((i - 2) * 1.15, 0, 0);
+  cup.userData.baseScale = 1;
+  brewGroup.add(cup);
+  brewCups.push(cup);
+}
+/* Dripper (cone) + kettle (lathe + spout) + grinder + glass vessel. */
+const dripper = new THREE.Mesh(new THREE.ConeGeometry(0.5, 0.6, 32, 1, true), new THREE.MeshStandardMaterial({ color: 0x132039, metalness: 0.6, roughness: 0.4, side: THREE.DoubleSide }));
+dripper.position.set(-2.6, 1.15, -0.6); brewGroup.add(dripper);
+const kettleProfile = [[0, 0], [0.34, 0], [0.42, 0.1], [0.44, 0.5], [0.4, 0.85], [0.3, 0.95], [0.28, 0.95], [0.3, 0.8], [0.32, 0.4], [0, 0.4]].map(function (p) { return new THREE.Vector2(p[0], p[1]); });
+const kettle = new THREE.Mesh(new THREE.LatheGeometry(kettleProfile, 32), new THREE.MeshStandardMaterial({ color: 0x1c1f26, metalness: 0.9, roughness: 0.3 }));
+kettle.position.set(2.9, 0, -0.7); brewGroup.add(kettle);
+const spout = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.09, 0.9, 12), kettle.material);
+spout.position.set(2.45, 0.75, -0.7); spout.rotation.z = 0.7; brewGroup.add(spout);
+const grinder = new THREE.Group();
+const gBody = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.48, 1.0, 24), new THREE.MeshStandardMaterial({ color: 0x2a2f38, metalness: 0.7, roughness: 0.45 }));
+gBody.position.y = 0.5; grinder.add(gBody);
+const gTop = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.34, 0.35, 24), new THREE.MeshStandardMaterial({ color: 0x8a8f98, metalness: 0.85, roughness: 0.35 }));
+gTop.position.y = 1.15; grinder.add(gTop);
+grinder.position.set(-3.9, 0, -0.4); brewGroup.add(grinder);
+const vessel = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.5, 0.44, 1.3, 32, 1, true),
+  new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0.05, transmission: 0.9, transparent: true, opacity: 0.45, side: THREE.DoubleSide })
+);
+vessel.position.set(3.9, 0.65, 0.4); brewGroup.add(vessel);
+/* Pour stream (animates in during chapter 6) — glossy liquid (developer.jot render bar). */
+const pourMat = new THREE.MeshPhysicalMaterial({ color: 0x3a2418, roughness: 0.05, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.4, transparent: true, opacity: 0 });
+const pour = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 1.1, 10), pourMat);
+pour.position.set(-2.6, 0.55, -0.6); brewGroup.add(pour);
+/* Glossy coffee pool at the base of the pour. */
+const poolMat = new THREE.MeshPhysicalMaterial({ color: 0x1e1008, roughness: 0.03, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.6, transparent: true, opacity: 0 });
+const pool = new THREE.Mesh(new THREE.CircleGeometry(0.32, 32), poolMat);
+pool.rotation.x = -Math.PI / 2; pool.position.set(-2.6, 0.02, -0.6); brewGroup.add(pool);
+/* Faceted translucent ICE CUBE (developer.jot reel hero element) beside the Cold Brew
+   cup, with a thin glossy coffee stream pouring onto it and a small pool beneath. */
+const iceMat = new THREE.MeshPhysicalMaterial({
+  color: 0xdfeaf2, roughness: 0.05, metalness: 0, transmission: 0.9, thickness: 1.2,
+  ior: 1.31, clearcoat: 1, clearcoatRoughness: 0.05, flatShading: true, envMapIntensity: 1.5,
+  transparent: true, opacity: 0.95
+});
+const iceCube = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), iceMat);
+iceCube.position.set(1.62, 0.4, 0.3);
+iceCube.rotation.set(0.3, 0.6, 0.15);
+brewGroup.add(iceCube);
+const iceStreamMat = new THREE.MeshPhysicalMaterial({ color: 0x3a1e10, roughness: 0.05, metalness: 0, clearcoat: 1, envMapIntensity: 1.4, transparent: true, opacity: 0 });
+const iceStream = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.55, 10), iceStreamMat);
+iceStream.position.set(1.62, 0.9, 0.3);
+brewGroup.add(iceStream);
+const icePool = new THREE.Mesh(new THREE.CircleGeometry(0.3, 32),
+  new THREE.MeshPhysicalMaterial({ color: 0x1e1008, roughness: 0.03, metalness: 0, clearcoat: 1, envMapIntensity: 1.6, transparent: true, opacity: 0 }));
+icePool.rotation.x = -Math.PI / 2;
+icePool.position.set(1.62, 0.02, 0.3);
+brewGroup.add(icePool);
+/* Grounds: instanced small deformed spheres that fall in chapter 6. */
+const groundsCount = 220;
+const grounds = new THREE.InstancedMesh(new THREE.SphereGeometry(0.035, 6, 5), new THREE.MeshStandardMaterial({ color: 0x2b1a12, roughness: 0.9 }), groundsCount);
+grounds.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+brewGroup.add(grounds);
+const groundsData = [];
+for (let i = 0; i < groundsCount; i++) {
+  groundsData.push({ x: -2.6 + (rand() - 0.5) * 0.7, y: 1.6 + rand() * 1.2, z: -0.6 + (rand() - 0.5) * 0.5, s: 0.6 + rand() * 0.9, v: 0.4 + rand() * 0.7 });
+}
+brewGroup.position.set(2, 0, -8);
+scene.add(brewGroup);
+
+/* ---------- Chapter 7: final cup + bean callback ---------- */
+const finalGroup = new THREE.Group();
+const finalCup = new THREE.Group();
+const fBody = new THREE.Mesh(cupGeo, cupMat);
+fBody.scale.setScalar(1.6); finalCup.add(fBody);
+const fCof = new THREE.Mesh(new THREE.CircleGeometry(0.58, 32), new THREE.MeshStandardMaterial({ color: 0x2b1a12, roughness: 0.15 }));
+fCof.rotation.x = -Math.PI / 2; fCof.position.y = 0.76; finalCup.add(fCof);
+const fHandle = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.08, 10, 24, Math.PI), cupMat);
+fHandle.rotation.z = -Math.PI / 2; fHandle.position.set(0.68, 0.42, 0); finalCup.add(fHandle);
+const fSaucer = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.07, 40), new THREE.MeshStandardMaterial({ color: 0x132039, roughness: 0.5 }));
+fSaucer.position.y = -0.04; finalCup.add(fSaucer);
+finalCup.position.set(-0.6, 0, 0);
+finalGroup.add(finalCup);
+finalGroup.position.set(0, 0.1, -10);
+scene.add(finalGroup);
+
+/* ---------- Atmosphere: dust, steam, light rays ---------- */
+function makePoints(count, area, color, size, opacity) {
+  const geo = new THREE.BufferGeometry();
+  const pos = new Float32Array(count * 3);
+  const base = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    base[i * 3] = (rand() - 0.5) * area[0];
+    base[i * 3 + 1] = (rand() - 0.5) * area[1];
+    base[i * 3 + 2] = (rand() - 0.5) * area[2];
+    pos[i * 3] = base[i * 3];
+    pos[i * 3 + 1] = base[i * 3 + 1];
+    pos[i * 3 + 2] = base[i * 3 + 2];
+  }
+  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({ color, size, map: dotTex, transparent: true, opacity, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+  const pts = new THREE.Points(geo, mat);
+  pts.userData.base = base;
+  scene.add(pts);
+  return pts;
+}
+const dust = makePoints(isMobile ? 260 : 620, [26, 12, 26], 0xffe9c4, 0.09, 0.55);
+dust.position.set(0, 1.5, -3);
+const steam = makePoints(90, [1.6, 1, 1.6], 0xffffff, 0.35, 0.0); /* opacity driven per chapter */
+steam.position.set(2, 1.2, -8);
+const finalSteam = makePoints(60, [1.2, 1, 1.2], 0xffffff, 0.3, 0.0);
+finalSteam.position.set(-0.6, 1.2, -10);
+/* Light-ray sprites. */
+const rays = [];
+for (let i = 0; i < 4; i++) {
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: rayTex, color: 0xffd9a0, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false }));
+  sp.scale.set(1.2 + rand() * 1.6, 7 + rand() * 5, 1);
+  sp.position.set(-4 + i * 2.6 + rand(), 3.5, -2 - rand() * 3);
+  sp.material.rotation = (rand() - 0.5) * 0.5;
+  scene.add(sp); rays.push(sp);
+}
+
+/* ---------- Scroll driver: one global progress 0→1 (GSAP scrub: 1, Lenis, fallback) ---------- */
+let targetProgress = 0, progress = 0, lastProgressChange = performance.now();
+const story = document.getElementById("story");
+if (!reducedMotion && window.gsap && window.ScrollTrigger) {
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.create({
+    trigger: "#story", start: "top top", end: "bottom bottom", scrub: 1,
+    onUpdate: function (self) { targetProgress = self.progress; lastProgressChange = performance.now(); }
+  });
+  if (window.Lenis) {
+    try {
+      const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+      const rafL = function (t) { lenis.raf(t); requestAnimationFrame(rafL); };
+      requestAnimationFrame(rafL);
+    } catch (e) { /* native scroll fallback */ }
+  }
+} else if (!reducedMotion) {
+  window.addEventListener("scroll", function () {
+    const max = document.body.scrollHeight - window.innerHeight;
+    targetProgress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    lastProgressChange = performance.now();
+  }, { passive: true });
+}
+if (reducedMotion) {
+  document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("visible"); });
+}
+
+/* ---------- Camera path: CatmullRom through 7 waypoints + lookAt curve ---------- */
+const camCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(0, 1.1, 10),
+  new THREE.Vector3(0, 2.6, 4.5),
+  new THREE.Vector3(0.4, 1.0, 2.2),
+  new THREE.Vector3(3.2, 1.3, -0.5),
+  new THREE.Vector3(-3.2, 1.3, -2.5),
+  new THREE.Vector3(2.2, 1.6, -5.5),
+  new THREE.Vector3(0, 2.2, -4.5)
+]);
+const lookCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(0.35, 0.7, 0),
+  new THREE.Vector3(0, 1.2, -4),
+  new THREE.Vector3(0, 0.8, 0.6),
+  new THREE.Vector3(3, 0.8, -3),
+  new THREE.Vector3(-3, 0.8, -5),
+  new THREE.Vector3(2, 0.8, -8),
+  new THREE.Vector3(0, 0.9, -10)
+]);
+
+/* ---------- Bean keyframes (position / scale / roast colour) ---------- */
+const beanKeys = [
+  { p: 0.00, pos: [-2.3, 0.7, 0], s: 1.6 },
+  { p: 0.14, pos: [0, 2.4, -3], s: 0.85 },
+  { p: 0.28, pos: [0, 0.9, 0.8], s: 3.2 },
+  { p: 0.43, pos: [3, 0.8, -3], s: 0.9 },
+  { p: 0.57, pos: [-2.1, 0.6, -5], s: 0.65 },
+  { p: 0.71, pos: [1.2, 0.7, -8], s: 0.45 },
+  { p: 0.86, pos: [1.2, 0.7, -8], s: 0.12 },
+  { p: 1.00, pos: [0.9, 0.6, -10], s: 0.6 }
+];
+const beanRaw = new THREE.Color(0xc8a165), beanRoast = new THREE.Color(0x2b1a12);
+function beanAt(p) {
+  let i = 0;
+  while (i < beanKeys.length - 2 && p > beanKeys[i + 1].p) i++;
+  const a = beanKeys[i], b = beanKeys[i + 1];
+  const t = Math.min(1, Math.max(0, (p - a.p) / (b.p - a.p)));
+  const sm = t * t * (3 - 2 * t);
+  return {
+    pos: [a.pos[0] + (b.pos[0] - a.pos[0]) * sm, a.pos[1] + (b.pos[1] - a.pos[1]) * sm, a.pos[2] + (b.pos[2] - a.pos[2]) * sm],
+    s: a.s + (b.s - a.s) * sm
+  };
+}
+/* Background / fog keyframes per chapter. */
+const bgKeys = [
+  { p: 0.00, c: 0x132039, f: 0.028 },
+  { p: 0.14, c: 0x16263f, f: 0.022 },
+  { p: 0.28, c: 0x132039, f: 0.035 },
+  { p: 0.43, c: 0x1a120c, f: 0.030 },
+  { p: 0.57, c: 0x14243f, f: 0.024 },
+  { p: 0.71, c: 0x14100c, f: 0.030 },
+  { p: 0.86, c: 0x1a140e, f: 0.020 },
+  { p: 1.00, c: 0xe8dfd2, f: 0.012 }
+];
+const _cA = new THREE.Color(), _cB = new THREE.Color();
+function bgAt(p, out) {
+  let i = 0;
+  while (i < bgKeys.length - 2 && p > bgKeys[i + 1].p) i++;
+  const a = bgKeys[i], b = bgKeys[i + 1];
+  const t = Math.min(1, Math.max(0, (p - a.p) / (b.p - a.p)));
+  const sm = t * t * (3 - 2 * t);
+  _cA.setHex(a.c); _cB.setHex(b.c);
+  out.copy(_cA).lerp(_cB, sm);
+  return a.f + (b.f - a.f) * sm;
+}
+
+/* ---------- Mouse: cursor light, particle push, bean glow ----------
+   SEPARATED INPUTS (mouse rules, @kamrann.ai reel): scroll owns the 3D
+   camera/progress; the mouse NEVER drives the camera or any scroll-driven
+   transform. The pointer here only feeds lighting/particle hover effects
+   (cursor light, dust push, bean glow) — and only for fine pointers. The
+   hero parallax lives in the plain script as a DOM-only ±8px translate. */
+const pointer = new THREE.Vector2(0, 0);
+const pointerTarget = new THREE.Vector2(0, 0);
+let beanHovered = false;
+const raycaster = new THREE.Raycaster();
+const finePointer3D = window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reducedMotion;
+if (finePointer3D) {
+  window.addEventListener("pointermove", function (e) {
+    pointerTarget.x = (e.clientX / window.innerWidth) * 2 - 1;
+    pointerTarget.y = -((e.clientY / window.innerHeight) * 2 - 1);
+  }, { passive: true });
+}
+
+/* CTA hover: ease the camera flight to a stop + disperse particles outward.
+   Fine pointers only (touch has no hover; the CTA still works by tap). */
+let hoverStop = false, disperse = 0;
+if (finePointer3D) {
+  document.querySelectorAll("[data-hover-stop]").forEach(function (el) {
+    el.addEventListener("mouseenter", function () { hoverStop = true; });
+    el.addEventListener("mouseleave", function () { hoverStop = false; });
+  });
+}
+
+/* Menu drink selection drives the 3D cups. */
+let activeDrink = 0;
+let swapPulse = 0; /* cup-swap moment (developer.jot crossfade): pulses on drink change */
+window.addEventListener("aurora:drink", function (e) { activeDrink = e.detail.index; swapPulse = 1; });
+
+/* ---------- Resize with ~2.4M-pixel framebuffer budget ---------- */
+function applySize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+  let pr = Math.min(window.devicePixelRatio || 1, 2);
+  const budget = 2400000;
+  if (w * h * pr * pr > budget) pr = Math.sqrt(budget / (w * h));
+  renderer.setPixelRatio(pr);
+  renderer.setSize(w, h);
+  composer.setSize(w, h);
+}
+applySize();
+window.addEventListener("resize", applySize);
+
+/* ---------- Render loop ----------
+   ?still=1 renders exactly ONE frame and stops — SwiftShader verification aid
+   (the continuous RAF loop is too slow for CPU rendering to screenshot). */
+const stillMode = new URLSearchParams(location.search).has("still");
+const clock = new THREE.Clock();
+const vignetteEl = document.querySelector(".vignette");
+let rafId = null, running = true, firstFrame = true;
+let prevProgress = 0, speedSmooth = 0, idlePhase = 0;
+const _v3 = new THREE.Vector3(), _v3b = new THREE.Vector3(), _v3c = new THREE.Vector3();
+const _m4 = new THREE.Matrix4(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(1, 1, 1);
+const cursorWorld = new THREE.Vector3(0, 2, 2);
+
+function tick() {
+  if (!running) { rafId = null; return; }
+  if (!stillMode) rafId = requestAnimationFrame(tick);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const t = clock.elapsedTime;
+
+  /* Smooth the scroll progress (eases to a stop while a CTA is hovered). */
+  const lerpF = hoverStop ? 0.015 : 0.08;
+  progress += (targetProgress - progress) * lerpF;
+  if (Math.abs(targetProgress - progress) > 0.0004) lastProgressChange = performance.now();
+  const p = progress;
+
+  /* Scroll speed → vignette tightens + RGB shift grows. */
+  const speed = Math.abs(p - prevProgress) / Math.max(dt, 0.001);
+  prevProgress = p;
+  speedSmooth += (speed - speedSmooth) * 0.1;
+  if (vignetteEl) vignetteEl.style.setProperty("--vig", (0.82 + Math.min(0.18, speedSmooth * 0.06)).toFixed(3));
+  rgbPass.uniforms.uShift.value = 0.0012 + Math.min(0.004, speedSmooth * 0.002);
+  rgbPass.uniforms.uTime.value = t;
+
+  /* Idle drift: the camera always moves gently, never static. */
+  const idle = !reducedMotion && (performance.now() - lastProgressChange > 2500) && !hoverStop;
+  if (idle) idlePhase += dt;
+  const drift = idle ? Math.sin(idlePhase * 0.35) * 0.004 : 0;
+  const pe = THREE.MathUtils.clamp(p + drift, 0, 1);
+
+  /* Chapter gating: only the current chapter's 3D set is visible. */
+  terrainGate = gateGroup(terrainGroup, pe, 0.08, 0.34, terrainGate);
+  roasterGate = gateGroup(roaster, pe, 0.36, 0.60, roasterGate);
+  bagGate = gateGroup(bagGroup, pe, 0.50, 0.74, bagGate);
+  brewGate = gateGroup(brewGroup, pe, 0.64, 0.88, brewGate);
+  finalGate = gateGroup(finalGroup, pe, 0.80, 1.01, finalGate);
+
+  /* Camera on its baked path + lookAt curve — SCROLL OWNS THE CAMERA.
+     The mouse never touches it (separated inputs; that was the fight). */
+  pointer.x += (pointerTarget.x - pointer.x) * 0.1;
+  pointer.y += (pointerTarget.y - pointer.y) * 0.1;
+  camCurve.getPoint(pe, _v3);
+  lookCurve.getPoint(pe, _v3b);
+  const bob = idle ? Math.sin(idlePhase * 0.6) * 0.05 : 0;
+  camera.position.set(_v3.x, _v3.y + bob, _v3.z);
+  camera.lookAt(_v3b);
+
+  /* The bean: position/scale along its keyframes, roast colour, idle spin. */
+  const bk = beanAt(pe);
+  const fade = pe < 0.71 ? 1 : (pe < 0.78 ? 1 - (pe - 0.71) / 0.07 : (pe < 0.86 ? 0 : (pe - 0.86) / 0.14));
+  beanGroup.position.set(bk.pos[0], bk.pos[1] + Math.sin(t * 0.8) * 0.05, bk.pos[2]);
+  beanGroup.scale.setScalar(bk.s);
+  beanGroup.rotation.y = pe * Math.PI * 2.2 + (idle ? idlePhase * 0.12 : 0);
+  beanGroup.rotation.x = 0.12;
+  /* Floor reflection + soft contact shadow follow the bean. */
+  beanMirror.position.set(bk.pos[0], -2.8 - bk.pos[1], bk.pos[2]);
+  beanMirror.scale.set(bk.s, -bk.s, bk.s);
+  beanMirror.rotation.copy(beanGroup.rotation);
+  beanMirrorMat.color.copy(beanMat.color);
+  beanMirrorMat.opacity = 0.16 * fade;
+  contactShadow.position.x = bk.pos[0];
+  contactShadow.position.z = bk.pos[2];
+  const shadowScale = bk.s * (1 + Math.max(0, bk.pos[1] - 0.7) * 0.25);
+  contactShadow.scale.setScalar(shadowScale);
+  contactShadow.material.opacity = 0.8 * fade * THREE.MathUtils.clamp(1.2 - Math.max(0, bk.pos[1] - 0.7) * 0.35, 0.15, 1);
+  const roastT = THREE.MathUtils.clamp((pe - 0.43) / 0.14, 0, 1);
+  beanMat.color.copy(beanRaw).lerp(beanRoast, roastT);
+  beanMat.transparent = fade < 1;
+  beanMat.opacity = fade;
+  beanGlow.material.opacity = 0.35 * fade * (0.8 + Math.sin(t * 1.4) * 0.15);
+
+  /* Bean hover glow (raycast, throttled to every other frame; fine pointers only). */
+  if (finePointer3D && (Math.floor(t * 30) % 2 === 0)) {
+    raycaster.setFromCamera(pointer, camera);
+    beanHovered = raycaster.intersectObject(bean, false).length > 0;
+  }
+  beanMat.emissive.lerp(new THREE.Color(beanHovered ? 0x4a1408 : 0x000000), 0.12);
+  rim.intensity += ((beanHovered ? 34 : 22) - rim.intensity) * 0.08;
+
+  /* Cursor light follows the pointer (lights up the bean/particles near it). */
+  _v3c.set(pointer.x, pointer.y, 0.5).unproject(camera);
+  const dir = _v3c.sub(camera.position).normalize();
+  const dist = (2 - camera.position.z) / dir.z;
+  cursorWorld.copy(camera.position).add(dir.multiplyScalar(dist));
+  cursorLight.position.lerp(cursorWorld, 0.12);
+  cursorLight.intensity += ((Math.abs(pointer.x) + Math.abs(pointer.y) > 0.05 ? 14 : 0) - cursorLight.intensity) * 0.1;
+
+  /* Background + fog per chapter (body background lerped; canvas is transparent). */
+  const fogD = bgAt(pe, _cA);
+  document.body.style.backgroundColor = "#" + _cA.getHexString();
+  scene.fog.color.copy(_cA);
+  scene.fog.density += (fogD - scene.fog.density) * 0.05;
+
+  /* Roaster drum rotates in the roast chapter. */
+  const roastSpin = THREE.MathUtils.clamp((pe - 0.43) / 0.14, 0, 1) * (1 - THREE.MathUtils.clamp((pe - 0.57) / 0.1, 0, 1));
+  drum.rotation.x += dt * (0.15 + roastSpin * 2.4);
+  drumGlow.intensity = 14 + roastSpin * 30 + Math.sin(t * 3) * 4;
+  ember.intensity = 18 + roastSpin * 26;
+
+  /* Bag: slow VELORA-style orbit anchor. */
+  const bagT = THREE.MathUtils.clamp((pe - 0.57) / 0.14, 0, 1) * (1 - THREE.MathUtils.clamp((pe - 0.71) / 0.08, 0, 1));
+  bagGroup.rotation.y = 0.35 + Math.sin(t * 0.4) * 0.12 * bagT + pe * 0.6 * bagT;
+
+  /* Brewing: pour + pool + grounds + steam + ice cube in chapter 6. */
+  const brewT = THREE.MathUtils.clamp((pe - 0.71) / 0.05, 0, 1) * (1 - THREE.MathUtils.clamp((pe - 0.82) / 0.04, 0, 1));
+  pourMat.opacity = brewT * 0.9;
+  pour.scale.y = 0.4 + brewT * 0.6;
+  pour.position.y = 0.55 + (1 - brewT) * 0.2;
+  poolMat.opacity = brewT * 0.9;
+  pool.scale.setScalar(0.6 + brewT * 0.4);
+  iceStreamMat.opacity = brewT * 0.9;
+  icePool.material.opacity = brewT * 0.9;
+  icePool.scale.setScalar(0.6 + brewT * 0.4);
+  iceCube.rotation.y = 0.6 + t * 0.15;
+  iceCube.rotation.x = 0.3 + Math.sin(t * 0.5) * 0.06;
+  iceCube.visible = brewT > 0.01;
+  iceStream.visible = brewT > 0.01;
+  icePool.visible = brewT > 0.01;
+  for (let i = 0; i < groundsCount; i++) {
+    const g = groundsData[i];
+    let gy = 1.6 - ((t * g.v + i * 0.37) % 1.6);
+    if (brewT < 0.05) gy = 1.6 + (i % 5) * 0.01;
+    _m4.compose(_v3.set(g.x, gy, g.z), _q, _s.setScalar(g.s));
+    grounds.setMatrixAt(i, _m4);
+  }
+  grounds.instanceMatrix.needsUpdate = true;
+  grounds.material.opacity = brewT;
+  grounds.material.transparent = true;
+  finalSteam.material.opacity = THREE.MathUtils.clamp((pe - 0.86) / 0.08, 0, 1) * 0.45;
+
+  /* Menu cups: active cup enlarges, others dim (carousel-style) + swap pulse. */
+  swapPulse = Math.max(0, swapPulse - 0.02);
+  for (let i = 0; i < brewCups.length; i++) {
+    const target = (i === activeDrink) ? 1.28 + swapPulse * 0.18 : 0.85;
+    const cur = brewCups[i].scale.x;
+    brewCups[i].scale.setScalar(cur + (target - cur) * 0.08);
+    brewCups[i].rotation.y = t * 0.25 + i * 0.4;
+  }
+  /* Swap puff: a brief steam burst when the drink changes. */
+  steam.material.opacity = brewT * 0.5 + swapPulse * 0.3;
+  finalCup.rotation.y = Math.sin(t * 0.3) * 0.15;
+
+  /* Dust: slow drift + mouse push + CTA-hover dispersal into glowing particles. */
+  disperse += ((hoverStop ? 1 : 0) - disperse) * 0.06;
+  const dPos = dust.geometry.attributes.position;
+  const dBase = dust.userData.base;
+  for (let i = 0; i < dPos.count; i++) {
+    const bx = dBase[i * 3], by = dBase[i * 3 + 1], bz = dBase[i * 3 + 2];
+    let x = bx + Math.sin(t * 0.25 + i) * 0.35;
+    let y = by + Math.sin(t * 0.18 + i * 1.7) * 0.3 + Math.sin(t * 0.1 + i) * 0.2;
+    let z = bz + Math.cos(t * 0.22 + i) * 0.3;
+    /* Mouse push: points near the cursor light up and move away. */
+    const dx = x - (cursorWorld.x - dust.position.x), dy = y - (cursorWorld.y - dust.position.y), dz = z - (cursorWorld.z - dust.position.z);
+    const d2 = dx * dx + dy * dy + dz * dz;
+    if (d2 < 2.2 && d2 > 0.001) {
+      const f = (1 - Math.sqrt(d2) / 1.5) * 0.9;
+      x += dx * f; y += dy * f; z += dz * f;
+    }
+    /* CTA hover: disperse outward into floating glowing particles. */
+    if (disperse > 0.01) {
+      const len = Math.sqrt(x * x + y * y + z * z) || 1;
+      x += (x / len) * disperse * 2.4; y += (y / len) * disperse * 2.4; z += (z / len) * disperse * 2.4;
+    }
+    dPos.setXYZ(i, x, y, z);
+  }
+  dPos.needsUpdate = true;
+  dust.material.size = 0.09 + disperse * 0.12;
+  dust.material.opacity = 0.55 + disperse * 0.35;
+
+  /* Steam rises. */
+  function riseSteam(pts, speed) {
+    const p = pts.geometry.attributes.position, b = pts.userData.base;
+    for (let i = 0; i < p.count; i++) {
+      const yy = ((b[i * 3 + 1] + t * speed + i * 0.13) % 2.4) - 0.4;
+      p.setXYZ(i, b[i * 3] + Math.sin(t * 0.6 + i) * 0.15, yy, b[i * 3 + 2] + Math.cos(t * 0.5 + i) * 0.12);
+    }
+    p.needsUpdate = true;
+  }
+  riseSteam(steam, 0.35); riseSteam(finalSteam, 0.3);
+
+  /* Light rays breathe. */
+  rays.forEach(function (sp, i) {
+    sp.material.opacity = 0.12 + Math.sin(t * 0.5 + i * 1.3) * 0.05;
+    sp.material.rotation += dt * 0.02 * (i % 2 ? 1 : -1);
+  });
+
+  /* Bean field drift. */
+  beanGroup.rotation.z = Math.sin(t * 0.4) * 0.04;
+
+  if (useComposer) composer.render(); else renderer.render(scene, camera);
+  if (firstFrame) {
+    firstFrame = false;
+    if (window.__auroraSceneReady) window.__auroraSceneReady();
+  }
+}
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) { running = false; if (rafId) cancelAnimationFrame(rafId); rafId = null; }
+  else if (!running && !stillMode) { running = true; clock.getDelta(); rafId = requestAnimationFrame(tick); }
+});
+tick(); /* render the first frame immediately; the loop re-schedules unless ?still=1 */
+}
+</script>
+</body>
+</html>
