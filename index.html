@@ -634,6 +634,7 @@ div>
         var targetCoffee = new THREE.Color(ROASTS.medium.coffee);
         var targetBean = new THREE.Color(ROASTS.medium.bean);
         var targetSteam = ROASTS.medium.steam;
+        var pulseT = 0; /* Roast-morph scale pulse (Reel 2 locked-frame morph). */
         var priceEl = document.getElementById("roast-price");
         var descEl = document.getElementById("roast-desc");
         document.querySelectorAll(".roast-btn").forEach(function (btn) {
@@ -643,6 +644,7 @@ div>
             targetCoffee.set(r.coffee);
             targetBean.set(r.bean);
             targetSteam = r.steam;
+            pulseT = 1; /* Locked-frame morph: the mug stays put and breathes 1.00 → 1.04 → 1.00. */
             if (priceEl) { priceEl.textContent = r.price; priceEl.classList.remove("swap"); void priceEl.offsetWidth; priceEl.classList.add("swap"); }
             if (descEl) { descEl.innerHTML = r.note; descEl.classList.remove("swap"); void descEl.offsetWidth; descEl.classList.add("swap"); }
             document.querySelectorAll(".roast-btn").forEach(function (x) { x.classList.toggle("on", x === btn); });
@@ -709,6 +711,13 @@ div>
           cupGroup.rotation.x = 0.28 + pointer.y * 0.14;
           cupGroup.rotation.z = pointer.x * 0.08;
           cupGroup.position.y = -0.55 + Math.sin(t * 0.8) * 0.06;
+          /* Roast morph pulse: mug scales 1.00 → 1.04 → 1.00 over 0.8s, locked in frame. */
+          if (pulseT > 0) {
+            pulseT = Math.max(0, pulseT - dt / 0.8);
+            cupGroup.scale.setScalar(1 + 0.04 * Math.sin(pulseT * Math.PI));
+          } else {
+            cupGroup.scale.setScalar(1);
+          }
 
           beans.forEach(function (b) {
             b.mesh.rotation.y += b.rot * dt;
@@ -728,7 +737,11 @@ div>
           });
           steamGeo.attributes.position.needsUpdate = true;
 
-          camera.position.z = 9.5 - scrollT * 2.2;
+          /* Reel 1 dolly-in: slow 2.5s push toward the mug on load, then hold still. */
+          var introT = Math.min(1, t / 2.5);
+          var introEase = 1 - Math.pow(1 - introT, 3);
+          var dolly = (1 - introEase) * 2.0;
+          camera.position.z = 9.5 - scrollT * 2.2 + dolly;
           camera.position.y = 0.9 + scrollT * 1.8 + pointer.y * -0.35;
           camera.position.x = pointer.x * 0.6;
           camera.lookAt(0, 0.2 + scrollT * 0.8, 0);
