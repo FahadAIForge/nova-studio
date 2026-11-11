@@ -10,14 +10,17 @@
     <meta property="og:type" content="website" />
     <meta property="og:title" content="NOVA Studio — Websites That Make People Stop Scrolling" />
     <meta property="og:description" content="NOVA is a digital design studio. We design and build fast, cinematic websites for brands that want to stand out — 3D, motion, and clean code." />
-    <meta property="og:image" content="hero.jpg" />
+    <meta property="og:image" content="og.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="NOVA Studio — Websites That Make People Stop Scrolling" />
     <meta name="twitter:description" content="NOVA is a digital design studio. We design and build fast, cinematic websites for brands that want to stand out — 3D, motion, and clean code." />
-    <meta name="twitter:image" content="hero.jpg" />
+    <meta name="twitter:image" content="og.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <script type="importmap">
+      { "imports": { "three": "./three.module.min.js" } }
+    </script>
     <style>
       :root {
         --bg: #050505;
@@ -47,7 +50,55 @@
       ::selection { background: var(--amber); color: #000; }
       img { display: block; max-width: 100%; }
 
-      /* ---------- hero (full-viewport, photo is the hero) ---------- */
+      /* ---------- the shader hero (Animated Shader Hero, 21st.dev) —
+         a full-screen animated amber nebula with a white-hot streak.
+         The shader IS the hero background, edge to edge. ---------- */
+      #shader-canvas {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%;
+        display: block; z-index: 0;
+      }
+      /* No WebGL / reduced motion: hide the canvas — the near-black
+         hero with the gradient headline still reads. */
+      body.no-webgl #shader-canvas { display: none; }
+
+      /* ---------- the 3D orbs (transparent overlay over the shader) —
+         glass pipeline nodes that fly past as you scroll. ---------- */
+      #bg-canvas {
+        position: fixed; inset: 0;
+        width: 100%; height: 100%;
+        display: block; z-index: 1;
+        pointer-events: none;
+      }
+      .node-label {
+        position: fixed; left: 0; top: 0;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        background: rgba(46, 32, 5, 0.92);
+        color: #fef3c7;
+        border: 1px solid rgba(251, 191, 36, 0.6);
+        border-radius: 999px;
+        padding: 7px 14px;
+        font-size: 13.5px; font-weight: 700;
+        white-space: nowrap;
+        will-change: transform;
+        z-index: 1;
+      }
+      .node-label strong { color: #fbbf24; font-weight: 800; }
+      @media (max-width: 640px) {
+        .node-label { font-size: 11.5px; padding: 5px 10px; }
+      }
+      body.no-webgl #bg-canvas,
+      body.no-webgl .node-label { display: none; }
+
+      /* ---------- scroll reveal (sections fade/slide in as you scroll) ---------- */
+      .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+      .reveal.visible { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal { opacity: 1; transform: none; transition: none; }
+      }
+
+      /* ---------- hero (full-viewport, shader is the hero) ---------- */
       .hero {
         position: relative;
         min-height: 100vh;
@@ -55,55 +106,16 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        background: #000;
       }
-      .hero-bg {
-        position: absolute; inset: -3%;
-        width: 106%; height: 106%;
-        object-fit: cover;
-        /* Slow cinematic drift (Ken Burns) — the reference heroes all
-           move on their own; this one never sits still. */
-        animation: kenburns 28s ease-in-out infinite alternate;
-      }
-      @keyframes kenburns {
-        from { transform: scale(1) translate(0, 0); }
-        to { transform: scale(1.08) translate(-1.5%, 1%); }
-      }
-      /* Black gradient (bottom) + vignette, so white type reads over
-         the photo and the nav stays legible. */
+      /* Dark vignette + bottom gradient over the shader, so white type
+         reads and the nav stays legible. */
       .hero-shade {
-        position: absolute; inset: 0;
+        position: absolute; inset: 0; z-index: 1;
         background:
-          radial-gradient(120% 90% at 50% 40%, transparent 40%, rgba(0, 0, 0, 0.55) 100%),
-          linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, transparent 22%, transparent 55%, rgba(0, 0, 0, 0.55) 82%, rgba(5, 5, 5, 0.92) 100%);
-      }
-      /* Warm amber glow behind the headline (mix-blend-screen), so the
-         light in the photo feels like it is lighting the type. */
-      .hero-glow {
-        position: absolute; left: 50%; top: 46%;
-        width: 900px; height: 420px;
-        transform: translate(-50%, -50%);
-        background: radial-gradient(50% 50% at 50% 50%, rgba(249, 158, 11, 0.28) 0%, rgba(249, 115, 22, 0.10) 55%, transparent 100%);
-        mix-blend-mode: screen;
-        animation: glowpulse 6s ease-in-out infinite alternate;
+          radial-gradient(120% 90% at 50% 40%, transparent 40%, rgba(0, 0, 0, 0.45) 100%),
+          linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 22%, transparent 55%, rgba(0, 0, 0, 0.45) 82%, rgba(5, 5, 5, 0.92) 100%);
         pointer-events: none;
-      }
-      @keyframes glowpulse {
-        from { opacity: 0.7; }
-        to { opacity: 1; }
-      }
-      /* The Animated Shader Hero's signature: a thin white-hot
-         horizontal light streak across the middle, slowly pulsing. */
-      .hero-streak {
-        position: absolute; left: 0; right: 0; top: 47%;
-        height: 2px;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9) 30%, #fff 50%, rgba(255, 255, 255, 0.9) 70%, transparent);
-        box-shadow: 0 0 24px 4px rgba(255, 220, 160, 0.55), 0 0 80px 12px rgba(249, 158, 11, 0.25);
-        animation: streakpulse 4s ease-in-out infinite alternate;
-        pointer-events: none;
-      }
-      @keyframes streakpulse {
-        from { opacity: 0.45; }
-        to { opacity: 1; }
       }
       .hero-inner {
         position: relative; z-index: 2;
@@ -219,7 +231,7 @@
         50% { transform: translateY(5px); }
       }
       @media (prefers-reduced-motion: reduce) {
-        .hero-bg, .hero-glow, .hero-streak, .scroll-arrow, .rise { animation: none; }
+        .scroll-arrow, .rise { animation: none; }
         html { scroll-behavior: auto; }
       }
 
@@ -522,12 +534,17 @@
     </style>
   </head>
   <body>
-    <!-- Hero: one full-bleed photograph, like the reference sites. -->
+    <!-- The 3D orbs: one fixed transparent canvas over the whole page. -->
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+    <div class="node-label" data-node="lead">Idea</div>
+    <div class="node-label" data-node="ai">Design · <strong>the look &amp; feel</strong></div>
+    <div class="node-label" data-node="email">Build · clean code</div>
+    <div class="node-label" data-node="sheet">Launch · live &amp; measured</div>
+
+    <!-- Hero: the animated shader IS the hero, like the reference sites. -->
     <header class="hero">
-      <img class="hero-bg" src="hero.jpg" alt="A dark studio interior at night, a single shaft of warm amber light cutting across the room, a silhouetted person standing in the light" fetchpriority="high" />
+      <canvas id="shader-canvas" aria-hidden="true"></canvas>
       <div class="hero-shade" aria-hidden="true"></div>
-      <div class="hero-glow" aria-hidden="true"></div>
-      <div class="hero-streak" aria-hidden="true"></div>
 
       <div class="hero-inner">
         <nav class="nav">
@@ -560,7 +577,7 @@
 
     <div class="wrap">
       <!-- Preview card rising out of the hero (21st.dev's signature move). -->
-      <div class="preview">
+      <div class="preview reveal">
         <div class="preview-card">
           <div class="browser-bar">
             <div class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -578,7 +595,7 @@
         <p class="preview-caption">This is the work, not a mockup — <strong>every site we build looks like this when it goes live.</strong></p>
       </div>
 
-      <section id="services">
+      <section id="services" class="reveal">
         <span class="eyebrow">SERVICES</span>
         <h2>What we do</h2>
         <p class="section-lede">Four services, one goal — a website your visitors remember. Every project gets the same care: a clear idea, a cinematic design, clean code, and a launch that works.</p>
@@ -606,7 +623,7 @@
         </ol>
       </section>
 
-      <section id="work">
+      <section id="work" class="reveal">
         <span class="eyebrow">SELECTED WORK</span>
         <h2>Three kinds of site. One standard.</h2>
         <p class="section-lede">A coffee brand, a fitness app, an interior studio — different businesses, same idea: a site that feels like a place, not a page. Hover the fan to see them spread.</p>
@@ -639,7 +656,7 @@
         <p class="fan-note">Aurora Coffee · Pulse Fitness · Haven Interiors — each one a different kind of site, each one built to stand out.</p>
       </section>
 
-      <section id="process">
+      <section id="process" class="reveal">
         <span class="eyebrow">HOW WE WORK</span>
         <h2>From idea to live in four steps</h2>
         <p class="section-lede">No mystery, no endless revisions. You always know what happens next — and when your site goes live.</p>
@@ -667,7 +684,7 @@
         </ol>
       </section>
 
-      <section id="contact">
+      <section id="contact" class="reveal">
         <div class="demo-grid">
           <div class="demo-copy">
             <h2>Start a project</h2>
@@ -718,7 +735,7 @@
               </div>
 
               <button class="submit-btn" id="submit-btn" type="submit">Send my project →</button>
-              <p class="form-fineprint">Demo form — nothing is sent anywhere. To reach the studio for real, use the link below.</p>
+              <p class="form-fineprint">Your enquiry goes straight to the studio — you'll get a reply by email.</p>
             </form>
 
             <div class="success-panel" id="success-panel" role="status">
@@ -726,15 +743,15 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
               </div>
               <h3>Message received — thanks!</h3>
-              <p>This is a demo form, so nothing was sent — but in a real project, this is where we'd reply within 24 hours with <strong>next steps and a price</strong>.</p>
-              <p>Want to talk for real? Find the studio on LinkedIn — the link is in the footer.</p>
+              <p>Your message is on its way — the studio will reply to your email within 24 hours with <strong>next steps and a price</strong>.</p>
+              <p>Check your inbox (and spam, just in case). Your enquiry is logged too, so nothing gets lost.</p>
               <button class="again-btn" id="again-btn" type="button">Send another message</button>
             </div>
           </div>
         </div>
       </section>
 
-      <div class="built">
+      <div class="built reveal">
         <span class="built-label">BUILT WITH</span>
         <ul>
           <li>HTML</li>
@@ -744,7 +761,7 @@
         </ul>
       </div>
 
-      <footer>
+      <footer class="reveal">
         <div class="footer-row">
           <div class="footer-name">NOVA Studio <span>· a demo website — content is illustrative</span></div>
           <a href="https://www.linkedin.com/in/fahad-khan-ai/" target="_blank" rel="noopener">Built by Fahad Khan — connect on LinkedIn →</a>
@@ -753,9 +770,12 @@
     </div>
 
     <script>
-      /* Demo contact form — front-end only. Nothing is sent anywhere;
-         the success panel is the whole point (it shows the flow works). */
+      /* Contact form — posts to the Instant Lead Responder webhook
+         (n8n Cloud), so every enquiry reaches Fahad: the AI scores it,
+         sends a reply by email, and logs it in Google Sheets. Same
+         pattern as the Instant Lead Responder demo site. */
       (function () {
+        var WEBHOOK_URL = "https://kahad.app.n8n.cloud/webhook/lead";
         var form = document.getElementById("contact-form");
         var successPanel = document.getElementById("success-panel");
         var errorBox = document.getElementById("form-error");
@@ -777,6 +797,7 @@
 
           var name = document.getElementById("f-name").value.trim();
           var email = document.getElementById("f-email").value.trim();
+          var service = document.getElementById("f-service").value;
           var message = document.getElementById("f-message").value.trim();
 
           if (!name || !email || !message) {
@@ -790,11 +811,27 @@
 
           submitBtn.disabled = true;
           submitBtn.textContent = "Sending…";
-          setTimeout(function () {
+
+          var body = new URLSearchParams();
+          body.append("name", name);
+          body.append("email", email);
+          body.append("service", service);
+          body.append("message", message);
+
+          fetch(WEBHOOK_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: body.toString()
+          }).then(function () {
             form.style.display = "none";
             successPanel.classList.add("show");
             successPanel.scrollIntoView({ behavior: "smooth", block: "center" });
-          }, 500);
+          }).catch(function () {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Send my project →";
+            showError("Something went wrong sending your message. Please try again, or reach the studio on LinkedIn — the link is in the footer.");
+          });
         });
 
         againBtn.addEventListener("click", function () {
@@ -806,6 +843,495 @@
           form.style.display = "";
           document.getElementById("f-name").focus();
         });
+      })();
+    </script>
+    <script>
+      /* Fallback: if the shader hero cannot start (no WebGL, reduced
+         motion, or the module fails within 8s), hide the canvas — the
+         near-black hero with the gradient headline still reads. */
+      (function () {
+        var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduceMotion) { document.body.classList.add("no-webgl"); return; }
+        window.__novaShaderTimer = setTimeout(function () {
+          if (!window.__novaShaderReady) { document.body.classList.add("no-webgl"); }
+        }, 8000);
+        window.__nova3dTimer = setTimeout(function () {
+          if (!window.__nova3dReady) { document.body.classList.add("no-webgl"); }
+        }, 8000);
+      })();
+    </script>
+    <script type="module">
+      /* Animated Shader Hero (21st.dev style): a full-screen amber/gold
+         nebula with a white-hot streak, rendered live in WebGL. The
+         shader IS the hero — it churns on its own, no scroll needed. */
+      import * as THREE from "three";
+      if (window.__novaShaderTimer) { clearTimeout(window.__novaShaderTimer); }
+
+      (function () {
+        var canvas = document.getElementById("shader-canvas");
+        if (!canvas) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        var renderer;
+        try {
+          renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        } catch (e) {
+          document.body.classList.add("no-webgl");
+          return;
+        }
+
+        var hero = canvas.parentElement;
+        var uniforms = {
+          uTime: { value: 0 },
+          uRes: { value: new THREE.Vector2(1, 1) }
+        };
+        function size() {
+          var w = hero.clientWidth || 1, h = hero.clientHeight || 1;
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+          renderer.setSize(w, h, false);
+          uniforms.uRes.value.set(w, h);
+        }
+
+        var scene = new THREE.Scene();
+        var camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        var mat = new THREE.ShaderMaterial({
+          uniforms: uniforms,
+          vertexShader: "varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
+          fragmentShader: [
+            "varying vec2 vUv;",
+            "uniform float uTime;",
+            "uniform vec2 uRes;",
+            "float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }",
+            "float noise(vec2 p) {",
+            "  vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);",
+            "  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);",
+            "}",
+            "float fbm(vec2 p) {",
+            "  float v = 0.0; float a = 0.5;",
+            "  for (int i = 0; i < 5; i++) { v += a * noise(p); p = p * 2.03 + vec2(17.3, 9.1); a *= 0.5; }",
+            "  return v;",
+            "}",
+            "void main() {",
+            "  vec2 p = (vUv - 0.5) * vec2(uRes.x / uRes.y, 1.0) * vec2(1.7, 1.0);",
+            "  float t = uTime * 0.03;",
+            "  vec2 q = vec2(fbm(p * 1.4 + vec2(t, -t * 0.6)), fbm(p * 1.4 + vec2(-t * 0.4, t)));",
+            "  vec2 r = vec2(fbm(p * 1.4 + 2.0 * q + vec2(1.7, 9.2) + 0.15 * t), fbm(p * 1.4 + 2.0 * q + vec2(8.3, 2.8) - 0.12 * t));",
+            "  float band = smoothstep(0.45, 0.85, fbm(p * 1.4 + 2.2 * r));",
+            "  float f = clamp(1.0 - length(p) * 0.9, 0.0, 1.0);",
+            "  vec3 col = vec3(0.008, 0.006, 0.004);",
+            "  col += vec3(0.95, 0.55, 0.12) * pow(band, 2.0) * f * 2.4;",
+            "  col += vec3(0.6, 0.35, 0.08) * band * f * 0.6;",
+            "  col += vec3(0.85, 0.22, 0.08) * pow(q.x, 5.0) * 0.55;",
+            "  col += vec3(0.9, 0.65, 0.2) * pow(band, 3.0) * (1.0 - vUv.y) * 0.25;",
+            "  float streak = exp(-pow((vUv.y - 0.47) * 22.0, 2.0));",
+            "  col += vec3(1.0, 0.92, 0.75) * streak * 1.4;",
+            "  float glow = exp(-pow((vUv.y - 0.47) * 4.5, 2.0));",
+            "  col += vec3(0.9, 0.5, 0.15) * glow * 0.28;",
+            "  vec2 sp = vUv * vec2(160.0, 90.0);",
+            "  vec2 cell = floor(sp);",
+            "  float h = hash(cell);",
+            "  float star = smoothstep(0.14, 0.0, length(fract(sp) - 0.5)) * step(0.992, h);",
+            "  float tw = 0.5 + 0.5 * sin(uTime * (1.0 + h * 3.0) + h * 40.0);",
+            "  col += vec3(1.0, 0.95, 0.85) * star * tw * 0.9;",
+            "  col *= smoothstep(1.25, 0.25, length(p));",
+            "  gl_FragColor = vec4(col, 1.0);",
+            "}"
+          ].join("\n")
+        });
+        scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat));
+
+        size();
+        window.addEventListener("resize", size);
+
+        var clock = new THREE.Clock();
+        var running = true;
+        document.addEventListener("visibilitychange", function () {
+          running = !document.hidden;
+        });
+        function tick() {
+          requestAnimationFrame(tick);
+          if (!running) return;
+          uniforms.uTime.value = clock.getElapsedTime();
+          renderer.render(scene, camera);
+        }
+        tick();
+        window.__novaShaderReady = true;
+      })();
+    </script>
+    <script type="module">
+      /* The 3D pipeline (glass orbs + light trail + particles) floating
+         over the shader hero — amber, to match. Scroll flies the camera
+         along the pipeline; the labels track the nodes. Same engine as
+         the Instant Lead Responder v4 scene, made transparent. */
+      import * as THREE from "three";
+      import { RoomEnvironment } from "./jsm/environments/RoomEnvironment.js";
+      if (window.__nova3dTimer) { clearTimeout(window.__nova3dTimer); }
+
+      (function () {
+        var canvas = document.getElementById("bg-canvas");
+        if (!canvas) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        var renderer;
+        try {
+          renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        } catch (e) {
+          document.body.classList.add("no-webgl");
+          return;
+        }
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 640 ? 1.5 : 2));
+        renderer.setClearColor(0x000000, 0);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.1;
+
+        var scene = new THREE.Scene();
+        var pmrem = new THREE.PMREMGenerator(renderer);
+        scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+        var camera = new THREE.PerspectiveCamera(45, 2, 0.1, 120);
+        camera.position.set(0, 0.8, 12);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.25));
+        var keyLight = new THREE.PointLight(0xf59e0b, 100, 40);
+        keyLight.position.set(2, 3, 6);
+        scene.add(keyLight);
+        var fillLight = new THREE.PointLight(0xf87171, 35, 40);
+        fillLight.position.set(-6, -1, 8);
+        scene.add(fillLight);
+        var rimLight = new THREE.PointLight(0xf59e0b, 40, 50);
+        rimLight.position.set(0, 2, -14);
+        scene.add(rimLight);
+
+        var nodeDefs = [
+          { id: "lead",  pos: [-5.5, 1.0, 0],    r: 0.34, ei: 1.2 },
+          { id: "ai",    pos: [4.8, -1.2, -4],   r: 0.85, ei: 2.0 },
+          { id: "email", pos: [5.5, 1.0, -8],    r: 0.52, ei: 1.2 },
+          { id: "sheet", pos: [3.5, -0.8, -12],  r: 0.52, ei: 1.2 }
+        ];
+        var nodes = {};
+        nodeDefs.forEach(function (d) {
+          var mesh = new THREE.Mesh(
+            new THREE.SphereGeometry(d.r, 48, 32),
+            new THREE.MeshPhysicalMaterial({ color: 0x1f1408, metalness: 0.1, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.1, emissive: 0xf59e0b, emissiveIntensity: d.ei })
+          );
+          mesh.position.set(d.pos[0], d.pos[1], d.pos[2]);
+          scene.add(mesh);
+          nodes[d.id] = mesh;
+        });
+
+        function glowTexture() {
+          var c = document.createElement("canvas");
+          c.width = c.height = 128;
+          var g = c.getContext("2d");
+          var grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+          grad.addColorStop(0, "rgba(251,191,36,0.9)");
+          grad.addColorStop(0.35, "rgba(245,158,11,0.4)");
+          grad.addColorStop(1, "rgba(245,158,11,0)");
+          g.fillStyle = grad;
+          g.fillRect(0, 0, 128, 128);
+          return new THREE.CanvasTexture(c);
+        }
+        var halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+        halo.scale.set(2.6, 2.6, 1);
+        halo.position.copy(nodes.ai.position);
+        scene.add(halo);
+
+        var ring = new THREE.Mesh(
+          new THREE.TorusGeometry(1.35, 0.02, 12, 80),
+          new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.9 })
+        );
+        ring.position.copy(nodes.ai.position);
+        ring.rotation.x = Math.PI / 2.6;
+        scene.add(ring);
+
+        var curve = new THREE.CatmullRomCurve3(
+          nodeDefs.map(function (d) { return new THREE.Vector3(d.pos[0], d.pos[1], d.pos[2]); })
+        );
+        var tubeGeo = new THREE.TubeGeometry(curve, 100, 0.045, 8, false);
+        var tubeStops = [
+          new THREE.Color(0x7c2d12), new THREE.Color(0xf59e0b),
+          new THREE.Color(0xf59e0b), new THREE.Color(0xf87171)
+        ];
+        var tubeUv = tubeGeo.attributes.uv;
+        var tubeColors = new Float32Array(tubeUv.count * 3);
+        var tmpColor = new THREE.Color();
+        for (var ti = 0; ti < tubeUv.count; ti++) {
+          var tt = tubeUv.getX(ti);
+          var seg = Math.min(2, Math.floor(tt * 3));
+          var frac = tt * 3 - seg;
+          tmpColor.copy(tubeStops[seg]).lerp(tubeStops[seg + 1], frac);
+          tubeColors[ti * 3] = tmpColor.r;
+          tubeColors[ti * 3 + 1] = tmpColor.g;
+          tubeColors[ti * 3 + 2] = tmpColor.b;
+        }
+        tubeGeo.setAttribute("color", new THREE.BufferAttribute(tubeColors, 3));
+        var tube = new THREE.Mesh(
+          tubeGeo,
+          new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending })
+        );
+        scene.add(tube);
+
+        function dotTexture() {
+          var c = document.createElement("canvas");
+          c.width = c.height = 64;
+          var g = c.getContext("2d");
+          var grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+          grad.addColorStop(0, "rgba(255,255,255,1)");
+          grad.addColorStop(0.4, "rgba(255,255,255,0.9)");
+          grad.addColorStop(1, "rgba(255,255,255,0)");
+          g.fillStyle = grad;
+          g.fillRect(0, 0, 64, 64);
+          return new THREE.CanvasTexture(c);
+        }
+        var dotTex = dotTexture();
+
+        var FLOW_COUNT = window.innerWidth < 640 ? 220 : 420;
+        var flowGeo = new THREE.BufferGeometry();
+        var flowPos = new Float32Array(FLOW_COUNT * 3);
+        var flowT = [];
+        for (var i = 0; i < FLOW_COUNT; i++) {
+          flowT.push({ t: Math.random(), speed: 0.05 + Math.random() * 0.11 });
+        }
+        flowGeo.setAttribute("position", new THREE.BufferAttribute(flowPos, 3));
+        var flowPalette = [
+          new THREE.Color(0xf59e0b), new THREE.Color(0xfbbf24),
+          new THREE.Color(0xf87171), new THREE.Color(0xffffff)
+        ];
+        var flowColors = new Float32Array(FLOW_COUNT * 3);
+        for (var ci = 0; ci < FLOW_COUNT; ci++) {
+          var c = flowPalette[ci % flowPalette.length];
+          flowColors[ci * 3] = c.r;
+          flowColors[ci * 3 + 1] = c.g;
+          flowColors[ci * 3 + 2] = c.b;
+        }
+        flowGeo.setAttribute("color", new THREE.BufferAttribute(flowColors, 3));
+        var flow = new THREE.Points(flowGeo, new THREE.PointsMaterial({
+          vertexColors: true, size: 0.14, map: dotTex, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending
+        }));
+        scene.add(flow);
+
+        var DUST = 800;
+        var dustGeo = new THREE.BufferGeometry();
+        var dustPos = new Float32Array(DUST * 3);
+        for (var j = 0; j < DUST; j++) {
+          dustPos[j * 3] = (Math.random() - 0.5) * 26;
+          dustPos[j * 3 + 1] = (Math.random() - 0.5) * 9;
+          dustPos[j * 3 + 2] = (Math.random() - 0.5) * 14 - 6;
+        }
+        dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
+        scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({
+          color: 0xffffff, size: 0.05, map: dotTex, transparent: true, opacity: 0.35, depthWrite: false, blending: THREE.AdditiveBlending
+        })));
+
+        var aiCore = new THREE.Mesh(
+          new THREE.SphereGeometry(0.38, 32, 24),
+          new THREE.MeshBasicMaterial({ color: 0xfef3c7 })
+        );
+        aiCore.position.copy(nodes.ai.position);
+        scene.add(aiCore);
+
+        function bokehTexture(rgb) {
+          var c = document.createElement("canvas");
+          c.width = c.height = 128;
+          var g = c.getContext("2d");
+          var grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+          grad.addColorStop(0, "rgba(" + rgb + ",0.55)");
+          grad.addColorStop(0.5, "rgba(" + rgb + ",0.18)");
+          grad.addColorStop(1, "rgba(" + rgb + ",0)");
+          g.fillStyle = grad;
+          g.fillRect(0, 0, 128, 128);
+          return new THREE.CanvasTexture(c);
+        }
+        var bokehTexE = bokehTexture("245,158,11");
+        var bokehTexM = bokehTexture("248,113,113");
+        var bokehSpots = [
+          [-9, 2.5, 6, 9, 0.05, bokehTexE], [9, -1, 4, 11, 0.04, bokehTexM],
+          [-8, -2.5, 2, 8, 0.045, bokehTexE], [8, 3, 8, 10, 0.035, bokehTexM]
+        ];
+        var bokehSprites = [];
+        bokehSpots.forEach(function (s) {
+          var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: s[5], transparent: true, opacity: s[4], depthWrite: false, blending: THREE.AdditiveBlending }));
+          sp.scale.set(s[3], s[3], 1);
+          sp.position.set(s[0], s[1], s[2]);
+          sp.userData.baseY = s[1];
+          scene.add(sp);
+          bokehSprites.push(sp);
+        });
+
+        var camCurve = null;
+        var zBack = 1;
+        function buildCamCurve() {
+          var pts = [
+            new THREE.Vector3(0, 0.8, 12),
+            new THREE.Vector3(-2, 1.0, 7),
+            new THREE.Vector3(-0.5, 0.8, 2),
+            new THREE.Vector3(1.5, 0.8, -3),
+            new THREE.Vector3(3, 0.8, -7)
+          ];
+          camCurve = new THREE.CatmullRomCurve3(pts);
+        }
+        var lookCurve = new THREE.CatmullRomCurve3([
+          new THREE.Vector3(0, 0, -6),
+          new THREE.Vector3(4.8, -1.2, -4),
+          new THREE.Vector3(5.5, 1.0, -8),
+          new THREE.Vector3(3.5, -0.8, -12)
+        ]);
+        buildCamCurve();
+
+        var labelEls = {};
+        document.querySelectorAll(".node-label").forEach(function (el) {
+          labelEls[el.getAttribute("data-node")] = el;
+        });
+        if (window.innerWidth < 640 && labelEls.ai) {
+          labelEls.ai.innerHTML = 'Design · <strong>look &amp; feel</strong>';
+        }
+        var v3 = new THREE.Vector3();
+        var smoothT = 0;
+        function placeLabels() {
+          var w = window.innerWidth, h = window.innerHeight;
+          var fade = Math.max(0, Math.min(1, (smoothT - 0.03) / 0.12));
+          Object.keys(labelEls).forEach(function (id) {
+            var el = labelEls[id];
+            var node = nodes[id];
+            if (!node) return;
+            node.getWorldPosition(v3);
+            v3.project(camera);
+            if (v3.z > 1 || Math.abs(v3.x) > 1.05 || Math.abs(v3.y) > 1.05) { el.style.opacity = "0"; return; }
+            el.style.opacity = fade.toFixed(2);
+            var x = (v3.x * 0.5 + 0.5) * w;
+            var y = (-v3.y * 0.5 + 0.5) * h;
+            var lift;
+            if (w < 640) {
+              lift = (id === "ai" || id === "sheet") ? 62 : -58;
+            } else {
+              lift = id === "ai" ? -72 : -58;
+            }
+            var ly = y + lift;
+            x = Math.max(64, Math.min(w - 64, x));
+            ly = Math.max(28, Math.min(h - 28, ly));
+            el.style.transform = "translate(-50%, -50%) translate(" + x.toFixed(1) + "px," + ly.toFixed(1) + "px)";
+          });
+        }
+
+        var pointer = { x: 0, y: 0 };
+        window.addEventListener("pointermove", function (e) {
+          pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+          pointer.y = -((e.clientY / window.innerHeight) * 2 - 1);
+        });
+
+        var targetT = 0;
+        var camOverride = null;
+        function readScroll() {
+          if (camOverride !== null) { targetT = camOverride; return; }
+          var max = document.documentElement.scrollHeight - window.innerHeight;
+          targetT = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
+        }
+        window.addEventListener("scroll", readScroll, { passive: true });
+        readScroll();
+
+        function resize() {
+          var w = window.innerWidth, h = window.innerHeight;
+          renderer.setSize(w, h, false);
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          zBack = camera.aspect < 1 ? 1.4 : 1;
+          buildCamCurve();
+          readScroll();
+        }
+        window.addEventListener("resize", resize);
+        resize();
+
+        var scrollParam = new URLSearchParams(window.location.search).get("scroll");
+        if (scrollParam !== null) {
+          var sv = parseFloat(scrollParam);
+          if (!isNaN(sv)) {
+            document.documentElement.style.scrollBehavior = "auto";
+            var max0 = document.documentElement.scrollHeight - window.innerHeight;
+            window.scrollTo(0, Math.max(0, Math.min(1, sv)) * max0);
+            readScroll();
+            smoothT = targetT;
+          }
+        }
+        var camParam = new URLSearchParams(window.location.search).get("cam");
+        if (camParam !== null) {
+          var cv = parseFloat(camParam);
+          if (!isNaN(cv)) {
+            camOverride = Math.max(0, Math.min(1, cv));
+            targetT = camOverride;
+            smoothT = camOverride;
+          }
+        }
+
+        var running = true;
+        document.addEventListener("visibilitychange", function () {
+          running = !document.hidden;
+        });
+
+        var clock = new THREE.Clock();
+        var tmp = new THREE.Vector3();
+        var lookTmp = new THREE.Vector3();
+        function tick() {
+          requestAnimationFrame(tick);
+          if (!running) return;
+          var dt = Math.min(clock.getDelta(), 0.05);
+          var t = clock.elapsedTime;
+
+          for (var i = 0; i < FLOW_COUNT; i++) {
+            var f = flowT[i];
+            f.t += f.speed * dt;
+            if (f.t > 1) f.t -= 1;
+            tmp.copy(curve.getPointAt(f.t));
+            flowPos[i * 3] = tmp.x;
+            flowPos[i * 3 + 1] = tmp.y;
+            flowPos[i * 3 + 2] = tmp.z;
+          }
+          flowGeo.attributes.position.needsUpdate = true;
+
+          var pulse = 1 + Math.sin(t * 2.2) * 0.06;
+          nodes.ai.scale.setScalar(pulse);
+          aiCore.scale.setScalar(pulse);
+          halo.material.opacity = 0.45 + Math.sin(t * 2.2) * 0.12;
+          ring.rotation.z = t * 0.35;
+          for (var bi = 0; bi < bokehSprites.length; bi++) {
+            bokehSprites[bi].position.y = bokehSprites[bi].userData.baseY + Math.sin(t * 0.25 + bi * 1.7) * 0.5;
+          }
+
+          smoothT += (targetT - smoothT) * 0.07;
+          var s = Math.max(0, Math.min(1, smoothT));
+          var camPos = camCurve.getPointAt(s);
+          camera.position.set(
+            camPos.x + pointer.x * 0.5,
+            camPos.y + pointer.y * 0.3,
+            camPos.z + (1 - s) * (zBack - 1) * 12
+          );
+          lookTmp.copy(lookCurve.getPointAt(s));
+          lookTmp.x -= 1.0;
+          camera.lookAt(lookTmp);
+
+          placeLabels();
+          renderer.render(scene, camera);
+        }
+        tick();
+        window.__nova3dReady = true;
+      })();
+    </script>
+    <script>
+      /* Scroll reveal — sections fade/slide in as they enter the viewport. */
+      (function () {
+        var els = document.querySelectorAll(".reveal");
+        if (!("IntersectionObserver" in window)) {
+          els.forEach(function (el) { el.classList.add("visible"); });
+          return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12 });
+        els.forEach(function (el) { io.observe(el); });
       })();
     </script>
   </body>
