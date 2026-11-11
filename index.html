@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="data:," />
+    <title>NOVA Studio — Websites That Make People Stop Scrolling</title>
+    <meta name="description" content="NOVA is a digital design studio. We design and build fast, cinematic websites for brands that want to stand out — 3D, motion, and clean code." />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="NOVA Studio — Websites That Make People Stop Scrolling" />
+    <meta property="og:description" content="NOVA is a digital design studio. We design and build fast, cinematic websites for brands that want to stand out — 3D, motion, and clean code." />
+    <meta property="og:image" content="hero.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NOVA Studio — Websites That Make People Stop Scrolling" />
+    <meta name="twitter:description" content="NOVA is a digital design studio. We design and build fast, cinematic websites for brands that want to stand out — 3D, motion, and clean code." />
+    <meta name="twitter:image" content="hero.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #050505;
+        --amber: #f59e0b;
+        --amber-light: #fbbf24;
+        --orange: #f97316;
+        --coral: #f87171;
+        --yellow: #fde047;
+        --ink: #ffffff;
+        --muted: rgba(255, 255, 255, 0.62);
+        --muted-2: rgba(255, 255, 255, 0.45);
+        --glass: rgba(255, 255, 255, 0.04);
+        --glass-border: rgba(255, 255, 255, 0.10);
+        --radius: 16px;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 17px;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection { background: var(--amber); color: #000; }
+      img { display: block; max-width: 100%; }
+
+      /* ---------- hero (full-viewport, photo is the hero) ---------- */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        min-height: 720px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .hero-bg {
+        position: absolute; inset: -3%;
+        width: 106%; height: 106%;
+        object-fit: cover;
+        /* Slow cinematic drift (Ken Burns) — the reference heroes all
+           move on their own; this one never sits still. */
+        animation: kenburns 28s ease-in-out infinite alternate;
+      }
+      @keyframes kenburns {
+        from { transform: scale(1) translate(0, 0); }
+        to { transform: scale(1.08) translate(-1.5%, 1%); }
+      }
+      /* Black gradient (bottom) + vignette, so white type reads over
+         the photo and the nav stays legible. */
+      .hero-shade {
+        position: absolute; inset: 0;
+        background:
+          radial-gradient(120% 90% at 50% 40%, transparent 40%, rgba(0, 0, 0, 0.55) 100%),
+          linear-gradient(180deg, rgba(0, 0, 0, 0.45) 0%, transparent 22%, transparent 55%, rgba(0, 0, 0, 0.55) 82%, rgba(5, 5, 5, 0.92) 100%);
+      }
+      /* Warm amber glow behind the headline (mix-blend-screen), so the
+         light in the photo feels like it is lighting the type. */
+      .hero-glow {
+        position: absolute; left: 50%; top: 46%;
+        width: 900px; height: 420px;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(50% 50% at 50% 50%, rgba(249, 158, 11, 0.28) 0%, rgba(249, 115, 22, 0.10) 55%, transparent 100%);
+        mix-blend-mode: screen;
+        animation: glowpulse 6s ease-in-out infinite alternate;
+        pointer-events: none;
+      }
+      @keyframes glowpulse {
+        from { opacity: 0.7; }
+        to { opacity: 1; }
+      }
+      /* The Animated Shader Hero's signature: a thin white-hot
+         horizontal light streak across the middle, slowly pulsing. */
+      .hero-streak {
+        position: absolute; left: 0; right: 0; top: 47%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9) 30%, #fff 50%, rgba(255, 255, 255, 0.9) 70%, transparent);
+        box-shadow: 0 0 24px 4px rgba(255, 220, 160, 0.55), 0 0 80px 12px rgba(249, 158, 11, 0.25);
+        animation: streakpulse 4s ease-in-out infinite alternate;
+        pointer-events: none;
+      }
+      @keyframes streakpulse {
+        from { opacity: 0.45; }
+        to { opacity: 1; }
+      }
+      .hero-inner {
+        position: relative; z-index: 2;
+        flex: 1;
+        display: flex; flex-direction: column;
+        max-width: 1080px; margin: 0 auto; width: 100%;
+        padding: 0 24px;
+      }
+
+      /* ---------- nav ---------- */
+      .nav {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 16px; padding: 22px 0 0;
+      }
+      .nav-logo { font-family: "Inter Tight", "Inter", sans-serif; font-weight: 900; letter-spacing: -0.02em; font-size: 22px; color: #fff; text-decoration: none; }
+      .nav-logo span { color: var(--amber-light); }
+      .nav-links { display: flex; gap: 28px; align-items: center; }
+      .nav-links a { color: rgba(255, 255, 255, 0.75); text-decoration: none; font-size: 15px; font-weight: 500; }
+      .nav-links a:hover { color: #fff; }
+      .nav-cta {
+        font-size: 14.5px; font-weight: 600; color: #fff; text-decoration: none;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        padding: 9px 18px; border-radius: 9999px;
+        white-space: nowrap;
+      }
+      .nav-cta:hover { background: rgba(255, 255, 255, 0.14); }
+
+      /* ---------- hero stack (centred, like 21st.dev) ---------- */
+      .hero-stack {
+        flex: 1;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center;
+        padding: 40px 0 120px;
+      }
+      .hero-badge {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
+        color: rgba(255, 255, 255, 0.85);
+        background: rgba(255, 255, 255, 0.10);
+        border: 1px solid rgba(255, 255, 255, 0.20);
+        border-radius: 9999px; padding: 8px 16px;
+        margin-bottom: 24px;
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      }
+      .hero-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 10px rgba(245, 158, 11, 0.9); }
+      .hero-stack h1 {
+        font-family: "Inter Tight", "Inter", sans-serif;
+        font-size: clamp(56px, 8vw, 110px);
+        line-height: 0.95;
+        letter-spacing: -0.03em;
+        font-weight: 900;
+        margin: 0 0 24px;
+        max-width: 14ch;
+        color: #fff;
+        text-shadow: 0 2px 40px rgba(0, 0, 0, 0.55);
+      }
+      .hero-stack h1 .accent {
+        background: linear-gradient(90deg, var(--yellow), #fb923c, var(--coral));
+        -webkit-background-clip: text; background-clip: text;
+        -webkit-text-fill-color: transparent; color: transparent;
+      }
+      .hero-stack .sub {
+        font-size: clamp(17px, 2vw, 19px);
+        color: rgba(255, 255, 255, 0.72);
+        max-width: 58ch;
+        margin: 0 0 32px;
+        text-shadow: 0 1px 20px rgba(0, 0, 0, 0.6);
+      }
+      .hero-stack .sub strong { color: #fff; }
+      .hero-cta { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: center; }
+      .btn {
+        display: inline-block;
+        background: linear-gradient(90deg, var(--yellow), var(--orange));
+        color: #1a0e00;
+        font-weight: 700; font-size: 16px;
+        padding: 14px 28px; border-radius: 9999px;
+        text-decoration: none; border: none;
+        box-shadow: 0 8px 40px rgba(249, 115, 22, 0.45);
+        transition: transform .15s ease, box-shadow .15s ease;
+      }
+      .btn:hover { transform: translateY(-1px); box-shadow: 0 12px 48px rgba(249, 115, 22, 0.55); }
+      .btn-ghost {
+        background: rgba(255, 255, 255, 0.08); color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.20);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        box-shadow: none;
+      }
+      .btn-ghost:hover { background: rgba(255, 255, 255, 0.14); box-shadow: none; }
+      /* Staggered entrance — badge, headline, sub, buttons fade up in turn. */
+      .rise { animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      .rise-1 { animation-delay: 0.05s; }
+      .rise-2 { animation-delay: 0.20s; }
+      .rise-3 { animation-delay: 0.35s; }
+      .rise-4 { animation-delay: 0.50s; }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(24px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .scroll-hint {
+        position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+        z-index: 2;
+        display: flex; flex-direction: column; align-items: center; gap: 2px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .scroll-arrow { font-size: 16px; animation: bob 1.8s ease-in-out infinite; }
+      @keyframes bob {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(5px); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .hero-bg, .hero-glow, .hero-streak, .scroll-arrow, .rise { animation: none; }
+        html { scroll-behavior: auto; }
+      }
+
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2; }
+
+      /* ---------- preview card (rises out of the hero — 21st.dev's move) ---------- */
+      .preview {
+        margin-top: -90px;
+        position: relative; z-index: 3;
+      }
+      .preview-card {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 24px;
+        overflow: hidden;
+        background: #0b0b0e;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 80px rgba(249, 158, 11, 0.12);
+      }
+      .browser-bar {
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .browser-dots { display: flex; gap: 6px; }
+      .browser-dots i { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.22); display: block; }
+      .browser-dots i:first-child { background: rgba(248, 113, 113, 0.8); }
+      .browser-dots i:nth-child(2) { background: rgba(251, 191, 36, 0.8); }
+      .browser-dots i:nth-child(3) { background: rgba(52, 211, 153, 0.8); }
+      .browser-url {
+        flex: 1; text-align: center;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 12.5px; color: rgba(255, 255, 255, 0.55);
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 8px; padding: 5px 12px;
+      }
+      .preview-site { position: relative; min-height: 340px; display: flex; align-items: flex-end; }
+      .preview-site img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .preview-site::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(180deg, transparent 35%, rgba(0, 0, 0, 0.55) 78%, rgba(0, 0, 0, 0.85) 100%);
+      }
+      .preview-site .preview-copy { position: relative; z-index: 2; padding: 28px 32px; }
+      .preview-copy .tag {
+        display: inline-block;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 11.5px; font-weight: 600; letter-spacing: 0.12em;
+        color: var(--amber-light);
+        border: 1px solid rgba(251, 191, 36, 0.5);
+        background: rgba(245, 158, 11, 0.14);
+        padding: 5px 12px; border-radius: 9999px; margin-bottom: 12px;
+      }
+      .preview-copy h3 { margin: 0 0 6px; font-family: "Inter Tight", "Inter", sans-serif; font-size: 32px; font-weight: 900; letter-spacing: -0.02em; }
+      .preview-copy p { margin: 0; color: rgba(255, 255, 255, 0.75); font-size: 16px; max-width: 52ch; }
+      .preview-caption { margin: 14px 4px 0; color: var(--muted-2); font-size: 14.5px; text-align: center; }
+      .preview-caption strong { color: rgba(255, 255, 255, 0.75); }
+
+      /* ---------- sections ---------- */
+      section { padding: 88px 0 0; }
+      h2 {
+        font-family: "Inter Tight", "Inter", sans-serif;
+        font-size: clamp(32px, 4.6vw, 46px);
+        font-weight: 900; letter-spacing: -0.025em; line-height: 1.05;
+        margin: 0 0 14px;
+        color: #fff;
+        text-align: center;
+      }
+      .section-lede { color: var(--muted); max-width: 60ch; margin: 0 auto 40px; font-size: 18px; text-align: center; }
+      .eyebrow {
+        display: block; text-align: center;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 12px; font-weight: 600; letter-spacing: 0.14em;
+        color: var(--amber-light); margin-bottom: 12px;
+      }
+
+      /* services */
+      .steps {
+        display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+        list-style: none; margin: 0; padding: 0;
+      }
+      .step {
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        padding: 26px 26px 24px;
+        background: var(--glass);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+      .step-num {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 13px; font-weight: 600;
+        color: #1a0e00; background: linear-gradient(90deg, var(--yellow), var(--orange));
+        display: inline-block; padding: 4px 10px; border-radius: 6px;
+        margin-bottom: 16px;
+      }
+      .step h3 { margin: 0 0 8px; font-size: 21px; font-weight: 800; letter-spacing: -0.01em; color: #fff; }
+      .step p { margin: 0; color: var(--muted); font-size: 16px; }
+
+      /* ---------- work fan (hero-10 construction) ---------- */
+      .fan {
+        position: relative;
+        display: flex; justify-content: center; align-items: flex-end;
+        height: 560px;
+        margin: 8px auto 0;
+        max-width: 860px;
+        perspective: 1200px;
+      }
+      .fan-card {
+        position: relative;
+        width: 300px; height: 440px;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+        transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+        flex: 0 0 auto;
+      }
+      .fan-card img { width: 100%; height: 100%; object-fit: cover; }
+      .fan-card::after {
+        content: ""; position: absolute; inset: 0;
+        background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.45) 78%, rgba(0, 0, 0, 0.85) 100%);
+      }
+      .fan-card .fan-caption { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 20px 26px; }
+      .fan-caption .fan-tag {
+        display: inline-block;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+        color: var(--amber-light); margin-bottom: 6px;
+      }
+      .fan-caption h3 { margin: 0 0 4px; font-family: "Inter Tight", "Inter", sans-serif; font-size: 24px; font-weight: 900; letter-spacing: -0.01em; }
+      .fan-caption p { margin: 0; color: rgba(255, 255, 255, 0.72); font-size: 14.5px; }
+      .fan-card.left { transform: rotate(-4deg) translateY(14px); z-index: 10; margin-right: -12px; }
+      .fan-card.centre { transform: rotate(0deg); z-index: 30; height: 480px; }
+      .fan-card.right { transform: rotate(4deg) translateY(14px); z-index: 20; margin-left: -12px; }
+      /* Hover: the fan spreads wider, cards lift — the Card Fan
+         Carousel behaviour, in pure CSS. */
+      .fan:hover .fan-card.left { transform: rotate(-7deg) translate(-18px, -6px); }
+      .fan:hover .fan-card.centre { transform: translateY(-14px); }
+      .fan:hover .fan-card.right { transform: rotate(7deg) translate(18px, -6px); }
+      .fan-note { text-align: center; color: var(--muted-2); font-size: 14.5px; margin: 22px 0 0; }
+
+      /* ---------- process ---------- */
+      .process {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+        list-style: none; margin: 0; padding: 0;
+      }
+      .process li {
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius);
+        padding: 24px 22px;
+        background: var(--glass);
+        backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      }
+      .process .p-num {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 12px; font-weight: 600; letter-spacing: 0.1em; color: var(--amber-light);
+        display: block; margin-bottom: 10px;
+      }
+      .process h3 { margin: 0 0 6px; font-size: 19px; font-weight: 800; color: #fff; }
+      .process p { margin: 0; color: var(--muted); font-size: 15px; }
+
+      /* ---------- contact / demo form ---------- */
+      .demo-grid {
+        display: grid; grid-template-columns: 1fr 1.15fr; gap: 44px; align-items: start;
+      }
+      .demo-copy p { color: var(--muted); font-size: 18px; margin: 0 0 18px; max-width: 46ch; }
+      .demo-copy p strong { color: #fff; }
+      .demo-copy h2, .demo-copy .section-lede { text-align: left; margin-left: 0; margin-right: 0; }
+      .expect { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 14px; }
+      .expect li { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; color: var(--muted); }
+      .expect li strong { color: #fff; }
+      .expect .tick {
+        flex: 0 0 auto; width: 24px; height: 24px; border-radius: 50%;
+        background: rgba(245, 158, 11, 0.15); color: var(--amber-light);
+        display: grid; place-items: center; margin-top: 1px;
+      }
+      .expect .tick svg { width: 14px; height: 14px; }
+
+      .form-card {
+        border: 1px solid var(--glass-border);
+        border-radius: 18px;
+        padding: 30px;
+        background: var(--glass);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+      .form-card h3 { margin: 0 0 6px; font-size: 24px; font-weight: 900; letter-spacing: -0.02em; color: #fff; }
+      .form-card .form-note { margin: 0 0 24px; color: var(--muted); font-size: 15px; }
+      .field { margin-bottom: 18px; }
+      label { display: block; font-weight: 700; font-size: 14.5px; margin-bottom: 7px; color: #fff; }
+      input, select, textarea {
+        width: 100%;
+        font: inherit; font-size: 16px;
+        padding: 12px 14px;
+        border: 1.5px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.06); color: #fff;
+      }
+      input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.4); }
+      input:focus, select:focus, textarea:focus {
+        outline: 3px solid rgba(245, 158, 11, 0.28);
+        border-color: var(--amber);
+      }
+      textarea { resize: vertical; min-height: 108px; }
+      .submit-btn {
+        width: 100%;
+        background: linear-gradient(90deg, var(--yellow), var(--orange)); color: #1a0e00;
+        border: none;
+        font: inherit; font-weight: 800; font-size: 17px;
+        padding: 15px 20px; border-radius: 9999px; cursor: pointer;
+        box-shadow: 0 8px 40px rgba(249, 115, 22, 0.35);
+        transition: transform .15s ease;
+      }
+      .submit-btn:hover:not(:disabled) { transform: translateY(-1px); }
+      .submit-btn:disabled { opacity: .65; cursor: wait; }
+      .form-fineprint { margin: 14px 0 0; font-size: 13.5px; color: var(--muted-2); text-align: center; }
+      .form-error {
+        display: none;
+        margin: 0 0 18px; padding: 12px 14px;
+        border: 1.5px solid rgba(255, 120, 110, 0.5); border-radius: 10px;
+        color: #ffb4ab; font-size: 15px; font-weight: 600;
+        background: rgba(179, 38, 30, 0.15);
+      }
+      .form-error.show { display: block; }
+
+      .success-panel { display: none; text-align: left; }
+      .success-panel.show { display: block; }
+      .success-badge {
+        width: 56px; height: 56px; border-radius: 50%;
+        background: linear-gradient(90deg, var(--yellow), var(--orange)); color: #1a0e00;
+        display: grid; place-items: center; margin-bottom: 18px;
+      }
+      .success-badge svg { width: 30px; height: 30px; }
+      .success-panel h3 { font-size: 26px; }
+      .success-panel p { color: var(--muted); margin: 0 0 14px; }
+      .success-panel p strong { color: #fff; }
+      .again-btn {
+        background: transparent; border: none; padding: 0;
+        font: inherit; font-weight: 700; color: var(--amber-light);
+        text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+      }
+
+      /* ---------- built with ---------- */
+      .built {
+        margin-top: 88px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 26px 0;
+        display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px;
+      }
+      .built .built-label {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 12.5px; font-weight: 600; letter-spacing: 0.1em; color: var(--muted-2);
+      }
+      .built ul { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; }
+      .built li {
+        font-weight: 800; font-size: 16px; color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 999px; padding: 7px 16px;
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      /* ---------- footer ---------- */
+      footer { padding: 32px 0 36px; }
+      .footer-row {
+        display: flex; flex-wrap: wrap; gap: 12px 28px;
+        align-items: center; justify-content: space-between;
+      }
+      .footer-name { font-weight: 900; font-size: 19px; letter-spacing: -0.01em; color: #fff; }
+      .footer-name span { color: var(--muted-2); font-weight: 600; }
+      footer a {
+        color: var(--amber-light); font-weight: 700;
+        text-decoration: underline; text-underline-offset: 3px;
+      }
+      footer a:hover { color: var(--amber); }
+
+      /* ---------- responsive ---------- */
+      @media (max-width: 820px) {
+        .nav-links { display: none; }
+        .demo-grid { grid-template-columns: 1fr; gap: 30px; }
+        .steps { grid-template-columns: 1fr; }
+        .process { grid-template-columns: 1fr 1fr; }
+        .hero { min-height: 100svh; }
+        .hero-stack { padding-bottom: 140px; }
+        section { padding-top: 64px; }
+        .form-card { padding: 24px 20px; }
+        .preview { margin-top: -70px; }
+        .preview-site { min-height: 260px; }
+        .fan { height: auto; flex-wrap: nowrap; }
+        .fan-card { width: 30vw; height: 300px; }
+        .fan-card.centre { height: 330px; }
+        .fan-card.left { margin-right: -8px; }
+        .fan-card.right { margin-left: -8px; }
+        .fan-caption h3 { font-size: 18px; }
+        .fan-caption p { display: none; }
+      }
+      @media (max-width: 560px) {
+        .process { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Hero: one full-bleed photograph, like the reference sites. -->
+    <header class="hero">
+      <img class="hero-bg" src="hero.jpg" alt="A dark studio interior at night, a single shaft of warm amber light cutting across the room, a silhouetted person standing in the light" fetchpriority="high" />
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="hero-streak" aria-hidden="true"></div>
+
+      <div class="hero-inner">
+        <nav class="nav">
+          <a class="nav-logo" href="#">NOVA <span>Studio</span></a>
+          <div class="nav-links">
+            <a href="#work">Work</a>
+            <a href="#services">Services</a>
+            <a href="#process">Process</a>
+            <a href="#contact">Contact</a>
+          </div>
+          <a class="nav-cta" href="#contact">Start a project →</a>
+        </nav>
+
+        <div class="hero-stack">
+          <div class="hero-badge rise rise-1"><span class="dot" aria-hidden="true"></span>WEB DESIGN + 3D STUDIO</div>
+          <h1 class="rise rise-2">Websites that make people <span class="accent">stop scrolling.</span></h1>
+          <p class="sub rise rise-3">NOVA is a digital design studio. We design and build fast, cinematic websites for brands that want to stand out — <strong>3D, motion, and clean code, all in one place</strong>.</p>
+          <div class="hero-cta rise rise-4">
+            <a class="btn" href="#work">See our work</a>
+            <a class="btn btn-ghost" href="#contact">Start a project</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-hint" aria-hidden="true">
+        <span>SCROLL</span>
+        <span class="scroll-arrow">↓</span>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <!-- Preview card rising out of the hero (21st.dev's signature move). -->
+      <div class="preview">
+        <div class="preview-card">
+          <div class="browser-bar">
+            <div class="browser-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="browser-url">nova.studio/aurora-coffee</div>
+          </div>
+          <div class="preview-site">
+            <img src="work-coffee.jpg" alt="Aurora Coffee — a dark, moody coffee brand website with warm amber light" loading="lazy" />
+            <div class="preview-copy">
+              <span class="tag">LATEST WORK · E-COMMERCE</span>
+              <h3>Aurora Coffee</h3>
+              <p>A warm, dark coffee brand site — the kind of page that makes people order before they finish reading.</p>
+            </div>
+          </div>
+        </div>
+        <p class="preview-caption">This is the work, not a mockup — <strong>every site we build looks like this when it goes live.</strong></p>
+      </div>
+
+      <section id="services">
+        <span class="eyebrow">SERVICES</span>
+        <h2>What we do</h2>
+        <p class="section-lede">Four services, one goal — a website your visitors remember. Every project gets the same care: a clear idea, a cinematic design, clean code, and a launch that works.</p>
+        <ol class="steps">
+          <li class="step">
+            <span class="step-num">01</span>
+            <h3>Web Design</h3>
+            <p>Clean, modern websites that load fast and look expensive — designed around your brand, not a template.</p>
+          </li>
+          <li class="step">
+            <span class="step-num">02</span>
+            <h3>3D &amp; Motion</h3>
+            <p>Cinematic 3D scenes and smooth animations that make a site unforgettable — the kind of thing people screenshot and share.</p>
+          </li>
+          <li class="step">
+            <span class="step-num">03</span>
+            <h3>E-commerce</h3>
+            <p>Online stores that are easy to shop and easy to run — fast checkout, clear products, no friction.</p>
+          </li>
+          <li class="step">
+            <span class="step-num">04</span>
+            <h3>Brand Identity</h3>
+            <p>Logos, colours, and type that make a brand recognisable — a look your customers remember.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section id="work">
+        <span class="eyebrow">SELECTED WORK</span>
+        <h2>Three kinds of site. One standard.</h2>
+        <p class="section-lede">A coffee brand, a fitness app, an interior studio — different businesses, same idea: a site that feels like a place, not a page. Hover the fan to see them spread.</p>
+        <div class="fan">
+          <article class="fan-card left">
+            <img src="work-coffee.jpg" alt="Aurora Coffee — dark coffee shop interior with warm amber pendant lights" loading="lazy" />
+            <div class="fan-caption">
+              <span class="fan-tag">E-COMMERCE</span>
+              <h3>Aurora Coffee</h3>
+              <p>A warm, dark coffee brand site.</p>
+            </div>
+          </article>
+          <article class="fan-card centre">
+            <img src="work-fitness.jpg" alt="Pulse Fitness — athlete training in a dark gym with warm amber rim light" loading="lazy" />
+            <div class="fan-caption">
+              <span class="fan-tag">LANDING PAGE</span>
+              <h3>Pulse Fitness</h3>
+              <p>A bold landing page for a fitness app.</p>
+            </div>
+          </article>
+          <article class="fan-card right">
+            <img src="work-interiors.jpg" alt="Haven Interiors — elegant dark living room at dusk with a warm amber lamp" loading="lazy" />
+            <div class="fan-caption">
+              <span class="fan-tag">PORTFOLIO</span>
+              <h3>Haven Interiors</h3>
+              <p>A calm, elegant interior studio site.</p>
+            </div>
+          </article>
+        </div>
+        <p class="fan-note">Aurora Coffee · Pulse Fitness · Haven Interiors — each one a different kind of site, each one built to stand out.</p>
+      </section>
+
+      <section id="process">
+        <span class="eyebrow">HOW WE WORK</span>
+        <h2>From idea to live in four steps</h2>
+        <p class="section-lede">No mystery, no endless revisions. You always know what happens next — and when your site goes live.</p>
+        <ol class="process">
+          <li>
+            <span class="p-num">STEP 01</span>
+            <h3>Discover</h3>
+            <p>We learn what you sell, who it's for, and what the site has to do.</p>
+          </li>
+          <li>
+            <span class="p-num">STEP 02</span>
+            <h3>Design</h3>
+            <p>The look, the feel, the flow — a design you approve before we build.</p>
+          </li>
+          <li>
+            <span class="p-num">STEP 03</span>
+            <h3>Build</h3>
+            <p>Clean code, fast load, mobile-first — tested on real phones, not just a laptop.</p>
+          </li>
+          <li>
+            <span class="p-num">STEP 04</span>
+            <h3>Launch</h3>
+            <p>Live, measured, improved — and yours to keep, with no lock-in.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section id="contact">
+        <div class="demo-grid">
+          <div class="demo-copy">
+            <h2>Start a project</h2>
+            <p>Tell us about your project — what you sell, who it's for, and what you want the site to do. We'll reply within 24 hours with <strong>honest next steps and a price</strong>.</p>
+            <ul class="expect">
+              <li>
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span><strong>No pressure</strong> — a straight answer on price and timeline, no sales call unless you want one.</span>
+              </li>
+              <li>
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span><strong>You own everything</strong> — your site, your code, your content. No lock-in, no monthly ransom.</span>
+              </li>
+              <li>
+                <span class="tick" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                <span><strong>Fast turnaround</strong> — most sites live in 2–3 weeks, from first call to launch.</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="form-card">
+            <form id="contact-form" novalidate>
+              <h3>Tell us about your project</h3>
+              <p class="form-note">A few lines is enough — we'll take it from there.</p>
+              <p class="form-error" id="form-error" role="alert"></p>
+
+              <div class="field">
+                <label for="f-name">Your name</label>
+                <input id="f-name" name="name" type="text" autocomplete="name" required placeholder="e.g. Sarah Mitchell" />
+              </div>
+              <div class="field">
+                <label for="f-email">Email address</label>
+                <input id="f-email" name="email" type="email" autocomplete="email" required placeholder="you@company.com" />
+              </div>
+              <div class="field">
+                <label for="f-service">What do you need?</label>
+                <select id="f-service" name="service" required>
+                  <option value="Web Design">Web Design</option>
+                  <option value="3D & Motion">3D &amp; Motion</option>
+                  <option value="E-commerce">E-commerce</option>
+                  <option value="Brand Identity">Brand Identity</option>
+                  <option value="Something else">Something else</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="f-message">Your message</label>
+                <textarea id="f-message" name="message" required placeholder="Tell us about your project — what you sell, who it's for, and what you want the site to do."></textarea>
+              </div>
+
+              <button class="submit-btn" id="submit-btn" type="submit">Send my project →</button>
+              <p class="form-fineprint">Demo form — nothing is sent anywhere. To reach the studio for real, use the link below.</p>
+            </form>
+
+            <div class="success-panel" id="success-panel" role="status">
+              <div class="success-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              </div>
+              <h3>Message received — thanks!</h3>
+              <p>This is a demo form, so nothing was sent — but in a real project, this is where we'd reply within 24 hours with <strong>next steps and a price</strong>.</p>
+              <p>Want to talk for real? Find the studio on LinkedIn — the link is in the footer.</p>
+              <button class="again-btn" id="again-btn" type="button">Send another message</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="built">
+        <span class="built-label">BUILT WITH</span>
+        <ul>
+          <li>HTML</li>
+          <li>CSS</li>
+          <li>JavaScript</li>
+          <li>AI imagery</li>
+        </ul>
+      </div>
+
+      <footer>
+        <div class="footer-row">
+          <div class="footer-name">NOVA Studio <span>· a demo website — content is illustrative</span></div>
+          <a href="https://www.linkedin.com/in/fahad-khan-ai/" target="_blank" rel="noopener">Built by Fahad Khan — connect on LinkedIn →</a>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      /* Demo contact form — front-end only. Nothing is sent anywhere;
+         the success panel is the whole point (it shows the flow works). */
+      (function () {
+        var form = document.getElementById("contact-form");
+        var successPanel = document.getElementById("success-panel");
+        var errorBox = document.getElementById("form-error");
+        var submitBtn = document.getElementById("submit-btn");
+        var againBtn = document.getElementById("again-btn");
+
+        function showError(msg) {
+          errorBox.textContent = msg;
+          errorBox.classList.add("show");
+        }
+        function hideError() {
+          errorBox.textContent = "";
+          errorBox.classList.remove("show");
+        }
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          hideError();
+
+          var name = document.getElementById("f-name").value.trim();
+          var email = document.getElementById("f-email").value.trim();
+          var message = document.getElementById("f-message").value.trim();
+
+          if (!name || !email || !message) {
+            showError("Please fill in your name, email and a short message.");
+            return;
+          }
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showError("That email address doesn't look right — please check it and try again.");
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending…";
+          setTimeout(function () {
+            form.style.display = "none";
+            successPanel.classList.add("show");
+            successPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 500);
+        });
+
+        againBtn.addEventListener("click", function () {
+          form.reset();
+          hideError();
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Send my project →";
+          successPanel.classList.remove("show");
+          form.style.display = "";
+          document.getElementById("f-name").focus();
+        });
+      })();
+    </script>
+  </body>
+</html>
