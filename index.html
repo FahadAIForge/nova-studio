@@ -105,6 +105,7 @@
         color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
         padding: 8px 12px; border-radius: 999px; cursor: pointer; }
       .motion-toggle:hover { color: var(--cream); border-color: var(--cream); }
+      @media (max-height: 600px) { .motion-toggle { left: auto; right: 16px; bottom: 12px; padding: 6px 10px; font-size: 10px; opacity: 0.85; } }
 
       /* ---- Sections ---- */
       section { position: relative; z-index: 2; padding: 96px 0; }
@@ -391,7 +392,7 @@ div>
           </div>
           <div class="origin-grid">
             <figure class="photo-frame">
-              <img src="photo-cup.jpg" alt="A black cup of coffee with latte art on a concrete table — real photograph" loading="lazy" />
+              <img src="photo-cup.jpg" alt="A matte black takeaway coffee cup on a weathered wooden cafe table — real photograph" loading="lazy" />
               <figcaption><b>The cup</b><span>Black, no sugar</span></figcaption>
             </figure>
             <div class="facts">
