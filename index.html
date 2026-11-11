@@ -17,7 +17,7 @@
       :root {
         --ground: #1B120F;   /* 60% — near-black roast */
         --cream: #F2E6DF;    /* 30% — warm cream */
-        --caramel: #C68E17;  /* 10% — salted caramel, FLAT solid only */
+        --caramel: #C75B33;  /* 10% — burnt copper/rust, FLAT solid only */
         --brown: #4A3525;    /* hairlines, secondary surfaces */
         --ink: #2B1B17;      /* espresso "black" (never pure #000) */
         --paper: #FDFBF7;    /* espresso "white" (never pure #FFF) */
@@ -175,8 +175,23 @@
       footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
       footer a { color: var(--cream); }
 
-      .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.8s ease, transform 0.8s ease; }
+      .reveal { opacity: 0; transform: translateY(36px); transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1); }
       .reveal.visible { opacity: 1; transform: translateY(0); }
+      /* Hero entrance — staggered glide-in on load. */
+      @keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+      .hero-eyebrow { animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
+      .hero h1 { animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both; }
+      .hero .lede { animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both; }
+      .hero-ctas { animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both; }
+      .hero-note { animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.52s both; }
+      .roast { animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.64s both; }
+      /* Roast card swap — quick glide when the roast changes. */
+      @keyframes swap { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+      .swap { animation: swap 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+      /* Photos — slow zoom on hover. */
+      .photo-frame { overflow: hidden; }
+      .photo-frame img { transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1); }
+      .photo-frame:hover img { transform: scale(1.05); }
 
       @media (max-width: 900px) {
         .hero-grid, .craft-grid, .menu-grid, .origin-grid, .visit-grid { grid-template-columns: 1fr; gap: 36px; }
@@ -238,7 +253,7 @@
               <p class="roast-desc" id="roast-desc"><b>Medium — Balanced.</b> Blueberry and jasmine, with a honeyed sweetness. The one we drink ourselves, every morning.</p>
             </div>
 
-            <p class="hero-cup-hint"><span class="dot"></span> That cup on the right is real 3D — drag it to spin it.</p>
+            <p class="hero-cup-hint"><span class="dot"></span> That mug on the right is real 3D — drag it to spin it.</p>
           </div>
           <div aria-hidden="true"></div>
         </div>
@@ -508,31 +523,42 @@ div>
         rim.position.set(-5, 2, -3);
         scene.add(rim);
 
-        /* ---- The cup (lathe) + saucer + coffee + handle ---- */
+        /* ---- The mug (lathe) + walnut coaster + coffee + crema + chunky handle ---- */
         var cupGroup = new THREE.Group();
-        var ceramic = new THREE.MeshPhysicalMaterial({ color: 0xF2E6DF, roughness: 0.28, metalness: 0, clearcoat: 0.55, clearcoatRoughness: 0.3 });
+        var ceramic = new THREE.MeshPhysicalMaterial({ color: 0xC75B33, roughness: 0.32, metalness: 0, clearcoat: 0.45, clearcoatRoughness: 0.35 });
+        /* Short, wide, straight-sided coffee mug — not a tall flared teacup. */
         var cupPts = [
-          [0.0, 0.0], [0.45, 0.0], [0.55, 0.05], [0.62, 0.15], [0.72, 0.5], [0.78, 0.85],
-          [0.80, 0.95], [0.76, 0.95], [0.72, 0.85], [0.68, 0.55], [0.60, 0.25], [0.45, 0.18], [0.0, 0.18]
+          [0.0, 0.0], [0.55, 0.0], [0.68, 0.03], [0.71, 0.10], [0.72, 0.35], [0.72, 0.52],
+          [0.74, 0.58], [0.70, 0.58], [0.68, 0.50], [0.66, 0.25], [0.60, 0.10], [0.45, 0.06], [0.0, 0.06]
         ].map(function (p) { return new THREE.Vector2(p[0], p[1]); });
         cupGroup.add(new THREE.Mesh(new THREE.LatheGeometry(cupPts, 64), ceramic));
 
-        var saucerPts = [
-          [0.0, 0.0], [0.5, 0.0], [0.9, 0.02], [1.1, 0.08], [1.15, 0.12], [1.1, 0.14], [0.9, 0.10], [0.5, 0.06], [0.0, 0.06]
-        ].map(function (p) { return new THREE.Vector2(p[0], p[1]); });
-        var saucer = new THREE.Mesh(new THREE.LatheGeometry(saucerPts, 64), ceramic);
-        saucer.position.y = -0.16;
-        cupGroup.add(saucer);
+        /* Dark walnut coaster instead of a saucer. */
+        var coaster = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.95, 0.95, 0.07, 48),
+          new THREE.MeshStandardMaterial({ color: 0x3B2620, roughness: 0.7 })
+        );
+        coaster.position.y = -0.10;
+        cupGroup.add(coaster);
 
-        var coffeeMat = new THREE.MeshStandardMaterial({ color: 0x5A3B2E, roughness: 0.35 });
-        var coffee = new THREE.Mesh(new THREE.CircleGeometry(0.66, 48), coffeeMat);
+        var coffeeMat = new THREE.MeshStandardMaterial({ color: 0x4A2E1E, roughness: 0.3 });
+        var coffee = new THREE.Mesh(new THREE.CircleGeometry(0.60, 48), coffeeMat);
         coffee.rotation.x = -Math.PI / 2;
-        coffee.position.y = 0.94;
+        coffee.position.y = 0.55;
         cupGroup.add(coffee);
 
-        var handle = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.055, 12, 32, Math.PI), ceramic);
+        /* Pale crema ring on the dark coffee — the coffee look. */
+        var crema = new THREE.Mesh(
+          new THREE.RingGeometry(0.42, 0.58, 48),
+          new THREE.MeshStandardMaterial({ color: 0xD9A05B, roughness: 0.5 })
+        );
+        crema.rotation.x = -Math.PI / 2;
+        crema.position.y = 0.56;
+        cupGroup.add(crema);
+
+        var handle = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.09, 14, 32, Math.PI), ceramic);
         handle.rotation.z = -Math.PI / 2;
-        handle.position.set(0.78, 0.55, 0);
+        handle.position.set(0.70, 0.28, 0);
         cupGroup.add(handle);
 
         cupGroup.position.set(2.4, -0.55, -1);
@@ -555,7 +581,7 @@ div>
           return g;
         }
         var beanGeo = makeBeanGeometry();
-        var beanMat = new THREE.MeshStandardMaterial({ color: 0x5A3B2E, roughness: 0.55 });
+        var beanMat = new THREE.MeshStandardMaterial({ color: 0x4A2E1E, roughness: 0.55 });
         var beans = [];
         for (var b = 0; b < 20; b++) {
           var m = new THREE.Mesh(beanGeo, beanMat);
@@ -588,7 +614,7 @@ div>
         var steamData = [];
         for (var s = 0; s < steamCount; s++) {
           var sx = 2.4 + (Math.random() - 0.5) * 0.7;
-          var sy = 0.6 + Math.random() * 2.4;
+          var sy = 0.1 + Math.random() * 2.4;
           var sz = -1 + (Math.random() - 0.5) * 0.5;
           steamPos[s * 3] = sx; steamPos[s * 3 + 1] = sy; steamPos[s * 3 + 2] = sz;
           steamData.push({ x: sx, y: sy, z: sz, speed: 0.25 + Math.random() * 0.35, phase: Math.random() * Math.PI * 2 });
@@ -600,8 +626,8 @@ div>
 
         /* ---- Roast selector — smooth colour morph (lerped, not snapped) ---- */
         var ROASTS = {
-          light:    { coffee: 0x8B5A2B, bean: 0x8B5A2B, steam: 0.22, price: "$17 / 250 g", note: "<b>Light — Fruity.</b> Blueberry and jasmine, tea-like and bright. Best as a pour-over." },
-          medium:   { coffee: 0x5A3B2E, bean: 0x5A3B2E, steam: 0.32, price: "$18 / 250 g", note: "<b>Medium — Balanced.</b> Blueberry and jasmine, with a honeyed sweetness. The one we drink ourselves, every morning." },
+          light:    { coffee: 0x7A4A22, bean: 0x7A4A22, steam: 0.22, price: "$17 / 250 g", note: "<b>Light — Fruity.</b> Blueberry and jasmine, tea-like and bright. Best as a pour-over." },
+          medium:   { coffee: 0x4A2E1E, bean: 0x4A2E1E, steam: 0.32, price: "$18 / 250 g", note: "<b>Medium — Balanced.</b> Blueberry and jasmine, with a honeyed sweetness. The one we drink ourselves, every morning." },
           dark:     { coffee: 0x2B1B17, bean: 0x2B1B17, steam: 0.40, price: "$18 / 250 g", note: "<b>Dark — Chocolatey.</b> Dark chocolate and molasses, heavy body. Built for milk." },
           espresso: { coffee: 0x1B120F, bean: 0x1B120F, steam: 0.45, price: "$16 / 250 g", note: "<b>Espresso — Intense.</b> Our house blend, roasted dark for a thick crema and a long finish." }
         };
@@ -617,8 +643,8 @@ div>
             targetCoffee.set(r.coffee);
             targetBean.set(r.bean);
             targetSteam = r.steam;
-            if (priceEl) priceEl.textContent = r.price;
-            if (descEl) descEl.innerHTML = r.note;
+            if (priceEl) { priceEl.textContent = r.price; priceEl.classList.remove("swap"); void priceEl.offsetWidth; priceEl.classList.add("swap"); }
+            if (descEl) { descEl.innerHTML = r.note; descEl.classList.remove("swap"); void descEl.offsetWidth; descEl.classList.add("swap"); }
             document.querySelectorAll(".roast-btn").forEach(function (x) { x.classList.toggle("on", x === btn); });
           });
         });
@@ -678,32 +704,34 @@ div>
 
           if (!dragging && Math.abs(spinVel) > 0.0005) { cupSpin += spinVel; spinVel *= 0.94; }
           cupGroup.rotation.y = cupSpin + t * 0.25;
-          /* Positive X tilt tips the cup's opening toward the camera so the dark coffee shows. */
-          cupGroup.rotation.x = 0.35 + pointer.y * 0.06;
+          /* Positive X tilt tips the mug's opening toward the camera so the dark coffee shows;
+             the mug leans smoothly toward the cursor — no snapping. */
+          cupGroup.rotation.x = 0.28 + pointer.y * 0.14;
+          cupGroup.rotation.z = pointer.x * 0.08;
           cupGroup.position.y = -0.55 + Math.sin(t * 0.8) * 0.06;
 
           beans.forEach(function (b) {
             b.mesh.rotation.y += b.rot * dt;
             b.mesh.rotation.x += b.rot * 0.6 * dt;
             b.mesh.position.y = b.baseY + Math.sin(t * 0.5 + b.phase) * 0.25;
-            b.mesh.position.x = b.baseX + pointer.x * 0.35;
+            b.mesh.position.x = b.baseX + pointer.x * 0.7;
           });
 
           var arr = steamGeo.attributes.position.array;
           steamData.forEach(function (p, i) {
             p.y += p.speed * dt;
-            if (p.y > 3.4) { p.y = 0.6; p.x = 2.4 + (Math.random() - 0.5) * 0.7; }
-            var curl = Math.sin(t * 1.2 + p.phase) * 0.18 * ((p.y - 0.6) / 2.8);
+            if (p.y > 3.0) { p.y = 0.1; p.x = 2.4 + (Math.random() - 0.5) * 0.7; }
+            var curl = Math.sin(t * 1.2 + p.phase) * 0.18 * ((p.y - 0.1) / 2.9);
             arr[i * 3] = p.x + curl;
             arr[i * 3 + 1] = p.y;
             arr[i * 3 + 2] = p.z;
           });
           steamGeo.attributes.position.needsUpdate = true;
 
-          camera.position.z = 9.5 - scrollT * 1.2;
-          camera.position.y = 0.9 + scrollT * 1.0 + pointer.y * -0.15;
-          camera.position.x = pointer.x * 0.25;
-          camera.lookAt(0, 0.2 + scrollT * 0.3, 0);
+          camera.position.z = 9.5 - scrollT * 2.2;
+          camera.position.y = 0.9 + scrollT * 1.8 + pointer.y * -0.35;
+          camera.position.x = pointer.x * 0.6;
+          camera.lookAt(0, 0.2 + scrollT * 0.8, 0);
 
           renderer.render(scene, camera);
         }
@@ -735,7 +763,7 @@ div>
         var lenis = null;
         if (window.Lenis) {
           try {
-            lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+            lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
             var raf = function (time) { lenis.raf(time); requestAnimationFrame(raf); };
             requestAnimationFrame(raf);
           } catch (e) { lenis = null; }
