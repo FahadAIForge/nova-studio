@@ -174,8 +174,17 @@
       .menu-item:hover h3 { color: var(--accent); }
       .menu-item p { color: var(--muted); font-size: 15px; grid-column: 1; }
       .menu-price { font-family: "JetBrains Mono", monospace; font-size: 15px; font-weight: 500; color: var(--accent); grid-row: 1; grid-column: 2; padding-top: 6px; }
-      .beans-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 56px; }
-      .bean-card { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 28px;
+      /* VELORA reel: the product section is a horizontal carousel — the centre card
+         is enlarged/highlighted, with dot pagination below. The beans row scrolls
+         sideways (scroll-snap) and the card nearest the centre grows. */
+      .beans-row { display: flex; gap: 20px; margin-top: 56px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px 4px 24px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+      .beans-row::-webkit-scrollbar { display: none; }
+      .bean-card { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 28px; flex: 0 0 300px; scroll-snap-align: center; transition: transform 500ms var(--ease-hover), box-shadow 500ms var(--ease-hover), border-color 500ms var(--ease-hover); }
+      .bean-card.is-centre { transform: scale(1.04); box-shadow: 0 24px 48px -24px rgba(19, 32, 57, 0.35); border-color: rgba(19, 32, 57, 0.35); }
+      .beans-row .photo-frame { flex: 0 0 300px; scroll-snap-align: center; }
+      .carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
+      .carousel-dots .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); transition: background 400ms var(--ease-out), transform 400ms var(--ease-out); }
+      .carousel-dots .dot.on { background: var(--accent); transform: scale(1.4); }
         transition: transform 320ms var(--ease-hover), box-shadow 320ms var(--ease-hover), border-color 320ms; }
       .bean-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -24px rgba(19, 32, 57, 0.28); border-color: rgba(19, 32, 57, 0.25); }
       .bean-card .mono { color: var(--accent); }
@@ -228,7 +237,8 @@
       @media (max-width: 900px) {
         .craft-grid, .menu-grid, .origin-grid, #visit .visit-panel { grid-template-columns: 1fr; gap: 32px; }
         .craft-photos { grid-template-columns: 1fr; }
-        .beans-row { grid-template-columns: 1fr; }
+        .beans-row { gap: 14px; }
+        .bean-card { flex-basis: 260px; }
         .nav-links a:not(.btn) { display: none; }
         section { padding: 72px 0; }
         #visit .visit-panel { padding: 32px 24px; }
@@ -395,6 +405,7 @@
               <figcaption><b>The bag</b><span>Fresh, sealed, 250 g</span></figcaption>
             </figure>
           </div>
+          <div class="carousel-dots" id="beans-dots" aria-hidden="true"><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
         </div>
       </section>
 
@@ -717,7 +728,7 @@
           cupGroup.rotation.x = 0.28 + pointer.y * 0.14;
           cupGroup.rotation.z = pointer.x * 0.08;
           cupGroup.position.y = -0.35 + Math.sin(t * 0.8) * 0.06;
-          cupGroup.position.x = 2.2 - scrollT * 1.2; /* the mug drifts left toward Craft */
+          cupGroup.position.x = 2.2 - scrollT * 0.6; /* the mug stays anchored, drifts left only a little */
           if (pulseT > 0) {
             pulseT = Math.max(0, pulseT - dt / 0.8);
             cupGroup.scale.setScalar(mugBaseScale * (1 + 0.04 * Math.sin(pulseT * Math.PI)));
@@ -745,12 +756,16 @@
           steamGeo.attributes.position.needsUpdate = true;
 
           /* Scroll = camera flight through the world (waypoints, smoothstep).
-             Camera dolly z 7.5 → 4.5 as you fly into the bean field, then back out. */
+             ASCEND reel: scrolling zooms you INTO the product — at s 0.40 the camera
+             dollies in close for a macro close-up of the copper mug + coffee surface,
+             then pulls back out. VELORA reel: the mug is the recurring anchor — it
+             drifts left only a little, so it stays in frame while sections slide past. */
           var camPath = [
             { s: 0.00, px: 0.0, py: 0.9, pz: 7.5, lx: 0.8, ly: 0.2, lz: 0 },
             { s: 0.25, px: 1.0, py: 1.4, pz: 5.5, lx: 0.0, ly: 0.6, lz: -1 },
-            { s: 0.50, px: -0.8, py: 1.8, pz: 4.5, lx: 0.5, ly: 0.8, lz: -2 },
-            { s: 0.75, px: 0.5, py: 2.0, pz: 6.0, lx: 0.0, ly: 0.4, lz: -1 },
+            { s: 0.40, px: 1.4, py: 0.7, pz: 2.8, lx: 1.8, ly: 0.3, lz: -1 },
+            { s: 0.60, px: -0.8, py: 1.8, pz: 4.5, lx: 0.5, ly: 0.8, lz: -2 },
+            { s: 0.80, px: 0.5, py: 2.0, pz: 6.0, lx: 0.0, ly: 0.4, lz: -1 },
             { s: 1.00, px: 1.2, py: 1.1, pz: 7.0, lx: 1.8, ly: 0.0, lz: -1 }
           ];
           var ci = 0;
@@ -852,6 +867,33 @@
           });
         }, { threshold: 0.1 });
         els.forEach(function (el) { io.observe(el); });
+      })();
+
+      /* VELORA reel: the beans carousel highlights the card nearest the centre
+         (enlarged) and moves the dot pagination with it. */
+      (function () {
+        var row = document.querySelector(".beans-row");
+        var dots = document.querySelectorAll("#beans-dots .dot");
+        if (!row) return;
+        var cards = Array.prototype.slice.call(row.querySelectorAll(".bean-card, .photo-frame"));
+        var ticking = false;
+        function update() {
+          ticking = false;
+          var mid = row.scrollLeft + row.clientWidth / 2;
+          var best = 0, bestD = Infinity;
+          cards.forEach(function (c, i) {
+            var cx = c.offsetLeft + c.offsetWidth / 2;
+            var d = Math.abs(cx - mid);
+            if (d < bestD) { bestD = d; best = i; }
+          });
+          cards.forEach(function (c, i) { c.classList.toggle("is-centre", i === best); });
+          dots.forEach(function (d, i) { d.classList.toggle("on", i === best); });
+        }
+        row.addEventListener("scroll", function () {
+          if (!ticking) { ticking = true; requestAnimationFrame(update); }
+        }, { passive: true });
+        window.addEventListener("resize", update);
+        update();
       })();
 
       /* Order form — posts to the real n8n webhook (AI reply + Sheets log). */
