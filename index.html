@@ -48,6 +48,12 @@
         -webkit-font-smoothing: antialiased;
       }
       ::selection { background: var(--amber); color: #000; }
+      /* Film grain over everything (cinematic atmosphere, cheap). */
+      body::after {
+        content: ""; position: fixed; inset: 0; z-index: 50; pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+        opacity: 0.05; mix-blend-mode: overlay;
+      }
       img { display: block; max-width: 100%; }
 
       /* ---------- the shader hero (Animated Shader Hero, 21st.dev) —
@@ -62,34 +68,16 @@
          hero with the gradient headline still reads. */
       body.no-webgl #shader-canvas { display: none; }
 
-      /* ---------- the 3D orbs (transparent overlay over the shader) —
-         glass pipeline nodes that fly past as you scroll. ---------- */
-      #bg-canvas {
+      /* ---------- the 3D world (the nova) — one fixed transparent
+         canvas over the whole page; the sphere + light + particles
+         live in it, and scroll flies the camera through it. ---------- */
+      #world-canvas {
         position: fixed; inset: 0;
         width: 100%; height: 100%;
         display: block; z-index: 1;
         pointer-events: none;
       }
-      .node-label {
-        position: fixed; left: 0; top: 0;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-        background: rgba(46, 32, 5, 0.92);
-        color: #fef3c7;
-        border: 1px solid rgba(251, 191, 36, 0.6);
-        border-radius: 999px;
-        padding: 7px 14px;
-        font-size: 13.5px; font-weight: 700;
-        white-space: nowrap;
-        will-change: transform;
-        z-index: 1;
-      }
-      .node-label strong { color: #fbbf24; font-weight: 800; }
-      @media (max-width: 640px) {
-        .node-label { font-size: 11.5px; padding: 5px 10px; }
-      }
-      body.no-webgl #bg-canvas,
-      body.no-webgl .node-label { display: none; }
+      body.no-webgl #world-canvas { display: none; }
 
       /* ---------- scroll reveal (sections fade/slide in as you scroll) ---------- */
       .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -207,6 +195,14 @@
         box-shadow: none;
       }
       .btn-ghost:hover { background: rgba(255, 255, 255, 0.14); box-shadow: none; }
+      /* One line under the buttons — this site exists so people message us. */
+      .hero-note {
+        margin: 20px 0 0;
+        font-size: 14.5px;
+        color: rgba(255, 255, 255, 0.6);
+        text-shadow: 0 1px 16px rgba(0, 0, 0, 0.6);
+      }
+      .hero-note strong { color: rgba(255, 255, 255, 0.85); }
       /* Staggered entrance — badge, headline, sub, buttons fade up in turn. */
       .rise { animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
       .rise-1 { animation-delay: 0.05s; }
@@ -330,26 +326,39 @@
       .step h3 { margin: 0 0 8px; font-size: 21px; font-weight: 800; letter-spacing: -0.01em; color: #fff; }
       .step p { margin: 0; color: var(--muted); font-size: 16px; }
 
-      /* ---------- work fan (hero-10 construction) ---------- */
+      /* ---------- work ring (3D Curved Carousel, CSS-3D) ----------
+         The three project photos ride a ring in 3D space — the centre
+         card faces you, the side cards angle away and fall off with
+         perspective. Drag (or use the arrows/dots) to spin the ring. */
       .fan {
         position: relative;
-        display: flex; justify-content: center; align-items: flex-end;
-        height: 560px;
+        height: 520px;
         margin: 8px auto 0;
         max-width: 860px;
-        perspective: 1200px;
+        perspective: 1400px;
+        cursor: grab;
+        touch-action: pan-y;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .fan:active { cursor: grabbing; }
+      .ring-track {
+        position: absolute; left: 50%; top: 0;
+        width: 300px; height: 440px; margin-left: -150px;
+        transform-style: preserve-3d;
       }
       .fan-card {
-        position: relative;
+        position: absolute; left: 0; top: 0;
         width: 300px; height: 440px;
         border-radius: 20px;
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.35);
         box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
-        transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-        flex: 0 0 auto;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transition: box-shadow 0.3s ease, border-color 0.3s ease;
       }
-      .fan-card img { width: 100%; height: 100%; object-fit: cover; }
+      .fan-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
       .fan-card::after {
         content: ""; position: absolute; inset: 0;
         background: linear-gradient(180deg, transparent 45%, rgba(0, 0, 0, 0.45) 78%, rgba(0, 0, 0, 0.85) 100%);
@@ -363,15 +372,31 @@
       }
       .fan-caption h3 { margin: 0 0 4px; font-family: "Inter Tight", "Inter", sans-serif; font-size: 24px; font-weight: 900; letter-spacing: -0.01em; }
       .fan-caption p { margin: 0; color: rgba(255, 255, 255, 0.72); font-size: 14.5px; }
-      .fan-card.left { transform: rotate(-4deg) translateY(14px); z-index: 10; margin-right: -12px; }
-      .fan-card.centre { transform: rotate(0deg); z-index: 30; height: 480px; }
-      .fan-card.right { transform: rotate(4deg) translateY(14px); z-index: 20; margin-left: -12px; }
-      /* Hover: the fan spreads wider, cards lift — the Card Fan
-         Carousel behaviour, in pure CSS. */
-      .fan:hover .fan-card.left { transform: rotate(-7deg) translate(-18px, -6px); }
-      .fan:hover .fan-card.centre { transform: translateY(-14px); }
-      .fan:hover .fan-card.right { transform: rotate(7deg) translate(18px, -6px); }
+      /* The card facing you glows — the ring's spotlight. */
+      .fan-card.active {
+        border-color: rgba(251, 191, 36, 0.75);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6), 0 0 44px rgba(245, 158, 11, 0.28);
+      }
       .fan-note { text-align: center; color: var(--muted-2); font-size: 14.5px; margin: 22px 0 0; }
+      .ring-nav {
+        display: flex; align-items: center; justify-content: center; gap: 18px;
+        margin: 18px 0 0;
+      }
+      .ring-arrow {
+        width: 40px; height: 40px; border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.07);
+        color: #fff; font-size: 18px; line-height: 1;
+        cursor: pointer; backdrop-filter: blur(8px);
+      }
+      .ring-arrow:hover { background: rgba(255, 255, 255, 0.16); }
+      .ring-dots { display: flex; gap: 8px; }
+      .ring-dot {
+        width: 9px; height: 9px; border-radius: 50%;
+        border: none; padding: 0; cursor: pointer;
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .ring-dot.on { background: var(--amber-light); box-shadow: 0 0 10px rgba(251, 191, 36, 0.8); }
 
       /* ---------- process ---------- */
       .process {
@@ -520,11 +545,9 @@
         .form-card { padding: 24px 20px; }
         .preview { margin-top: -70px; }
         .preview-site { min-height: 260px; }
-        .fan { height: auto; flex-wrap: nowrap; }
-        .fan-card { width: 30vw; height: 300px; }
-        .fan-card.centre { height: 330px; }
-        .fan-card.left { margin-right: -8px; }
-        .fan-card.right { margin-left: -8px; }
+        .fan { height: 380px; }
+        .ring-track { width: 240px; height: 320px; margin-left: -120px; }
+        .fan-card { width: 240px; height: 320px; }
         .fan-caption h3 { font-size: 18px; }
         .fan-caption p { display: none; }
       }
@@ -534,14 +557,10 @@
     </style>
   </head>
   <body>
-    <!-- The 3D orbs: one fixed transparent canvas over the whole page. -->
-    <canvas id="bg-canvas" aria-hidden="true"></canvas>
-    <div class="node-label" data-node="lead">Idea</div>
-    <div class="node-label" data-node="ai">Design · <strong>the look &amp; feel</strong></div>
-    <div class="node-label" data-node="email">Build · clean code</div>
-    <div class="node-label" data-node="sheet">Launch · live &amp; measured</div>
+    <!-- The 3D world: one fixed transparent canvas over the whole page. -->
+    <canvas id="world-canvas" aria-hidden="true"></canvas>
 
-    <!-- Hero: the animated shader IS the hero, like the reference sites. -->
+    <!-- Hero: the animated nebula shader IS the hero, like the reference sites. -->
     <header class="hero">
       <canvas id="shader-canvas" aria-hidden="true"></canvas>
       <div class="hero-shade" aria-hidden="true"></div>
@@ -566,6 +585,7 @@
             <a class="btn" href="#work">See our work</a>
             <a class="btn btn-ghost" href="#contact">Start a project</a>
           </div>
+          <p class="hero-note rise rise-4">No sales call, no pressure — just message us. We reply within 24 hours with honest next steps and a price.</p>
         </div>
       </div>
 
@@ -626,32 +646,43 @@
       <section id="work" class="reveal">
         <span class="eyebrow">SELECTED WORK</span>
         <h2>Three kinds of site. One standard.</h2>
-        <p class="section-lede">A coffee brand, a fitness app, an interior studio — different businesses, same idea: a site that feels like a place, not a page. Hover the fan to see them spread.</p>
-        <div class="fan">
-          <article class="fan-card left">
-            <img src="work-coffee.jpg" alt="Aurora Coffee — dark coffee shop interior with warm amber pendant lights" loading="lazy" />
-            <div class="fan-caption">
-              <span class="fan-tag">E-COMMERCE</span>
-              <h3>Aurora Coffee</h3>
-              <p>A warm, dark coffee brand site.</p>
-            </div>
-          </article>
-          <article class="fan-card centre">
-            <img src="work-fitness.jpg" alt="Pulse Fitness — athlete training in a dark gym with warm amber rim light" loading="lazy" />
-            <div class="fan-caption">
-              <span class="fan-tag">LANDING PAGE</span>
-              <h3>Pulse Fitness</h3>
-              <p>A bold landing page for a fitness app.</p>
-            </div>
-          </article>
-          <article class="fan-card right">
-            <img src="work-interiors.jpg" alt="Haven Interiors — elegant dark living room at dusk with a warm amber lamp" loading="lazy" />
-            <div class="fan-caption">
-              <span class="fan-tag">PORTFOLIO</span>
-              <h3>Haven Interiors</h3>
-              <p>A calm, elegant interior studio site.</p>
-            </div>
-          </article>
+        <p class="section-lede">A coffee brand, a fitness app, an interior studio — different businesses, same idea: a site that feels like a place, not a page. Drag the ring to spin it.</p>
+        <div class="fan" id="work-ring">
+          <div class="ring-track">
+            <article class="fan-card">
+              <img src="work-coffee.jpg" alt="Aurora Coffee — dark coffee shop interior with warm amber pendant lights" loading="lazy" />
+              <div class="fan-caption">
+                <span class="fan-tag">E-COMMERCE</span>
+                <h3>Aurora Coffee</h3>
+                <p>A warm, dark coffee brand site.</p>
+              </div>
+            </article>
+            <article class="fan-card">
+              <img src="work-fitness.jpg" alt="Pulse Fitness — athlete training in a dark gym with warm amber rim light" loading="lazy" />
+              <div class="fan-caption">
+                <span class="fan-tag">LANDING PAGE</span>
+                <h3>Pulse Fitness</h3>
+                <p>A bold landing page for a fitness app.</p>
+              </div>
+            </article>
+            <article class="fan-card">
+              <img src="work-interiors.jpg" alt="Haven Interiors — elegant dark living room at dusk with a warm amber lamp" loading="lazy" />
+              <div class="fan-caption">
+                <span class="fan-tag">PORTFOLIO</span>
+                <h3>Haven Interiors</h3>
+                <p>A calm, elegant interior studio site.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div class="ring-nav">
+          <button class="ring-arrow" id="ring-prev" aria-label="Previous project">‹</button>
+          <div class="ring-dots">
+            <button class="ring-dot on" data-i="0" aria-label="Aurora Coffee"></button>
+            <button class="ring-dot" data-i="1" aria-label="Pulse Fitness"></button>
+            <button class="ring-dot" data-i="2" aria-label="Haven Interiors"></button>
+          </div>
+          <button class="ring-arrow" id="ring-next" aria-label="Next project">›</button>
         </div>
         <p class="fan-note">Aurora Coffee · Pulse Fitness · Haven Interiors — each one a different kind of site, each one built to stand out.</p>
       </section>
@@ -855,15 +886,12 @@
         window.__novaShaderTimer = setTimeout(function () {
           if (!window.__novaShaderReady) { document.body.classList.add("no-webgl"); }
         }, 8000);
-        window.__nova3dTimer = setTimeout(function () {
-          if (!window.__nova3dReady) { document.body.classList.add("no-webgl"); }
-        }, 8000);
       })();
     </script>
     <script type="module">
-      /* Animated Shader Hero (21st.dev style): a full-screen amber/gold
-         nebula with a white-hot streak, rendered live in WebGL. The
-         shader IS the hero — it churns on its own, no scroll needed. */
+      /* Silk (21st.dev style): flowing amber silk ribbons, rendered
+         live in WebGL. A different 3D theme — smooth fabric, no orbs.
+         The shader IS the hero — it flows on its own, no scroll needed. */
       import * as THREE from "three";
       if (window.__novaShaderTimer) { clearTimeout(window.__novaShaderTimer); }
 
@@ -883,8 +911,13 @@
         var hero = canvas.parentElement;
         var uniforms = {
           uTime: { value: 0 },
-          uRes: { value: new THREE.Vector2(1, 1) }
+          uRes: { value: new THREE.Vector2(1, 1) },
+          uMouse: { value: new THREE.Vector2(0.5, 0.5) }
         };
+        var mouseTarget = new THREE.Vector2(0.5, 0.5);
+        window.addEventListener("pointermove", function (e) {
+          mouseTarget.set(e.clientX / window.innerWidth, 1.0 - e.clientY / window.innerHeight);
+        });
         function size() {
           var w = hero.clientWidth || 1, h = hero.clientHeight || 1;
           renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -901,6 +934,7 @@
             "varying vec2 vUv;",
             "uniform float uTime;",
             "uniform vec2 uRes;",
+            "uniform vec2 uMouse;",
             "float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }",
             "float noise(vec2 p) {",
             "  vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);",
@@ -933,6 +967,9 @@
             "  float star = smoothstep(0.14, 0.0, length(fract(sp) - 0.5)) * step(0.992, h);",
             "  float tw = 0.5 + 0.5 * sin(uTime * (1.0 + h * 3.0) + h * 40.0);",
             "  col += vec3(1.0, 0.95, 0.85) * star * tw * 0.9;",
+            "  float md = distance(vUv, uMouse);",
+            "  col += vec3(1.0, 0.75, 0.35) * exp(-md * md * 22.0) * 0.55;",
+            "  col += vec3(0.95, 0.55, 0.12) * exp(-md * md * 6.0) * 0.18;",
             "  col *= smoothstep(1.25, 0.25, length(p));",
             "  gl_FragColor = vec4(col, 1.0);",
             "}"
@@ -952,6 +989,7 @@
           requestAnimationFrame(tick);
           if (!running) return;
           uniforms.uTime.value = clock.getElapsedTime();
+          uniforms.uMouse.value.lerp(mouseTarget, 0.08);
           renderer.render(scene, camera);
         }
         tick();
@@ -959,16 +997,16 @@
       })();
     </script>
     <script type="module">
-      /* The 3D pipeline (glass orbs + light trail + particles) floating
-         over the shader hero — amber, to match. Scroll flies the camera
-         along the pipeline; the labels track the nodes. Same engine as
-         the Instant Lead Responder v4 scene, made transparent. */
+      /* The 3D world — ONE hero object: a glass/gold "nova" sphere with
+         a real material, environment light, a gold ring and a glowing
+         core, floating in a field of particles. The cursor moves a light
+         through the scene and tilts the nova; scroll flies the camera
+         closer, so the page feels like a place, not a poster. */
       import * as THREE from "three";
       import { RoomEnvironment } from "./jsm/environments/RoomEnvironment.js";
-      if (window.__nova3dTimer) { clearTimeout(window.__nova3dTimer); }
 
       (function () {
-        var canvas = document.getElementById("bg-canvas");
+        var canvas = document.getElementById("world-canvas");
         if (!canvas) return;
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -982,94 +1020,72 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 640 ? 1.5 : 2));
         renderer.setClearColor(0x000000, 0);
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.1;
+        renderer.toneMappingExposure = 1.15;
 
         var scene = new THREE.Scene();
         var pmrem = new THREE.PMREMGenerator(renderer);
         scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
         var camera = new THREE.PerspectiveCamera(45, 2, 0.1, 120);
-        camera.position.set(0, 0.8, 12);
+        camera.position.set(0, 0.6, 12);
 
-        scene.add(new THREE.AmbientLight(0xffffff, 0.25));
-        var keyLight = new THREE.PointLight(0xf59e0b, 100, 40);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+        var keyLight = new THREE.PointLight(0xf59e0b, 120, 40);
         keyLight.position.set(2, 3, 6);
         scene.add(keyLight);
-        var fillLight = new THREE.PointLight(0xf87171, 35, 40);
+        var fillLight = new THREE.PointLight(0xf87171, 40, 40);
         fillLight.position.set(-6, -1, 8);
         scene.add(fillLight);
-        var rimLight = new THREE.PointLight(0xf59e0b, 40, 50);
-        rimLight.position.set(0, 2, -14);
-        scene.add(rimLight);
+        /* The cursor light — a warm light that follows the mouse. */
+        var cursorLight = new THREE.PointLight(0xffd27a, 60, 30);
+        cursorLight.position.set(0, 0, 4);
+        scene.add(cursorLight);
 
-        var nodeDefs = [
-          { id: "lead",  pos: [-5.5, 1.0, 0],    r: 0.34, ei: 1.2 },
-          { id: "ai",    pos: [4.8, -1.2, -4],   r: 0.85, ei: 2.0 },
-          { id: "email", pos: [5.5, 1.0, -8],    r: 0.52, ei: 1.2 },
-          { id: "sheet", pos: [3.5, -0.8, -12],  r: 0.52, ei: 1.2 }
-        ];
-        var nodes = {};
-        nodeDefs.forEach(function (d) {
-          var mesh = new THREE.Mesh(
-            new THREE.SphereGeometry(d.r, 48, 32),
-            new THREE.MeshPhysicalMaterial({ color: 0x1f1408, metalness: 0.1, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.1, emissive: 0xf59e0b, emissiveIntensity: d.ei })
-          );
-          mesh.position.set(d.pos[0], d.pos[1], d.pos[2]);
-          scene.add(mesh);
-          nodes[d.id] = mesh;
-        });
+        var nova = new THREE.Group();
+        scene.add(nova);
+
+        var sphere = new THREE.Mesh(
+          new THREE.SphereGeometry(1.3, 64, 48),
+          new THREE.MeshPhysicalMaterial({
+            color: 0x2a1a05, metalness: 0.35, roughness: 0.12,
+            clearcoat: 1, clearcoatRoughness: 0.08,
+            emissive: 0xf59e0b, emissiveIntensity: 0.9
+          })
+        );
+        nova.add(sphere);
+
+        var core = new THREE.Mesh(
+          new THREE.SphereGeometry(0.65, 32, 24),
+          new THREE.MeshBasicMaterial({ color: 0xfff3c4 })
+        );
+        nova.add(core);
+
+        var ring = new THREE.Mesh(
+          new THREE.TorusGeometry(1.9, 0.025, 12, 100),
+          new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.95 })
+        );
+        ring.rotation.x = Math.PI / 2.4;
+        ring.rotation.y = 0.3;
+        nova.add(ring);
 
         function glowTexture() {
           var c = document.createElement("canvas");
           c.width = c.height = 128;
           var g = c.getContext("2d");
           var grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
-          grad.addColorStop(0, "rgba(251,191,36,0.9)");
-          grad.addColorStop(0.35, "rgba(245,158,11,0.4)");
+          grad.addColorStop(0, "rgba(251,191,36,0.85)");
+          grad.addColorStop(0.35, "rgba(245,158,11,0.35)");
           grad.addColorStop(1, "rgba(245,158,11,0)");
           g.fillStyle = grad;
           g.fillRect(0, 0, 128, 128);
           return new THREE.CanvasTexture(c);
         }
-        var halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
-        halo.scale.set(2.6, 2.6, 1);
-        halo.position.copy(nodes.ai.position);
-        scene.add(halo);
-
-        var ring = new THREE.Mesh(
-          new THREE.TorusGeometry(1.35, 0.02, 12, 80),
-          new THREE.MeshBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.9 })
-        );
-        ring.position.copy(nodes.ai.position);
-        ring.rotation.x = Math.PI / 2.6;
-        scene.add(ring);
-
-        var curve = new THREE.CatmullRomCurve3(
-          nodeDefs.map(function (d) { return new THREE.Vector3(d.pos[0], d.pos[1], d.pos[2]); })
-        );
-        var tubeGeo = new THREE.TubeGeometry(curve, 100, 0.045, 8, false);
-        var tubeStops = [
-          new THREE.Color(0x7c2d12), new THREE.Color(0xf59e0b),
-          new THREE.Color(0xf59e0b), new THREE.Color(0xf87171)
-        ];
-        var tubeUv = tubeGeo.attributes.uv;
-        var tubeColors = new Float32Array(tubeUv.count * 3);
-        var tmpColor = new THREE.Color();
-        for (var ti = 0; ti < tubeUv.count; ti++) {
-          var tt = tubeUv.getX(ti);
-          var seg = Math.min(2, Math.floor(tt * 3));
-          var frac = tt * 3 - seg;
-          tmpColor.copy(tubeStops[seg]).lerp(tubeStops[seg + 1], frac);
-          tubeColors[ti * 3] = tmpColor.r;
-          tubeColors[ti * 3 + 1] = tmpColor.g;
-          tubeColors[ti * 3 + 2] = tmpColor.b;
-        }
-        tubeGeo.setAttribute("color", new THREE.BufferAttribute(tubeColors, 3));
-        var tube = new THREE.Mesh(
-          tubeGeo,
-          new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending })
-        );
-        scene.add(tube);
+        var halo = new THREE.Sprite(new THREE.SpriteMaterial({
+          map: glowTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending
+        }));
+        halo.scale.set(5.5, 5.5, 1);
+        nova.add(halo);
+        nova.position.set(4.2, -1.4, -6);
 
         function dotTexture() {
           var c = document.createElement("canvas");
@@ -1085,32 +1101,37 @@
         }
         var dotTex = dotTexture();
 
-        var FLOW_COUNT = window.innerWidth < 640 ? 220 : 420;
-        var flowGeo = new THREE.BufferGeometry();
-        var flowPos = new Float32Array(FLOW_COUNT * 3);
-        var flowT = [];
-        for (var i = 0; i < FLOW_COUNT; i++) {
-          flowT.push({ t: Math.random(), speed: 0.05 + Math.random() * 0.11 });
+        /* Orbiting particles around the nova. */
+        var ORBIT = 320;
+        var orbitGeo = new THREE.BufferGeometry();
+        var orbitPos = new Float32Array(ORBIT * 3);
+        var orbitSeed = [];
+        for (var i = 0; i < ORBIT; i++) {
+          var a = Math.random() * Math.PI * 2;
+          var rad = 2.2 + Math.random() * 2.6;
+          var y = (Math.random() - 0.5) * 2.2;
+          orbitPos[i * 3] = Math.cos(a) * rad;
+          orbitPos[i * 3 + 1] = y;
+          orbitPos[i * 3 + 2] = Math.sin(a) * rad;
+          orbitSeed.push({ a: a, rad: rad, y: y, speed: 0.1 + Math.random() * 0.35 });
         }
-        flowGeo.setAttribute("position", new THREE.BufferAttribute(flowPos, 3));
-        var flowPalette = [
-          new THREE.Color(0xf59e0b), new THREE.Color(0xfbbf24),
-          new THREE.Color(0xf87171), new THREE.Color(0xffffff)
-        ];
-        var flowColors = new Float32Array(FLOW_COUNT * 3);
-        for (var ci = 0; ci < FLOW_COUNT; ci++) {
-          var c = flowPalette[ci % flowPalette.length];
-          flowColors[ci * 3] = c.r;
-          flowColors[ci * 3 + 1] = c.g;
-          flowColors[ci * 3 + 2] = c.b;
+        orbitGeo.setAttribute("position", new THREE.BufferAttribute(orbitPos, 3));
+        var orbitColors = new Float32Array(ORBIT * 3);
+        var palette = [new THREE.Color(0xf59e0b), new THREE.Color(0xfbbf24), new THREE.Color(0xf87171), new THREE.Color(0xffffff)];
+        for (var ci = 0; ci < ORBIT; ci++) {
+          var cc = palette[ci % palette.length];
+          orbitColors[ci * 3] = cc.r; orbitColors[ci * 3 + 1] = cc.g; orbitColors[ci * 3 + 2] = cc.b;
         }
-        flowGeo.setAttribute("color", new THREE.BufferAttribute(flowColors, 3));
-        var flow = new THREE.Points(flowGeo, new THREE.PointsMaterial({
-          vertexColors: true, size: 0.14, map: dotTex, transparent: true, opacity: 1, depthWrite: false, blending: THREE.AdditiveBlending
+        orbitGeo.setAttribute("color", new THREE.BufferAttribute(orbitColors, 3));
+        var orbit = new THREE.Points(orbitGeo, new THREE.PointsMaterial({
+          vertexColors: true, size: 0.12, map: dotTex, transparent: true, opacity: 1,
+          depthWrite: false, blending: THREE.AdditiveBlending
         }));
-        scene.add(flow);
+        orbit.position.copy(nova.position);
+        scene.add(orbit);
 
-        var DUST = 800;
+        /* Ambient dust across the whole world. */
+        var DUST = 700;
         var dustGeo = new THREE.BufferGeometry();
         var dustPos = new Float32Array(DUST * 3);
         for (var j = 0; j < DUST; j++) {
@@ -1120,98 +1141,9 @@
         }
         dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
         scene.add(new THREE.Points(dustGeo, new THREE.PointsMaterial({
-          color: 0xffffff, size: 0.05, map: dotTex, transparent: true, opacity: 0.35, depthWrite: false, blending: THREE.AdditiveBlending
+          color: 0xffffff, size: 0.05, map: dotTex, transparent: true, opacity: 0.35,
+          depthWrite: false, blending: THREE.AdditiveBlending
         })));
-
-        var aiCore = new THREE.Mesh(
-          new THREE.SphereGeometry(0.38, 32, 24),
-          new THREE.MeshBasicMaterial({ color: 0xfef3c7 })
-        );
-        aiCore.position.copy(nodes.ai.position);
-        scene.add(aiCore);
-
-        function bokehTexture(rgb) {
-          var c = document.createElement("canvas");
-          c.width = c.height = 128;
-          var g = c.getContext("2d");
-          var grad = g.createRadialGradient(64, 64, 0, 64, 64, 64);
-          grad.addColorStop(0, "rgba(" + rgb + ",0.55)");
-          grad.addColorStop(0.5, "rgba(" + rgb + ",0.18)");
-          grad.addColorStop(1, "rgba(" + rgb + ",0)");
-          g.fillStyle = grad;
-          g.fillRect(0, 0, 128, 128);
-          return new THREE.CanvasTexture(c);
-        }
-        var bokehTexE = bokehTexture("245,158,11");
-        var bokehTexM = bokehTexture("248,113,113");
-        var bokehSpots = [
-          [-9, 2.5, 6, 9, 0.05, bokehTexE], [9, -1, 4, 11, 0.04, bokehTexM],
-          [-8, -2.5, 2, 8, 0.045, bokehTexE], [8, 3, 8, 10, 0.035, bokehTexM]
-        ];
-        var bokehSprites = [];
-        bokehSpots.forEach(function (s) {
-          var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: s[5], transparent: true, opacity: s[4], depthWrite: false, blending: THREE.AdditiveBlending }));
-          sp.scale.set(s[3], s[3], 1);
-          sp.position.set(s[0], s[1], s[2]);
-          sp.userData.baseY = s[1];
-          scene.add(sp);
-          bokehSprites.push(sp);
-        });
-
-        var camCurve = null;
-        var zBack = 1;
-        function buildCamCurve() {
-          var pts = [
-            new THREE.Vector3(0, 0.8, 12),
-            new THREE.Vector3(-2, 1.0, 7),
-            new THREE.Vector3(-0.5, 0.8, 2),
-            new THREE.Vector3(1.5, 0.8, -3),
-            new THREE.Vector3(3, 0.8, -7)
-          ];
-          camCurve = new THREE.CatmullRomCurve3(pts);
-        }
-        var lookCurve = new THREE.CatmullRomCurve3([
-          new THREE.Vector3(0, 0, -6),
-          new THREE.Vector3(4.8, -1.2, -4),
-          new THREE.Vector3(5.5, 1.0, -8),
-          new THREE.Vector3(3.5, -0.8, -12)
-        ]);
-        buildCamCurve();
-
-        var labelEls = {};
-        document.querySelectorAll(".node-label").forEach(function (el) {
-          labelEls[el.getAttribute("data-node")] = el;
-        });
-        if (window.innerWidth < 640 && labelEls.ai) {
-          labelEls.ai.innerHTML = 'Design · <strong>look &amp; feel</strong>';
-        }
-        var v3 = new THREE.Vector3();
-        var smoothT = 0;
-        function placeLabels() {
-          var w = window.innerWidth, h = window.innerHeight;
-          var fade = Math.max(0, Math.min(1, (smoothT - 0.03) / 0.12));
-          Object.keys(labelEls).forEach(function (id) {
-            var el = labelEls[id];
-            var node = nodes[id];
-            if (!node) return;
-            node.getWorldPosition(v3);
-            v3.project(camera);
-            if (v3.z > 1 || Math.abs(v3.x) > 1.05 || Math.abs(v3.y) > 1.05) { el.style.opacity = "0"; return; }
-            el.style.opacity = fade.toFixed(2);
-            var x = (v3.x * 0.5 + 0.5) * w;
-            var y = (-v3.y * 0.5 + 0.5) * h;
-            var lift;
-            if (w < 640) {
-              lift = (id === "ai" || id === "sheet") ? 62 : -58;
-            } else {
-              lift = id === "ai" ? -72 : -58;
-            }
-            var ly = y + lift;
-            x = Math.max(64, Math.min(w - 64, x));
-            ly = Math.max(28, Math.min(h - 28, ly));
-            el.style.transform = "translate(-50%, -50%) translate(" + x.toFixed(1) + "px," + ly.toFixed(1) + "px)";
-          });
-        }
 
         var pointer = { x: 0, y: 0 };
         window.addEventListener("pointermove", function (e) {
@@ -1220,9 +1152,8 @@
         });
 
         var targetT = 0;
-        var camOverride = null;
+        var smoothT = 0;
         function readScroll() {
-          if (camOverride !== null) { targetT = camOverride; return; }
           var max = document.documentElement.scrollHeight - window.innerHeight;
           targetT = max > 0 ? Math.max(0, Math.min(1, window.scrollY / max)) : 0;
         }
@@ -1230,37 +1161,13 @@
         readScroll();
 
         function resize() {
-          var w = window.innerWidth, h = window.innerHeight;
-          renderer.setSize(w, h, false);
-          camera.aspect = w / h;
+          renderer.setSize(window.innerWidth, window.innerHeight, false);
+          camera.aspect = window.innerWidth / window.innerHeight;
           camera.updateProjectionMatrix();
-          zBack = camera.aspect < 1 ? 1.4 : 1;
-          buildCamCurve();
           readScroll();
         }
         window.addEventListener("resize", resize);
         resize();
-
-        var scrollParam = new URLSearchParams(window.location.search).get("scroll");
-        if (scrollParam !== null) {
-          var sv = parseFloat(scrollParam);
-          if (!isNaN(sv)) {
-            document.documentElement.style.scrollBehavior = "auto";
-            var max0 = document.documentElement.scrollHeight - window.innerHeight;
-            window.scrollTo(0, Math.max(0, Math.min(1, sv)) * max0);
-            readScroll();
-            smoothT = targetT;
-          }
-        }
-        var camParam = new URLSearchParams(window.location.search).get("cam");
-        if (camParam !== null) {
-          var cv = parseFloat(camParam);
-          if (!isNaN(cv)) {
-            camOverride = Math.max(0, Math.min(1, cv));
-            targetT = camOverride;
-            smoothT = camOverride;
-          }
-        }
 
         var running = true;
         document.addEventListener("visibilitychange", function () {
@@ -1268,51 +1175,50 @@
         });
 
         var clock = new THREE.Clock();
-        var tmp = new THREE.Vector3();
-        var lookTmp = new THREE.Vector3();
         function tick() {
           requestAnimationFrame(tick);
           if (!running) return;
           var dt = Math.min(clock.getDelta(), 0.05);
           var t = clock.elapsedTime;
 
-          for (var i = 0; i < FLOW_COUNT; i++) {
-            var f = flowT[i];
-            f.t += f.speed * dt;
-            if (f.t > 1) f.t -= 1;
-            tmp.copy(curve.getPointAt(f.t));
-            flowPos[i * 3] = tmp.x;
-            flowPos[i * 3 + 1] = tmp.y;
-            flowPos[i * 3 + 2] = tmp.z;
+          /* Orbiting particles circle the nova. */
+          for (var k = 0; k < ORBIT; k++) {
+            var s = orbitSeed[k];
+            s.a += s.speed * dt;
+            orbitPos[k * 3] = Math.cos(s.a) * s.rad;
+            orbitPos[k * 3 + 1] = s.y + Math.sin(t * 0.6 + k) * 0.12;
+            orbitPos[k * 3 + 2] = Math.sin(s.a) * s.rad;
           }
-          flowGeo.attributes.position.needsUpdate = true;
+          orbitGeo.attributes.position.needsUpdate = true;
 
-          var pulse = 1 + Math.sin(t * 2.2) * 0.06;
-          nodes.ai.scale.setScalar(pulse);
-          aiCore.scale.setScalar(pulse);
-          halo.material.opacity = 0.45 + Math.sin(t * 2.2) * 0.12;
-          ring.rotation.z = t * 0.35;
-          for (var bi = 0; bi < bokehSprites.length; bi++) {
-            bokehSprites[bi].position.y = bokehSprites[bi].userData.baseY + Math.sin(t * 0.25 + bi * 1.7) * 0.5;
-          }
+          /* The nova breathes, spins and tilts toward the cursor. */
+          var pulse = 1 + Math.sin(t * 1.8) * 0.04;
+          sphere.scale.setScalar(pulse);
+          core.scale.setScalar(pulse);
+          ring.rotation.z = t * 0.25;
+          halo.material.opacity = 0.55 + Math.sin(t * 1.8) * 0.15;
+          nova.rotation.y += dt * 0.12;
+          nova.rotation.x += ((pointer.y * 0.25) - nova.rotation.x) * 0.05;
+          nova.rotation.z += ((pointer.x * 0.15) - nova.rotation.z) * 0.05;
 
+          /* Cursor light follows the mouse in world space. */
+          cursorLight.position.x += ((pointer.x * 6) - cursorLight.position.x) * 0.08;
+          cursorLight.position.y += ((pointer.y * 3) - cursorLight.position.y) * 0.08;
+
+          /* Scroll flies the camera closer and lifts the view. */
           smoothT += (targetT - smoothT) * 0.07;
-          var s = Math.max(0, Math.min(1, smoothT));
-          var camPos = camCurve.getPointAt(s);
+          var st = Math.max(0, Math.min(1, smoothT));
           camera.position.set(
-            camPos.x + pointer.x * 0.5,
-            camPos.y + pointer.y * 0.3,
-            camPos.z + (1 - s) * (zBack - 1) * 12
+            pointer.x * 0.6,
+            0.6 + st * 1.4 + pointer.y * 0.35,
+            12 - st * 5
           );
-          lookTmp.copy(lookCurve.getPointAt(s));
-          lookTmp.x -= 1.0;
-          camera.lookAt(lookTmp);
+          camera.lookAt(0, -0.3 + st * 0.6, -5);
 
-          placeLabels();
           renderer.render(scene, camera);
         }
         tick();
-        window.__nova3dReady = true;
+        window.__novaWorldReady = true;
       })();
     </script>
     <script>
@@ -1332,6 +1238,72 @@
           });
         }, { threshold: 0.12 });
         els.forEach(function (el) { io.observe(el); });
+      })();
+    </script>
+    <script>
+      /* The work ring — drag to spin the 3D carousel. Cards ride a ring
+         in CSS 3D space; the front card glows. Auto-rotates slowly when
+         idle, pauses while you drag. */
+      (function () {
+        var ring = document.getElementById("work-ring");
+        var track = ring ? ring.querySelector(".ring-track") : null;
+        if (!ring || !track) return;
+        var cards = Array.prototype.slice.call(track.querySelectorAll(".fan-card"));
+        var dots = Array.prototype.slice.call(document.querySelectorAll(".ring-dot"));
+        var prevBtn = document.getElementById("ring-prev");
+        var nextBtn = document.getElementById("ring-next");
+        var R = window.innerWidth < 640 ? 260 : 320;
+        cards.forEach(function (card, i) {
+          card.style.transform = "rotateY(" + (i * 120) + "deg) translateZ(" + R + "px)";
+        });
+        var rot = 0, vel = 0, dragging = false, lastX = 0, idle = 0;
+        function apply() {
+          track.style.transform = "rotateY(" + rot.toFixed(2) + "deg)";
+          var idx = ((Math.round(((-rot % 360) + 360) % 360 / 120)) % 3 + 3) % 3;
+          cards.forEach(function (c, i) { c.classList.toggle("active", i === idx); });
+          dots.forEach(function (d, i) { d.classList.toggle("on", i === idx); });
+        }
+        function goTo(i) {
+          var cur = ((-rot % 360) + 360) % 360;
+          var target = ((-i * 120 % 360) + 360) % 360;
+          var delta = target - cur;
+          if (delta > 180) delta -= 360;
+          if (delta < -180) delta += 360;
+          rot -= delta;
+          vel = 0;
+          apply();
+        }
+        function onDown(x) { dragging = true; lastX = x; vel = 0; idle = 0; }
+        function onMove(x) {
+          if (!dragging) return;
+          var dx = x - lastX;
+          lastX = x;
+          rot += dx * 0.35;
+          vel = dx * 0.35;
+          idle = 0;
+          apply();
+        }
+        function onUp() { dragging = false; }
+        ring.addEventListener("pointerdown", function (e) { onDown(e.clientX); ring.setPointerCapture(e.pointerId); });
+        ring.addEventListener("pointermove", function (e) { onMove(e.clientX); });
+        ring.addEventListener("pointerup", onUp);
+        ring.addEventListener("pointercancel", onUp);
+        if (prevBtn) prevBtn.addEventListener("click", function () { goTo((((Math.round(((-rot % 360) + 360) % 360 / 120)) % 3 + 3) % 3 + 1) % 3); });
+        if (nextBtn) nextBtn.addEventListener("click", function () { goTo((((Math.round(((-rot % 360) + 360) % 360 / 120)) % 3 + 3) % 3 + 2) % 3); });
+        dots.forEach(function (d) {
+          d.addEventListener("click", function () { goTo(parseInt(d.getAttribute("data-i"), 10)); });
+        });
+        apply();
+        /* Idle auto-rotate + inertia. */
+        (function loop() {
+          requestAnimationFrame(loop);
+          if (!dragging) {
+            idle += 1;
+            if (idle > 120) { rot += 0.12; }
+            if (Math.abs(vel) > 0.05) { rot += vel; vel *= 0.94; }
+            apply();
+          }
+        })();
       })();
     </script>
   </body>
