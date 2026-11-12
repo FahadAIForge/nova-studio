@@ -1,1575 +1,1892 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NJ Coffee — One Bean. One Remarkable Journey.</title>
-<meta name="description" content="Follow one extraordinary Ethiopian coffee bean from the mist-covered mountains of Yirgacheffe to a perfectly crafted cup of NJ Coffee." />
-<meta property="og:title" content="NJ Coffee — One Bean. One Remarkable Journey." />
-<meta property="og:description" content="Single-origin Yirgacheffe, roasted every Tuesday. One bean, from highland to cup." />
-<meta property="og:type" content="website" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet" />
-<script type="importmap">
-{
-  "imports": {
-    "three": "./three.module.min.js",
-    "three/addons/": "./jsm/"
-  }
-}
-</script>
-<!-- NOTE (build): the brief specifies the jsDelivr CDN import map for three r186.
-     Headless Chrome in this environment cannot reach the CDN at all (verified:
-     dump-dom of the CDN URL returns empty), so the preview build uses the proven
-     local r160 three.module.min.js + local jsm/ addons (same files the live v9
-     site already ships). The code is version-agnostic; to deploy with the CDN,
-     swap this import map back to the jsDelivr r186 URLs — one edit, no code change. -->
+<meta name="description" content="Watch NJ Coffee assemble itself as you scroll — a cinematic scroll-driven product experience. Single-origin Yirgacheffe, roasted every Tuesday.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #132039;          /* deep navy field — Diego Aranda 60/30/10: navy reads, never black */
-    --navy: #132039;        /* 30% deep navy */
-    --cream: #ECE9E4;       /* 60% warm cream */
-    --coral: #FF6A5C;       /* 10% coral accent */
-    --ink: #070B14;
-    --muted: rgba(236, 228, 228, 0.62);
-    --line: rgba(236, 228, 228, 0.16);
-    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-rise: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-settle: cubic-bezier(0.3, 1.25, 0.5, 1);
+  /* ============ CREAM STAGE (Claude's flip, approved by Fahad) ============ */
+  :root{
+    --cream-top:#F3E9DA;
+    --cream-mid:#E9D9C1;
+    --cream-floor:#DFC7A4;
+    --ink:#1E1710;
+    --body:#6A563F;
+    --coral:#FF6A5C;
+    --coral-hover:#E85A48;
+    --coral-text:#A93424;
+    --copper:#B5773B;
+    --cream-text:#FBF3E8;
+    --paper:#ECE9E4;
+    --paper-body:#2B3A57;
+    --navy:#132039;
+    --card:#F8F1E6;
+    --hairline:rgba(30,23,16,.16);
+    --hairline-paper:rgba(19,32,57,.16);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: auto; }
-  html, body { background: var(--bg); }
-  body {
-    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
-    color: var(--cream);
-    overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'DM Sans','Inter','Helvetica Neue',Arial,sans-serif;
+    color:var(--body);
+    background:linear-gradient(180deg,#F3E9DA 0%,#E9D9C1 38%,#DFC7A4 100%);
+    background-attachment:fixed;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
-  ::selection { background: var(--coral); color: var(--bg); }
-  a { color: inherit; text-decoration: none; }
+  ::selection{background:var(--coral);color:var(--cream-text)}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  button{font-family:inherit;cursor:pointer}
 
-  /* ---------- Loader: black, one pulsing cream dot (Fernhollow) ---------- */
-  #loader {
-    position: fixed; inset: 0; z-index: 100; background: #000;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
-    transition: opacity 1s ease; pointer-events: all;
+  /* ============ LOADER ============ */
+  #loader{
+    position:fixed;inset:0;z-index:200;
+    background:linear-gradient(180deg,#F3E9DA 0%,#E9D9C1 60%,#DFC7A4 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+    transition:opacity .6s ease;
   }
-  #loader.done { opacity: 0; pointer-events: none; }
-  #loader .dot {
-    width: 12px; height: 12px; border-radius: 50%; background: var(--cream);
-    animation: pulse 1.1s ease-in-out infinite;
+  #loader.done{opacity:0;pointer-events:none}
+  #loader .loader-mark{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:.14em;color:var(--ink);
   }
-  @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.9); opacity: 0.45; } }
-  #loader .word { font-family: "Antonio", sans-serif; font-size: 15px; letter-spacing: 0.42em; text-transform: uppercase; color: var(--cream); }
-  #loader .sub { font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); }
-  #loader .count { font-family: "Antonio", sans-serif; font-size: 13px; letter-spacing: 0.2em; color: var(--coral); }
+  #loader .loader-mark b{color:var(--coral)}
+  #loader .loader-sub{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--body)}
+  #loader .loader-bar{width:min(240px,60vw);height:2px;background:rgba(30,23,16,.18);overflow:hidden}
+  #loader .loader-bar i{display:block;height:100%;width:0%;background:var(--coral);transition:width .2s ease}
+  #loader .loader-pct{font-size:11px;letter-spacing:.2em;color:var(--body)}
 
-  /* ---------- Fixed 3D canvas + atmosphere layers ----------
-     The canvas sits ABOVE the page copy (z 10, pointer-events none) so the 3D
-     hero object overlaps the headline letters (Claude fix #4) — clicks pass
-     through to the DOM below. Vignette + grain sit above the canvas. */
-  #scene { position: fixed; inset: 0; z-index: 10; width: 100%; height: 100%; display: block; pointer-events: none; }
-  .vignette {
-    position: fixed; inset: 0; z-index: 12; pointer-events: none;
-    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
-    opacity: var(--vig, 0.85); transition: opacity 0.3s linear;
+  /* ============ HEADER (navy chrome) ============ */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:var(--navy);
+    color:#ECE9E4;
   }
-  .grain {
-    position: fixed; inset: -50%; z-index: 13; pointer-events: none; opacity: 0.05;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-    animation: grain 0.9s steps(4) infinite;
+  .nav-inner{
+    max-width:1280px;margin:0 auto;padding:0 24px;height:64px;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
   }
-  @keyframes grain { 0% { transform: translate(0,0); } 25% { transform: translate(-2%,1%); } 50% { transform: translate(1%,-2%); } 75% { transform: translate(-1%,2%); } 100% { transform: translate(0,0); } }
-  .glow { position: fixed; z-index: 1; pointer-events: none; border-radius: 50%; filter: blur(70px); }
-  .glow-a { width: 52vw; height: 52vw; left: 38vw; top: 18vh; background: radial-gradient(circle, rgba(255,106,92,0.12), transparent 65%); }
-  .glow-b { width: 38vw; height: 38vw; left: 8vw; top: 55vh; background: radial-gradient(circle, rgba(19,32,57,0.85), transparent 65%); }
-  .glow-c { width: 30vw; height: 30vw; right: 4vw; top: 8vh; background: radial-gradient(circle, rgba(236,228,228,0.10), transparent 65%); }
+  .wordmark{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:700;font-size:22px;letter-spacing:.08em;color:#ECE9E4;white-space:nowrap;
+  }
+  .wordmark b{color:var(--coral);font-weight:700}
+  nav{display:flex;align-items:center;gap:28px}
+  nav a{
+    font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#ECE9E4;
+    opacity:.85;transition:opacity .2s ease,color .2s ease;
+  }
+  nav a:hover{opacity:1;color:var(--coral)}
+  nav a.active{color:var(--coral);opacity:1}
+  .nav-cta{
+    background:var(--coral);color:var(--cream-text);
+    font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    padding:10px 18px;border:none;border-radius:999px;
+    transition:background .2s ease,transform .2s ease;white-space:nowrap;
+  }
+  .nav-cta:hover{background:var(--coral-hover);transform:translateY(-1px)}
+  #scrollbar{position:fixed;top:64px;left:0;height:3px;background:var(--coral);width:0%;z-index:101}
 
-  /* ---------- Nav ---------- */
-  header {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 20;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 4vw; transition: background 0.6s ease, backdrop-filter 0.6s ease, padding 0.6s ease;
+  /* ============ SHARED CHAPTER STYLES ============ */
+  main{display:block}
+  section{position:relative}
+  .wrap{max-width:1200px;margin:0 auto;padding:96px 24px 96px}
+  .eyebrow{
+    font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--coral-text);margin-bottom:18px;
   }
-  header.scrolled { background: rgba(19,32,57,0.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); padding: 14px 4vw; border-bottom: 1px solid var(--line); }
-  .wordmark { font-family: "Antonio", sans-serif; font-size: 22px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream); }
-  .wordmark b { color: var(--coral); font-weight: 600; }
-  nav.links { display: flex; gap: 30px; align-items: center; }
-  nav.links a { font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); transition: color 0.3s; }
+  h1,h2{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:700;text-transform:uppercase;line-height:1.02;
+    color:var(--ink);letter-spacing:.01em;
+  }
+  h1{font-size:clamp(40px,4.2vw,52px)}
+  h2{font-size:clamp(38px,4vw,48px)}
+  .lede{
+    margin-top:20px;font-size:clamp(16px,1.15vw,18px);line-height:1.6;
+    color:var(--body);max-width:38ch;
+  }
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+  .btn{
+    display:inline-block;background:var(--coral);color:var(--cream-text);
+    font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    padding:15px 26px;border:none;border-radius:999px;
+    transition:background .2s ease,transform .2s ease;
+  }
+  .btn:hover{background:var(--coral-hover);transform:translateY(-2px)}
+  .btn.ghost{
+    background:transparent;color:var(--ink);
+    border:1.5px solid var(--ink);
+  }
+  .btn.ghost:hover{background:var(--ink);color:var(--cream-text);transform:translateY(-2px)}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+  .frame-img{
+    width:100%;height:auto;border-radius:4px;
+    -webkit-mask-image:radial-gradient(ellipse 95% 100% at 50% 50%,#000 75%,transparent 100%);
+    mask-image:radial-gradient(ellipse 95% 100% at 50% 50%,#000 75%,transparent 100%);
+  }
+  .fact-row{display:flex;gap:40px;flex-wrap:wrap;margin-top:36px}
+  .fact{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:20px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
+  .fact small{display:block;font-family:'DM Sans','Inter',Arial,sans-serif;font-weight:500;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--body);margin-top:6px}
+  .fact::before{content:"";display:block;width:10px;height:10px;border-radius:50%;background:var(--coral);margin-bottom:12px}
+  .price, .fact{font-variant-numeric:tabular-nums}
 
-  /* ---------- Buttons ---------- */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-    font-family: "DM Sans", sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-    padding: 16px 30px; border-radius: 999px; border: 1px solid transparent; cursor: pointer;
-    transition: transform 0.9s var(--ease-out), background 0.9s var(--ease-out), color 0.9s var(--ease-out), border-color 0.9s var(--ease-out), box-shadow 0.9s var(--ease-out);
-    will-change: transform;
+  /* ============ HERO — CINEMATIC ASSEMBLY (v12, design ownership) ============
+     One persistent canvas. The parts are transparent PNG sprites animated
+     at true 60fps with real easing — NOT a frame sequence. Scroll drives
+     one progress 0→1 through a pinned ~350vh hero. A real camera
+     (project() with z-depth, roll, rack focus, dolly zoom) owns ALL
+     scale — no CSS push-in, no stage tilt, so two zoom systems can
+     never fight. The five beats: A establishing (dolly-in, focus finds
+     the cup), B macro (the bag presents, the beans pour), C the seal
+     snap (then total stillness), D the convergence (whip pan, sweep
+     in, slam — a cut, not a glide), E the hero (stillness, the light
+     arrives, dolly to 1.12x). A light pass travels across the product
+     for the whole compose (the star), numbered part labels land with
+     their parts, and a rolling altitude counter runs 0→2,200 m.
+     All effects are cream-toned and serve the product — no orbs, dust,
+     or dark vignette. */
+  #hero{height:350vh}
+  .hero-sticky{
+    position:sticky;top:0;height:100vh;overflow:hidden;
   }
-  /* Primary CTA pop (mouse rules): one spring-eased hover/pop — scale 1.05,
-     slight lift, 180ms, transform/opacity only. Never 1:1, never layout. */
-  .btn-solid { background: var(--coral); color: var(--bg); transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 180ms cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease; }
-  .btn-solid:focus-visible { transform: translateY(-2px) scale(1.05); box-shadow: 0 18px 40px -14px rgba(255,106,92,0.65); outline: 2px solid var(--cream); outline-offset: 3px; }
-  .btn-solid:active { transform: translateY(0) scale(1.02); }
-  .btn-ghost { background: transparent; color: var(--cream); border-color: rgba(236,228,228,0.4); transition: transform 200ms ease, border-color 200ms ease, background 200ms ease, color 200ms ease; }
-  .btn-ghost:focus-visible { transform: translateY(-2px); border-color: var(--cream); outline: 2px solid var(--cream); outline-offset: 3px; }
-  .btn-ghost:active { transform: translateY(0); }
-  .btn-sm { padding: 11px 22px; font-size: 11px; }
-  /* Hover-only effects are gated to fine pointers (touch never gets a stuck
-     hover, and no menu/price/CTA info is ever hidden behind a hover). */
-  @media (hover: hover) and (pointer: fine) {
-    nav.links a:hover { color: var(--cream); }
-    .btn-solid:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 18px 40px -14px rgba(255,106,92,0.65); }
-    .btn-ghost:hover { transform: translateY(-2px); border-color: var(--cream); }
-    footer .f-links a:hover { color: var(--cream); }
+  /* Breathing cream light-field canvas (behind the stage; ambient only). */
+  .lightfield{
+    position:absolute;inset:0;width:100%;height:100%;
+    pointer-events:none;z-index:0;
+  }
+  #stage{
+    position:absolute;inset:0;width:100%;height:100%;z-index:1;
+  }
+  .hero-copy{
+    position:absolute;z-index:3;left:48px;top:50%;transform:translateY(-50%);
+    max-width:520px;
+  }
+  .hero-copy .eyebrow{color:var(--coral-text)}
+  .hero-copy .lede{color:var(--body)}
+  /* Scroll-linked copy layers: three headline blocks stacked in the same
+     spot; JS crossfades them as the assembly progresses (copy travels with
+     the product). Each block is absolutely positioned so the layout never
+     jumps when one fades. */
+  .copy-stack{position:relative;min-height:250px}
+  .copy-layer{
+    position:absolute;left:0;top:0;right:0;
+    opacity:0;pointer-events:none;
+  }
+  .copy-layer.on{pointer-events:auto}
+  .copy-layer .prod-line{
+    margin-top:24px;display:flex;align-items:baseline;gap:14px;
+  }
+  .copy-layer .prod-line .product{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:600;font-size:22px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);
+  }
+  .copy-layer .prod-line .price{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:700;font-size:32px;color:var(--coral-text);
+  }
+  .hero-status{
+    margin-top:36px;display:flex;align-items:center;gap:12px;
+    font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--body);
+  }
+  .hero-status .dot{width:8px;height:8px;border-radius:50%;background:var(--coral)}
+  .hero-status .line{width:56px;height:1px;background:var(--body);opacity:.5}
+
+  /* ============ PART LABELS (SONARA-style technical teardown) ============
+     Numbered labels ("01 Beans" etc.) positioned by JS next to the part
+     that just landed. DOM text, crisp and accessible. They fade in on
+     landing and fade out at the next beat. A short hairline leader
+     connects the label to its part. */
+  .part-labels{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+  .part-label{
+    position:absolute;left:0;top:0;display:flex;align-items:center;gap:8px;
+    opacity:0;will-change:transform,opacity;white-space:nowrap;
+    /* No CSS transition: the JS drives opacity every frame from the
+       scroll progress (smoothstep), so a transition would only add lag. */
+  }
+  .part-label .pl-num{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:700;font-size:15px;color:var(--coral-text);letter-spacing:.04em;
+  }
+  .part-label .pl-name{
+    font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);
+  }
+  .part-label::before{
+    content:"";display:block;width:26px;height:1px;background:var(--coral);opacity:.8;
+  }
+  /* ============ ALTITUDE COUNTER (Porsche / Deep Sea) ============
+     A rolling number tied to scroll: the Yirgacheffe altitude 0→2,200 m.
+     It makes the scroll feel physical — the scrollbar has a real unit. */
+  .alt-counter{
+    position:absolute;right:48px;bottom:32px;z-index:3;text-align:right;pointer-events:none;
+  }
+  .alt-counter .alt-num{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:700;font-size:clamp(28px,2.6vw,38px);color:var(--ink);
+    font-variant-numeric:tabular-nums;line-height:1;
+  }
+  .alt-counter .alt-unit{
+    display:block;margin-top:6px;font-size:10px;font-weight:700;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--body);
+  }
+  @media (max-width:768px){
+    .alt-counter{right:20px;bottom:20px}
+    .alt-counter .alt-num{font-size:24px}
   }
 
-  /* ---------- Chapters: one continuous scroll, ~700vh ---------- */
-  main { position: relative; z-index: 11; }
-  .chapter {
-    position: relative; min-height: 100vh; min-height: 100svh;
-    display: flex; align-items: center; padding: 120px 6vw 90px;
-  }
-  /* Hero: tighter vertical spacing so all 3 headline lines + subcopy + CTAs
-     fit in the first viewport at 1280×720. */
-  #arrival { padding-top: 96px; padding-bottom: 64px; }
-  .chapter-inner { max-width: 1240px; margin: 0 auto; width: 100%; position: relative; z-index: 11; }
-  .chapter-inner.center { text-align: center; }
-  .eyebrow {
-    font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--coral);
-    display: flex; align-items: center; gap: 12px; margin-bottom: 22px; font-weight: 700;
-  }
-  .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--coral); display: inline-block; }
-  .chapter-inner.center .eyebrow { justify-content: center; }
-  .chapter-inner.center .eyebrow::after { content: ""; width: 34px; height: 1px; background: var(--coral); display: inline-block; }
+  /* ============ PAPER SECTIONS (Origin, Menu) ============ */
+  .paper{background:var(--paper);color:var(--paper-body)}
+  .paper h2{color:var(--navy)}
+  .paper .lede{color:var(--paper-body)}
+  .paper .eyebrow{color:var(--coral-text)}
+  .paper .fact{color:var(--navy)}
+  .paper .fact small{color:var(--paper-body)}
+  .paper .btn.ghost{color:var(--navy);border-color:var(--navy)}
+  .paper .btn.ghost:hover{background:var(--navy);color:#ECE9E4}
 
-  /* Hero split (developer.jot reel): product BIG left-of-centre, headline right.
-     The 3D bean occupies the left half of the frame; the copy sits right. */
-  .chapter-inner.hero-split { margin-left: auto; margin-right: 0; max-width: 640px; text-align: left; }
-  .chapter-inner.hero-split .eyebrow { justify-content: flex-start; }
-  .chapter-inner.hero-split .eyebrow::after { display: none; }
-  .hero-split h1.hero { text-align: left; }
-  .hero-split .hero-sub { margin-left: 0; margin-right: 0; text-align: left; }
-  .hero-split .hero-ctas { justify-content: flex-start; }
-  h1.hero {
-    font-family: "Antonio", sans-serif; font-weight: 400; text-transform: uppercase;
-    font-size: clamp(3rem, 8vw, 8rem); line-height: 0.92; letter-spacing: 0.01em;
-    color: var(--cream); text-align: center;
+  /* ============ ROAST (deeper warm cream) ============ */
+  #roast{background:var(--cream-floor)}
+  #roast .wrap,#final .wrap{position:relative;z-index:1}
+  #roast .roast-line{
+    margin-top:28px;font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:600;font-size:clamp(28px,3vw,38px);letter-spacing:.02em;
+    text-transform:uppercase;color:var(--ink);
   }
-  h1.hero .line { display: block; overflow: hidden; }
-  h1.hero .line span { display: block; transform: translateY(110%); transition: transform 1.1s var(--ease-rise); }
-  h1.hero.in .line span { transform: translateY(0); }
-  h1.hero .line:nth-child(2) span { transition-delay: 0.12s; }
-  h1.hero .line:nth-child(3) span { transition-delay: 0.24s; }
-  h1.hero em { font-style: normal; color: var(--cream); }
-  .hero-sub { max-width: 52ch; margin: 28px auto 0; font-size: 17px; line-height: 1.7; color: var(--muted); text-align: center; }
-  .hero-ctas { display: flex; gap: 16px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+  #roast .roast-line em{font-style:normal;color:var(--coral-text)}
 
-  /* Section headlines (Playfair) + copy */
-  h2.display {
-    font-family: "Playfair Display", serif; font-weight: 500;
-    font-size: clamp(2.4rem, 5.6vw, 4.6rem); line-height: 1.04; letter-spacing: -0.01em; color: var(--cream);
-  }
-  h2.display em { font-style: italic; color: var(--coral); }
-  .lede { margin-top: 20px; max-width: 46ch; font-size: 17px; line-height: 1.75; color: var(--muted); }
-  .chapter-inner.center .lede { margin-left: auto; margin-right: auto; }
-  .stat-row { display: flex; gap: 44px; margin-top: 34px; flex-wrap: wrap; }
-  .stat b { display: block; font-family: "Antonio", sans-serif; font-size: 34px; font-weight: 500; color: var(--cream); letter-spacing: 0.02em; }
-  .stat span { font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
-  .coral { color: var(--coral); }
+  /* ============ BAG ============ */
+  .price-line{margin-top:28px;display:flex;align-items:baseline;gap:14px}
+  .price-line .product{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:22px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
+  .price-line .price{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:32px;color:var(--coral-text)}
 
-  /* Giant outlined numeral (Claude fix #9) */
-  .stat-giant {
-    font-family: "Antonio", sans-serif; font-weight: 400;
-    font-size: clamp(8rem, 22vw, 20rem); line-height: 0.9;
-    color: transparent; -webkit-text-stroke: 1.5px rgba(236,228,228,0.55);
-    user-select: none; margin-top: 6px;
+  /* ============ MENU ============ */
+  .menu-list{margin-top:40px;max-width:640px}
+  .menu-item{
+    display:flex;align-items:baseline;justify-content:space-between;gap:24px;
+    padding:20px 4px;border-bottom:1px solid var(--hairline-paper);
+    transition:padding-left .2s ease;
   }
-  .stat-giant small { display: block; font-size: clamp(1rem, 2vw, 1.4rem); letter-spacing: 0.3em; -webkit-text-stroke: 0; color: var(--muted); margin-top: 14px; }
+  .menu-item:first-child{border-top:1px solid var(--hairline-paper)}
+  .menu-item:hover{padding-left:12px}
+  .menu-item .name{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:600;font-size:clamp(20px,2vw,24px);letter-spacing:.06em;text-transform:uppercase;color:var(--navy);
+  }
+  .menu-item .name::before{
+    content:"";display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:var(--coral);margin-right:14px;vertical-align:middle;
+  }
+  .menu-item .price{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:700;font-size:clamp(20px,2vw,24px);color:var(--navy);
+  }
 
-  /* Chapter transitions: previous scales to 0.94 + dims to 60% (Claude fix #6) */
-  .chapter .chapter-inner { transition: transform 1s var(--ease-out), opacity 1s var(--ease-out); }
-  .chapter.leaving .chapter-inner { transform: scale(0.94); opacity: 0.6; }
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s var(--ease-out), transform 1s var(--ease-out); }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
+  /* ============ FINAL + FORM ============ */
+  #final .split{grid-template-columns:1.05fr 1fr;gap:64px}
+  .form-card{
+    background:var(--card);border:1px solid rgba(30,23,16,.12);
+    border-radius:12px;padding:32px;
+    box-shadow:0 18px 50px rgba(30,23,16,.14);
+  }
+  .form-card h3{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:700;font-size:24px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);
+  }
+  .form-card .form-note{margin-top:8px;font-size:13px;line-height:1.5;color:var(--body)}
+  .field{margin-top:20px}
+  .field label{display:block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin-bottom:8px}
+  .field input,.field select,.field textarea{
+    width:100%;font-family:inherit;font-size:15px;color:var(--ink);
+    background:#F7F5F1;border:1px solid #D5D0C8;border-radius:8px;
+    padding:12px 14px;outline:none;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--coral)}
+  .field .err{display:none;margin-top:6px;font-size:12px;color:var(--coral-text)}
+  .field.invalid input,.field.invalid select,.field.invalid textarea{border-color:var(--coral-text)}
+  .field.invalid .err{display:block}
+  .form-card .btn{width:100%;text-align:center;margin-top:26px}
+  #summary{
+    display:none;margin-top:24px;border-top:1px solid var(--hairline);padding-top:22px;
+  }
+  #summary.show{display:block}
+  #summary h4{
+    font-family:'Antonio','Arial Narrow',Impact,sans-serif;
+    font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);
+  }
+  #summary .demo-flag{
+    margin-top:8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--coral-text);
+  }
+  #summary pre{
+    margin-top:14px;white-space:pre-wrap;word-wrap:break-word;
+    font-family:'DM Sans','Inter',Arial,sans-serif;font-size:14px;line-height:1.7;color:var(--ink);
+    background:#F7F5F1;border:1px solid #D5D0C8;border-radius:8px;padding:16px;
+  }
+  .summary-actions{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+  .summary-actions .btn{flex:1;margin-top:0;padding:13px 18px;font-size:12px}
+  .summary-actions .btn.ghost{flex:1}
+  #copyfeedback{margin-top:10px;font-size:12px;color:var(--coral-text);min-height:16px}
 
-  /* Light chapter (final + form) */
-  .chapter.light { color: var(--ink); }
-  .chapter.light h2.display, .chapter.light .lede { color: var(--ink); }
-  .chapter.light .lede { color: rgba(7,11,20,0.68); }
-  .chapter.light .eyebrow { color: var(--coral); }
-  .chapter.light .stat b { color: var(--ink); }
-  .chapter.light .stat span { color: rgba(7,11,20,0.55); }
-  .chapter.light .stat-giant { -webkit-text-stroke: 1.5px rgba(7,11,20,0.4); }
-  .chapter.light .stat-giant small { color: rgba(7,11,20,0.55); }
-  /* Finale cream fallback (see plain script): readable even when WebGL never runs.
-     !important so it wins over the module's inline body background when the
-     module starts but its scroll loop stalls (inline navy would otherwise win). */
-  body.final-in-view { background-color: #e8dfd2 !important; }
+  /* ============ FOOTER (navy chrome) ============ */
+  footer{background:var(--navy);color:#ECE9E4}
+  .foot-inner{max-width:1200px;margin:0 auto;padding:56px 24px 48px;display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start;justify-content:space-between}
+  .foot-inner .wordmark{font-size:26px}
+  .foot-inner p{margin-top:12px;font-size:14px;line-height:1.6;color:rgba(236,233,228,.75);max-width:38ch}
+  .foot-links{display:flex;gap:26px;flex-wrap:wrap}
+  .foot-links a{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#ECE9E4;opacity:.85}
+  .foot-links a:hover{color:var(--coral);opacity:1}
+  .foot-base{border-top:1px solid rgba(236,233,228,.14);padding:18px 24px;text-align:center;font-size:12px;letter-spacing:.08em;color:rgba(236,233,228,.6)}
 
-  /* ---------- Menu carousel (Chapter 6) ---------- */
-  .menu-wrap { margin-top: 40px; }
-  .menu-row {
-    display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory;
-    padding: 10px 4px 22px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  /* ============ HEADLINE REVEAL (fade + rise — robust, never covers text) ============
+     The headline itself fades in and rises 12px when it enters view.
+     There is NO covering panel: even if the transition never runs, the
+     headline is fully visible (JS only adds the hidden state, then
+     reveals it; no-JS / reduced-motion shows bare headlines). */
+  .head-reveal{position:relative}
+  .head-reveal .ordinal{
+    position:absolute;top:2px;right:0;
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:13px;letter-spacing:.28em;color:var(--coral-text);
+    opacity:0;transition:opacity .6s ease .35s;pointer-events:none;
   }
-  .menu-row::-webkit-scrollbar { display: none; }
-  .menu-item {
-    flex: 0 0 260px; scroll-snap-align: center; text-align: left; cursor: pointer;
-    background: rgba(19,32,57,0.55); border: 1px solid var(--line); border-radius: 22px; padding: 26px;
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    transform: scale(0.78); opacity: 0.4;
-    transition: transform 0.9s var(--ease-out), opacity 0.9s var(--ease-out), border-color 0.9s var(--ease-out), background 0.9s var(--ease-out);
+  .head-reveal.in .ordinal{opacity:1}
+  .head-reveal h1,.head-reveal h2{
+    opacity:0;transform:translateY(14px);
+    transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1);
   }
-  .menu-item.is-centre { transform: scale(1); opacity: 1; border-color: rgba(255,106,92,0.6); background: rgba(19,32,57,0.8); }
-  .menu-item .tag { font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--coral); font-weight: 700; }
-  .menu-item h3 { font-family: "Playfair Display", serif; font-size: 26px; font-weight: 500; margin: 10px 0 6px; color: var(--cream); }
-  .menu-item p { font-size: 14px; line-height: 1.6; color: var(--muted); }
-  .menu-item .price { margin-top: 14px; font-family: "Antonio", sans-serif; font-size: 22px; color: var(--cream); letter-spacing: 0.04em; }
-  .menu-dots { display: flex; justify-content: center; gap: 8px; margin-top: 6px; }
-  .menu-dots .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(236,228,228,0.35); transition: background 0.4s, transform 0.4s; }
-  .menu-dots .dot.on { background: var(--coral); transform: scale(1.4); }
-  .menu-note { text-align: center; margin-top: 14px; font-size: 13px; color: var(--muted); letter-spacing: 0.08em; }
-  .menu-note b { color: var(--coral); }
+  .head-reveal.in h1,.head-reveal.in h2{opacity:1;transform:translateY(0)}
+  @media (max-width:768px){ .head-reveal .ordinal{display:none} }
 
-  /* ---------- Order form (Chapter 7) ---------- */
-  .visit-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 60px; align-items: start; }
-  .form-card {
-    background: var(--cream); color: var(--ink); border-radius: 28px; padding: 34px;
-    box-shadow: 0 30px 70px -30px rgba(0,0,0,0.6);
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:900px){
+    .split{grid-template-columns:1fr;gap:36px}
+    #final .split{grid-template-columns:1fr}
+    nav a{display:none}
+    nav a.nav-keep{display:inline-block}
   }
-  .form-card h3 { font-family: "Playfair Display", serif; font-size: 28px; font-weight: 500; margin-bottom: 6px; }
-  .form-card p { font-size: 14px; color: rgba(7,11,20,0.62); margin-bottom: 22px; line-height: 1.6; }
-  .form-card label { display: block; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700; margin: 16px 0 7px; color: rgba(7,11,20,0.7); }
-  .form-card input, .form-card select, .form-card textarea {
-    width: 100%; padding: 13px 15px; border-radius: 12px; border: 1px solid rgba(7,11,20,0.2);
-    font-family: "DM Sans", sans-serif; font-size: 15px; color: var(--ink); background: #fff; outline: none;
+  @media (max-width:768px){
+    .wrap{padding:72px 20px 72px}
+    h1{font-size:40px}
+    h2{font-size:36px}
+    /* Portrait hero: compact copy band on top so it never overlaps the
+       product, which the JS anchors at 75% height below it. */
+    .hero-copy{left:20px;right:20px;top:76px;transform:none;max-width:none}
+    .hero-copy .eyebrow{margin-bottom:10px}
+    .copy-stack{min-height:172px}
+    .hero-copy .lede{margin-top:10px}
+    .hero-copy .prod-line{margin-top:10px}
+    .hero-ctas{margin-top:16px;gap:8px;flex-wrap:nowrap}
+    .hero-ctas .btn{padding:12px 14px;font-size:11px;letter-spacing:.1em}
+    .hero-status{margin-top:14px}
+    .nav-inner{padding:0 16px}
   }
-  .form-card input:focus, .form-card select:focus, .form-card textarea:focus { border-color: var(--coral); }
-  .form-card textarea { resize: vertical; min-height: 84px; }
-  .form-card .btn { width: 100%; margin-top: 22px; }
-  .form-ok { display: none; text-align: center; padding: 30px 6px; }
-  .form-ok h4 { font-family: "Playfair Display", serif; font-size: 26px; margin-bottom: 10px; }
-  .form-ok p { color: rgba(7,11,20,0.65); line-height: 1.7; font-size: 15px; }
-  .form-summary { text-align: left; background: rgba(19,32,57,0.06); border: 1px solid rgba(19,32,57,0.14); border-radius: 14px; padding: 16px 18px; margin: 16px 0; font-size: 15px; line-height: 1.9; color: var(--ink); }
-  .form-summary b { color: var(--coral); }
-  .form-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 4px 0 16px; }
-
-  /* ---------- Footer ---------- */
-  footer {
-    position: relative; z-index: 11; padding: 54px 6vw 40px; border-top: 1px solid var(--line);
-    display: flex; flex-wrap: wrap; gap: 26px; align-items: center; justify-content: space-between;
-    background: linear-gradient(to bottom, transparent, rgba(19,32,57,0.9));
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition:none !important}
+    /* Collapse the 350vh pinned hero to a static assembled view. */
+    #hero{height:100vh}
   }
-  footer .f-links { display: flex; gap: 26px; }
-  footer .f-links a { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
-  footer small { color: var(--muted); font-size: 12px; letter-spacing: 0.06em; }
-
-  /* ---------- Scroll cue (Fernhollow: bottom-right) ---------- */
-  #scroll-cue {
-    position: fixed; right: 4vw; bottom: 28px; z-index: 20; display: flex; align-items: center; gap: 14px;
-    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted);
-    pointer-events: none; transition: opacity 0.8s ease;
-  }
-  #scroll-cue .divider { width: 56px; height: 1px; background: var(--coral); display: inline-block; animation: cue 2.2s ease-in-out infinite; }
-  @keyframes cue { 0%, 100% { transform: scaleX(0.5); transform-origin: left; opacity: 0.5; } 50% { transform: scaleX(1); opacity: 1; } }
-  #scroll-cue.hide { opacity: 0; }
-
-  /* ---------- WebGL fallback ---------- */
-  #no-webgl { display: none; position: fixed; inset: 0; z-index: 4; background: var(--bg); }
-  body.no-webgl #no-webgl { display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; }
-  body.no-webgl #scene { display: none; }
-
-  /* ---------- Responsive ---------- */
-  @media (max-width: 900px) {
-    nav.links { display: none; }
-    .visit-grid { grid-template-columns: 1fr; gap: 40px; }
-    .chapter { padding: 110px 6vw 80px; }
-    .menu-item { flex-basis: 230px; }
-    .stat-row { gap: 28px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .grain { animation: none; }
-    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
-  }
+  :focus-visible{outline:2px solid var(--coral);outline-offset:3px}
 </style>
 </head>
 <body>
 
-<!-- Loader: black, one pulsing cream dot, 0–100 counter -->
-<div id="loader" role="status" aria-label="Loading">
-  <div class="dot" aria-hidden="true"></div>
-  <div class="word">NJ Coffee</div>
-  <div class="sub">Preparing your experience…</div>
-  <div class="count" id="load-count">0%</div>
+<!-- LOADER -->
+<div id="loader" role="status" aria-live="polite">
+  <div class="loader-mark">NJ <b>COFFEE</b></div>
+  <div class="loader-sub">Preparing the experience</div>
+  <div class="loader-bar"><i id="loaderfill"></i></div>
+  <div class="loader-pct" id="loaderpct">0 / 5 parts</div>
 </div>
 
-<canvas id="scene" aria-hidden="true"></canvas>
-<div class="glow glow-a" aria-hidden="true"></div>
-<div class="glow glow-b" aria-hidden="true"></div>
-<div class="glow glow-c" aria-hidden="true"></div>
-<div class="vignette" aria-hidden="true"></div>
-<div class="grain" aria-hidden="true"></div>
-
-<header id="site-nav">
-  <a class="wordmark" href="#arrival">NJ <b>Coffee</b></a>
-  <nav class="links" aria-label="Sections">
-    <a href="#arrival">Home</a>
-    <a href="#origin">Origin</a>
-    <a href="#bean">Coffee</a>
-    <a href="#brewing">Menu</a>
-    <a href="#final">Visit</a>
-  </nav>
-  <a class="btn btn-solid btn-sm" href="#final">Order beans →</a>
-</header>
-
-<div id="scroll-cue"><span>Scroll to wander</span><span class="divider"></span></div>
-
-<div id="no-webgl">
-  <div>
-    <h2 class="display">NJ Coffee</h2>
-    <p class="lede" style="margin: 18px auto 0;">Single-origin Yirgacheffe, roasted every Tuesday.<br/>Your browser could not start WebGL, so the 3D journey is paused — the coffee is still here.</p>
+<!-- HEADER (navy chrome) -->
+<header>
+  <div class="nav-inner">
+    <a class="wordmark" href="#top" aria-label="NJ Coffee — home">NJ <b>COFFEE</b></a>
+    <nav aria-label="Main navigation">
+      <a href="#origin" data-nav="origin">Origin</a>
+      <a href="#bean" data-nav="bean">Coffee</a>
+      <a href="#menu" data-nav="menu">Menu</a>
+      <a href="#final" data-nav="final">Order</a>
+      <a class="btn nav-cta" href="#final">Order Beans &rarr;</a>
+    </nav>
   </div>
-</div>
+</header>
+<div id="scrollbar" aria-hidden="true"></div>
 
-<main id="story">
-  <!-- Chapter 1 — The Arrival (product-first: bean big, left-of-centre; copy right) -->
-  <section class="chapter" id="arrival" data-chapter="0">
-    <div class="chapter-inner hero-split">
-      <p class="eyebrow reveal">NJ Coffee — Single Origin</p>
-      <h1 class="hero" id="hero-title">
-        <span class="line"><span>Coffee.</span></span>
-        <span class="line"><span>Beyond</span></span>
-        <span class="line"><span><em>Ordinary.</em></span></span>
-      </h1>
-      <p class="hero-sub reveal">An extraordinary journey begins with one remarkable bean.</p>
-      <div class="hero-ctas reveal">
-        <a class="btn btn-solid" href="#origin" data-hover-stop>Explore the origin</a>
-        <a class="btn btn-ghost" href="#brewing">See the menu</a>
-      </div>
-    </div>
-  </section>
+<main id="top">
 
-  <!-- Chapter 2 — The Origin -->
-  <section class="chapter" id="origin" data-chapter="1">
-    <div class="chapter-inner">
-      <p class="eyebrow reveal">Chapter 01 — The Origin</p>
-      <h2 class="display reveal">Born in<br/>the <em>Highlands.</em></h2>
-      <div class="stat-giant reveal">2,200 m<small>Yirgacheffe, Ethiopia — high above the clouds</small></div>
-      <p class="lede reveal">High altitude, cool mountain air and patient cultivation give this coffee its character. One origin, grown slowly, picked by hand.</p>
-      <div class="stat-row reveal">
-        <div class="stat"><b>Yirgacheffe</b><span>Ethiopia</span></div>
-        <div class="stat"><b>2,200 m</b><span>Altitude</span></div>
-        <div class="stat"><b>Washed</b><span>Process</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Chapter 3 — The Bean (macro) -->
-  <section class="chapter" id="bean" data-chapter="2">
-    <div class="chapter-inner center">
-      <p class="eyebrow reveal">Chapter 02 — The Bean</p>
-      <h2 class="display reveal">Small bean.<br/><em>Extraordinary</em> character.</h2>
-      <p class="lede reveal">One bean, closer than you have ever seen it. Every curve, every crease, every pore — this is where the flavour begins.</p>
-      <div class="stat-row reveal" style="justify-content:center;">
-        <div class="stat"><b>1 bean</b><span>The whole story</span></div>
-        <div class="stat"><b>100%</b><span>Single origin</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Chapter 4 — The Roast -->
-  <section class="chapter" id="roast" data-chapter="3">
-    <div class="chapter-inner">
-      <p class="eyebrow reveal">Chapter 03 — The Roast</p>
-      <h2 class="display reveal">Roasted with<br/><em>intention.</em></h2>
-      <p class="lede reveal">Freshly roasted <span class="coral">every Tuesday</span>. Small batches. Thoughtful roasting. Exceptional coffee — the bean darkens, the room fills with warmth, and the character locks in.</p>
-      <div class="stat-row reveal">
-        <div class="stat"><b class="coral">Every Tuesday</b><span>Roast day</span></div>
-        <div class="stat"><b>Small batches</b><span>Never rushed</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Chapter 5 — The Signature Bag -->
-  <section class="chapter" id="bag" data-chapter="4">
-    <div class="chapter-inner">
-      <p class="eyebrow reveal">Chapter 04 — The Signature Bag</p>
-      <h2 class="display reveal">Your daily ritual,<br/><em>reimagined.</em></h2>
-      <p class="lede reveal">Single-Origin Yirgacheffe Coffee, sealed fresh in a 250g bag. One origin, one remarkable experience — ready for your kitchen.</p>
-      <div class="stat-row reveal">
-        <div class="stat"><b>250g bag</b><span>Single origin</span></div>
-        <div class="stat"><b>$16–$18</b><span>Per bag</span></div>
-      </div>
-      <div class="hero-ctas reveal" style="justify-content:flex-start;">
-        <a class="btn btn-solid" href="#final" data-hover-stop>Order your bag</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Chapter 6 — The Brewing Experience + menu carousel -->
-  <section class="chapter" id="brewing" data-chapter="5">
-    <div class="chapter-inner">
-      <p class="eyebrow reveal">Chapter 05 — The Brewing Experience</p>
-      <h2 class="display reveal">Crafted for<br/><em>every moment.</em></h2>
-      <p class="lede reveal">From the grinder to the pour, every cup is built the same way — slowly, carefully, and exactly to order.</p>
-      <div class="menu-wrap">
-        <div class="menu-row" id="menu-row" role="listbox" aria-label="Coffee menu">
-          <div class="menu-item is-centre" role="option" data-drink="0" tabindex="0">
-            <span class="tag">Classic</span><h3>Espresso</h3>
-            <p>Short, intense, and honest. The purest read on the bean.</p>
-            <p class="price">$3.50</p>
+  <!-- ARRIVAL : pinned layered assembly -->
+  <section id="hero" aria-label="NJ Coffee — watch the bag assemble as you scroll">
+    <div class="hero-sticky">
+      <canvas class="lightfield" id="lf-arrival" aria-hidden="true"></canvas>
+      <canvas id="stage" role="img" aria-label="NJ Coffee 250g bag and cream cup assembling from floating parts as you scroll"></canvas>
+      <noscript><img src="v11-scroll/frame-end-cream.jpg" alt="NJ Coffee 250g bag and cream cup, fully assembled" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain"></noscript>
+      <div class="hero-copy">
+        <p class="eyebrow">NJ Coffee &mdash; Single Origin</p>
+        <div class="copy-stack" id="copystack">
+          <div class="copy-layer" id="copylayer-a">
+            <h1>Coffee,<br>Redefined.</h1>
+            <p class="lede">One origin. One carefully crafted experience.</p>
           </div>
-          <div class="menu-item" role="option" data-drink="1" tabindex="0">
-            <span class="tag">Silky</span><h3>Cappuccino</h3>
-            <p>Espresso under a cloud of steamed milk and soft foam.</p>
-            <p class="price">$4.50</p>
+          <div class="copy-layer" id="copylayer-b">
+            <h1>Roasted with<br>intention.</h1>
+            <p class="lede">12 kg at a time. Every Tuesday.</p>
           </div>
-          <div class="menu-item" role="option" data-drink="2" tabindex="0">
-            <span class="tag">Slow</span><h3>Pour Over</h3>
-            <p>Hot water, a paper filter, and patience. Bright and clean.</p>
-            <p class="price">$5.00</p>
-          </div>
-          <div class="menu-item" role="option" data-drink="3" tabindex="0">
-            <span class="tag">Cold</span><h3>Cold Brew</h3>
-            <p>Steeped cold for hours. Smooth, sweet, and quietly strong.</p>
-            <p class="price">$5.50</p>
-          </div>
-          <div class="menu-item" role="option" data-drink="4" tabindex="0">
-            <span class="tag">Velvet</span><h3>Flat White</h3>
-            <p>Double espresso, velvet microfoam, no fuss.</p>
-            <p class="price">$5.00</p>
-          </div>
-        </div>
-        <div class="menu-dots" id="menu-dots" aria-hidden="true">
-          <span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </div>
-        <p class="menu-note">Now pouring: <b id="menu-now">Espresso — $3.50</b></p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Chapter 7 — The Final Moment (light) + order form -->
-  <section class="chapter light" id="final" data-chapter="6">
-    <div class="chapter-inner">
-      <div class="visit-grid">
-        <div>
-          <p class="eyebrow reveal">Chapter 06 — The Final Moment</p>
-          <h2 class="display reveal">Your next<br/><em>favourite</em> cup.</h2>
-          <p class="lede reveal">From the highlands of Yirgacheffe to your everyday coffee ritual. One origin. One remarkable experience.</p>
-          <div class="stat-row reveal">
-            <div class="stat"><b>NJ Coffee</b><span>Single-Origin Yirgacheffe</span></div>
-            <div class="stat"><b>2,200 m</b><span>Yirgacheffe, Ethiopia</span></div>
-            <div class="stat"><b class="coral">Every Tuesday</b><span>Roasted fresh</span></div>
-          </div>
-          <div class="hero-ctas reveal" style="justify-content:flex-start;">
-            <a class="btn btn-solid" href="#order-form" data-hover-stop>Order your coffee</a>
-            <a class="btn btn-ghost" href="#order-form" style="color:var(--ink);border-color:rgba(7,11,20,0.35);">Visit us</a>
-          </div>
-        </div>
-        <div class="form-card reveal" id="order-form">
-          <form id="order" novalidate>
-            <h3>Order beans, or just come in.</h3>
-            <p>Tell us what you want — this is a demo, so your order is summarised right here on this device.</p>
-            <label for="f-name">Name</label>
-            <input id="f-name" name="name" type="text" autocomplete="name" placeholder="Your name" required />
-            <label for="f-email">Email</label>
-            <input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
-            <label for="f-service">What do you want?</label>
-            <select id="f-service" name="service">
-              <option>Order beans</option>
-              <option>Book a tasting</option>
-              <option>Wholesale</option>
-              <option>Something else</option>
-            </select>
-            <label for="f-message">Message</label>
-            <textarea id="f-message" name="message" placeholder="250g of Yirgacheffe, please…"></textarea>
-            <button class="btn btn-solid" type="submit">Send the order →</button>
-          </form>
-          <div class="form-ok" id="form-ok">
-            <h4>Thank you — order received.</h4>
-            <p>Your order summary (kept on this device — this is a demo, nothing is sent anywhere):</p>
-            <div class="form-summary" id="form-summary"></div>
-            <div class="form-actions">
-              <button class="btn btn-solid btn-sm" type="button" id="dl-summary">Download summary</button>
-              <button class="btn btn-ghost btn-sm" type="button" id="copy-summary" style="color:var(--ink);border-color:rgba(7,11,20,0.35);">Copy summary</button>
+          <div class="copy-layer" id="copylayer-c">
+            <h1>Your coffee.<br>Your ritual.</h1>
+            <p class="lede">250 g. Roasted Tuesday. At your door Friday.</p>
+            <div class="prod-line">
+              <span class="product">Yirgacheffe 250g</span>
+              <span class="price">$18</span>
             </div>
-            <p>We will reply to your email shortly. If you need us sooner, find NJ Coffee on LinkedIn.</p>
           </div>
         </div>
+        <div class="cta-row">
+          <a class="btn" href="#origin">Discover the Origin</a>
+          <a class="btn ghost" href="#menu">See the Menu</a>
+        </div>
+        <p class="hero-status"><span class="dot"></span><span id="herostatustext">Scroll to assemble</span><span class="line"></span></p>
+      </div>
+      <div class="part-labels" id="partlabels" aria-hidden="true">
+        <div class="part-label" id="label-beans"><span class="pl-num">01</span><span class="pl-name">Beans</span></div>
+        <div class="part-label" id="label-bag"><span class="pl-num">02</span><span class="pl-name">Bag</span></div>
+        <div class="part-label" id="label-seal"><span class="pl-num">03</span><span class="pl-name">Seal</span></div>
+        <div class="part-label" id="label-cup"><span class="pl-num">04</span><span class="pl-name">Cup</span></div>
+      </div>
+      <div class="alt-counter" id="altcounter" aria-hidden="true"><span class="alt-num" id="altnum">0</span><span class="alt-unit">m &middot; Yirgacheffe altitude</span></div>
+    </div>
+  </section>
+
+  <!-- ORIGIN (cream paper) -->
+  <section id="origin" class="paper" aria-label="Origin">
+    <div class="wrap">
+      <p class="eyebrow">The Origin</p>
+      <h2>Rooted in Yirgacheffe.</h2>
+      <p class="lede">From the highlands of Ethiopia, discover the origin behind every NJ Coffee experience.</p>
+      <div class="fact-row">
+        <div class="fact">Single-origin<small>Yirgacheffe</small></div>
+        <div class="fact">Ethiopia<small>Grown high</small></div>
+        <div class="fact">2,200 m<small>Altitude</small></div>
+      </div>
+      <div class="cta-row">
+        <a class="btn" href="#bean">Explore the Bean</a>
       </div>
     </div>
   </section>
+
+  <!-- BEAN (cream stage) -->
+  <section id="bean" aria-label="The bean">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">The Bean</p>
+        <h2>Every detail matters.</h2>
+        <p class="lede">Single-origin Yirgacheffe coffee.</p>
+        <div class="cta-row">
+          <a class="btn" href="#roast">See the Roast</a>
+        </div>
+      </div>
+      <div>
+        <img class="frame-img" src="v11-scroll/frame-start-cream.jpg" alt="Exploded view of the NJ Coffee bag — seal strip, pouch, roasted beans, grounds and cream cup floating apart" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- ROAST (deeper warm cream) -->
+  <section id="roast" aria-label="Roast">
+    <canvas class="lightfield" id="lf-roast" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <p class="eyebrow">Roast</p>
+      <h2>Roasted with intention.</h2>
+      <p class="roast-line">12 kg at a time. <em>Every Tuesday.</em></p>
+      <div class="cta-row">
+        <a class="btn" href="#bag">Meet the Bag</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIGNATURE BAG (cream stage) -->
+  <section id="bag" aria-label="Signature bag">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Select</p>
+        <h2>Your coffee. Your ritual.</h2>
+        <p class="lede">250 g. Roasted Tuesday. At your door Friday.</p>
+        <div class="price-line">
+          <span class="product">Yirgacheffe 250g</span>
+          <span class="price">$18</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn" href="#final">Select Your Bag</a>
+        </div>
+      </div>
+      <div>
+        <img class="frame-img" src="v11-scroll/frame-end-cream.jpg" alt="NJ Coffee 250g bag and cream cup, fully assembled" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- BREW / MENU (cream paper) -->
+  <section id="menu" class="paper" aria-label="Brew and menu">
+    <div class="wrap">
+      <p class="eyebrow">Brew</p>
+      <h2>Find your perfect cup.</h2>
+      <div class="menu-list">
+        <div class="menu-item"><span class="name">Espresso</span><span class="price">$3.50</span></div>
+        <div class="menu-item"><span class="name">Cappuccino</span><span class="price">$4.50</span></div>
+        <div class="menu-item"><span class="name">Pour Over</span><span class="price">$5.00</span></div>
+        <div class="menu-item"><span class="name">Cold Brew</span><span class="price">$5.50</span></div>
+        <div class="menu-item"><span class="name">Flat White</span><span class="price">$5.00</span></div>
+      </div>
+      <div class="cta-row">
+        <a class="btn" href="#final">Order Your Bag</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL MOMENT (cream stage + local order form) -->
+  <section id="final" aria-label="Final moment and demo order">
+    <canvas class="lightfield" id="lf-final" aria-hidden="true"></canvas>
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">NJ Coffee</p>
+        <h2>Make it your moment.</h2>
+        <p class="lede">Single-origin Yirgacheffe. Thoughtfully roasted every Tuesday.</p>
+        <div class="price-line">
+          <span class="product">Yirgacheffe 250g</span>
+          <span class="price">$18</span>
+        </div>
+        <img class="frame-img" style="margin-top:36px" src="v11-scroll/frame-end-cream.jpg" alt="NJ Coffee 250g bag and cream cup, fully assembled" loading="lazy">
+      </div>
+      <div>
+        <form class="form-card" id="orderform" novalidate>
+          <h3>Demo Order</h3>
+          <p class="form-note">This is a demonstration form. Your order is built on this device only — nothing is sent anywhere.</p>
+          <div class="field" id="field-name">
+            <label for="custname">Your name</label>
+            <input type="text" id="custname" name="name" autocomplete="name" placeholder="e.g. Fahad Khan">
+            <p class="err">Please enter your name.</p>
+          </div>
+          <div class="field" id="field-product">
+            <label for="product">Product</label>
+            <select id="product" name="product">
+              <option value="Yirgacheffe 250g|18" selected>Yirgacheffe 250g — $18</option>
+            </select>
+            <p class="err">Please choose a product.</p>
+          </div>
+          <div class="field" id="field-qty">
+            <label for="qty">Quantity (bags)</label>
+            <input type="number" id="qty" name="qty" min="1" step="1" value="1" inputmode="numeric">
+            <p class="err">Quantity must be a whole number of 1 or more.</p>
+          </div>
+          <div class="field">
+            <label for="note">Note (optional)</label>
+            <textarea id="note" name="note" rows="2" placeholder="Anything to add?"></textarea>
+          </div>
+          <button class="btn" type="submit">Place Your Demo Order</button>
+          <div id="summary" aria-live="polite">
+            <h4>NJ Coffee — Demo Order</h4>
+            <p class="demo-flag">Demo only — no order has been sent.</p>
+            <pre id="summarytext"></pre>
+            <div class="summary-actions">
+              <button class="btn" type="button" id="downloadbtn">Download Order</button>
+              <button class="btn ghost" type="button" id="copybtn">Copy Order</button>
+            </div>
+            <p id="copyfeedback" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
 </main>
 
+<!-- FOOTER (navy chrome) -->
 <footer>
-  <a class="wordmark" href="#arrival">NJ <b>Coffee</b></a>
-  <nav class="f-links" aria-label="Footer">
-    <a href="#arrival">Home</a>
-    <a href="#origin">Origin</a>
-    <a href="#bean">Coffee</a>
-    <a href="#brewing">Menu</a>
-    <a href="#final">Visit</a>
-  </nav>
-  <small>One origin. One remarkable experience. — © 2026 NJ Coffee</small>
+  <div class="foot-inner">
+    <div>
+      <div class="wordmark">NJ <b>COFFEE</b></div>
+      <p>One origin. One carefully crafted experience.</p>
+      <p>A demo website. Built by Fahad Khan.</p>
+    </div>
+    <div class="foot-links">
+      <a href="#top">Home</a>
+      <a href="#origin">Origin</a>
+      <a href="#bean">Coffee</a>
+      <a href="#menu">Menu</a>
+      <a href="#final">Order</a>
+    </div>
+  </div>
+  <div class="foot-base">&copy; 2026 NJ Coffee — a demo website.</div>
 </footer>
-
 <script>
-  /* ---------- Plain script: loader, nav, reveals, menu, form, cursor ---------- */
-  (function () {
-    var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+(function(){
+  "use strict";
 
-    /* Loader progress (0–100) — advances while the scene boots; never hangs.
-       ?noloader=1 skips the loader entirely (headless-verification aid). */
-    var loader = document.getElementById("loader");
-    var countEl = document.getElementById("load-count");
-    var loadP = 0, loadDone = false;
-    if (new URLSearchParams(location.search).get("noloader") === "1") {
-      if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-      loadDone = true; loadP = 100;
-      var hero0 = document.getElementById("hero-title");
-      if (hero0) hero0.classList.add("in");
-    }
-    var loadTimer = setInterval(function () {
-      loadP = Math.min(loadDone ? 100 : 92, loadP + Math.random() * 9 + 3);
-      if (countEl) countEl.textContent = Math.floor(loadP) + "%";
-      if (loadP >= 100) { clearInterval(loadTimer); finishLoad(); }
-    }, 140);
-    function finishLoad() {
-      if (!loader || loader.classList.contains("done")) return;
-      loader.classList.add("done");
-      var hero = document.getElementById("hero-title");
-      if (hero) hero.classList.add("in");
-      setTimeout(function () { if (loader.parentNode) loader.parentNode.removeChild(loader); }, 1200);
-    }
-    window.__auroraSceneReady = function () { loadDone = true; loadP = Math.max(loadP, 96); };
-    /* Safety: never hang indefinitely. */
-    setTimeout(function () { loadDone = true; loadP = 100; }, 9000);
+  /* ================================================================
+     NJ COFFEE v12 — Cinematic assembly (design ownership)
+     One persistent canvas. The parts are transparent PNG sprites
+     (cut from f_001 / f_119) animated at true 60fps with real
+     easing — NOT a frame sequence. Scroll drives one progress 0→1
+     through a pinned ~350vh hero. A real camera (project() with
+     z-depth, roll, rack focus, dolly zoom) owns ALL scale — no CSS
+     push-in, no stage tilt, so two zoom systems can never fight.
+     Five beats: A establishing, B the beans pour, C the seal snap,
+     D the whip-pan convergence, E the hero light arrives. A light
+     pass travels across the product for the whole compose (the star),
+     numbered part labels land with their parts, a rolling altitude
+     counter runs 0→2,200 m. All effects are cream-toned and serve
+     the product. 60/30/10: cream stage, navy structure, coral accent.
+     ================================================================ */
 
-    /* Nav blur on scroll. */
-    var nav = document.getElementById("site-nav");
-    var cue = document.getElementById("scroll-cue");
-    function onScrollUI() {
-      if (nav) nav.classList.toggle("scrolled", window.scrollY > 40);
-      if (cue) cue.classList.toggle("hide", window.scrollY > window.innerHeight * 0.5);
-    }
-    window.addEventListener("scroll", onScrollUI, { passive: true });
-    onScrollUI();
+  /* ---------- constants ---------- */
+  var SRC_W = 2752, SRC_H = 1536;
+  var UNIT_PRICE = 18;
 
-    /* Reveal on entry. */
-    var els = document.querySelectorAll(".reveal");
-    if (!("IntersectionObserver" in window)) {
-      els.forEach(function (el) { el.classList.add("visible"); });
-    } else {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("visible"); io.unobserve(e.target); } });
-      }, { threshold: 0.12 });
-      els.forEach(function (el) { io.observe(el); });
-    }
-
-    /* Chapter transitions: previous scales to 0.94 + dims to 60% as the next enters. */
-    var chapters = Array.prototype.slice.call(document.querySelectorAll(".chapter"));
-    if ("IntersectionObserver" in window) {
-      var cio = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          var idx = chapters.indexOf(e.target);
-          if (!e.isIntersecting && e.boundingClientRect.top < 0 && idx >= 0 && idx < chapters.length - 1) {
-            e.target.classList.add("leaving");
-          } else {
-            e.target.classList.remove("leaving");
-          }
-        });
-      }, { threshold: 0.15 });
-      chapters.forEach(function (c) { cio.observe(c); });
-    }
-
-    /* Finale cream fallback: the final chapter's dark text needs a cream field
-       even when the WebGL module never runs (no WebGL / slow boot). The module's
-       scroll loop normally lerps the body background to cream; this plain-script
-       observer is the safety net — it only matters when the module is absent,
-       because the module's inline body background wins while it runs. */
-    var finalSec = document.getElementById("final");
-    if (finalSec && "IntersectionObserver" in window) {
-      new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          document.body.classList.toggle("final-in-view", e.isIntersecting);
-        });
-      }, { threshold: 0.2 }).observe(finalSec);
-    }
-
-    /* Menu carousel: centre item enlarged, dots follow, 3D cups follow via custom event. */
-    var drinks = ["Espresso — $3.50", "Cappuccino — $4.50", "Pour Over — $5.00", "Cold Brew — $5.50", "Flat White — $5.00"];
-    var row = document.getElementById("menu-row");
-    var dots = Array.prototype.slice.call(document.querySelectorAll("#menu-dots .dot"));
-    var nowEl = document.getElementById("menu-now");
-    var items = row ? Array.prototype.slice.call(row.querySelectorAll(".menu-item")) : [];
-    var activeDrink = 0;
-    function setDrink(i, scrollInto) {
-      activeDrink = (i + items.length) % items.length;
-      items.forEach(function (it, j) { it.classList.toggle("is-centre", j === activeDrink); });
-      dots.forEach(function (d, j) { d.classList.toggle("on", j === activeDrink); });
-      if (nowEl) nowEl.textContent = drinks[activeDrink];
-      if (scrollInto && items[activeDrink]) items[activeDrink].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-      window.dispatchEvent(new CustomEvent("aurora:drink", { detail: { index: activeDrink } }));
-    }
-    items.forEach(function (it, i) {
-      it.addEventListener("click", function () { setDrink(i, true); });
-      it.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setDrink(i, true); } });
-    });
-    if (row) {
-      var ticking = false;
-      row.addEventListener("scroll", function () {
-        if (ticking) return; ticking = true;
-        requestAnimationFrame(function () {
-          ticking = false;
-          var mid = row.scrollLeft + row.clientWidth / 2, best = 0, bestD = Infinity;
-          items.forEach(function (it, i) {
-            var cx = it.offsetLeft + it.offsetWidth / 2, d = Math.abs(cx - mid);
-            if (d < bestD) { bestD = d; best = i; }
-          });
-          if (best !== activeDrink) setDrink(best, false);
-        });
-      }, { passive: true });
-    }
-
-    /* Order form — LOCAL on-device summary (Fahad, 2026-11-11: the demo site is
-       only a showcase, not a real shop; a local summary never breaks when the
-       n8n trial lapses). Nothing is sent anywhere. */
-    var form = document.getElementById("order");
-    var lastSummaryText = "";
-    if (form) {
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        var name = document.getElementById("f-name").value.trim();
-        var email = document.getElementById("f-email").value.trim();
-        if (!name || !email) { alert("Please add your name and email so we can reply."); return; }
-        var service = document.getElementById("f-service").value;
-        var message = document.getElementById("f-message").value.trim();
-        lastSummaryText = "NJ Coffee — order summary (demo, kept on this device)\n" +
-          "Name: " + name + "\nEmail: " + email + "\nWhat: " + service + "\nMessage: " + (message || "—");
-        var sum = document.getElementById("form-summary");
-        if (sum) {
-          sum.innerHTML = "";
-          [["Name", name], ["Email", email], ["What", service], ["Message", message || "—"]].forEach(function (row) {
-            var d = document.createElement("div");
-            var b = document.createElement("b"); b.textContent = row[0] + ": ";
-            var s = document.createElement("span"); s.textContent = row[1];
-            d.appendChild(b); d.appendChild(s); sum.appendChild(d);
-          });
-        }
-        form.style.display = "none";
-        var ok = document.getElementById("form-ok");
-        if (ok) ok.style.display = "block";
-      });
-    }
-    /* Download the on-device summary as a .txt file (no network). */
-    var dlBtn = document.getElementById("dl-summary");
-    if (dlBtn) {
-      dlBtn.addEventListener("click", function () {
-        if (!lastSummaryText) return;
-        var blob = new Blob([lastSummaryText], { type: "text/plain" });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href = url; a.download = "nj-coffee-order.txt";
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-      });
-    }
-    /* Copy the on-device summary to the clipboard (no network). */
-    var copyBtn = document.getElementById("copy-summary");
-    if (copyBtn) {
-      copyBtn.addEventListener("click", function () {
-        if (!lastSummaryText) return;
-        var done = function () {
-          var old = copyBtn.textContent;
-          copyBtn.textContent = "Copied ✓";
-          setTimeout(function () { copyBtn.textContent = old; }, 1600);
-        };
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(lastSummaryText).then(done, function () { fallbackCopy(); });
-        } else { fallbackCopy(); }
-        function fallbackCopy() {
-          var ta = document.createElement("textarea");
-          ta.value = lastSummaryText; ta.setAttribute("readonly", "");
-          ta.style.position = "absolute"; ta.style.left = "-9999px";
-          document.body.appendChild(ta); ta.select();
-          try { document.execCommand("copy"); done(); } catch (err) { /* clipboard unavailable */ }
-          ta.remove();
-        }
-      });
-    }
-
-    /* Hero-only parallax (mouse rules, @kamrann.ai reel): the mouse owns ONLY
-       this small clamped DOM parallax (±8px on the hero headline). Scroll owns
-       the 3D camera — the two never drive the same transform. Mousemove only
-       writes a target; a rAF loop lerps toward it (damping 0.1); the loop runs
-       only while the hero is in view (IntersectionObserver) and only for fine
-       pointers with motion allowed. Native cursor throughout. */
-    var heroTitle = document.getElementById("hero-title");
-    var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    var heroInView = false, pxTarget = { x: 0, y: 0 }, pxCur = { x: 0, y: 0 }, pxRaf = null;
-    function pxTick() {
-      pxRaf = null;
-      if (!heroInView) { if (heroTitle) heroTitle.style.transform = ""; return; }
-      pxCur.x += (pxTarget.x - pxCur.x) * 0.1;
-      pxCur.y += (pxTarget.y - pxCur.y) * 0.1;
-      heroTitle.style.transform = "translate3d(" + (pxCur.x * 8).toFixed(2) + "px," + (pxCur.y * 8).toFixed(2) + "px,0)";
-      pxRaf = requestAnimationFrame(pxTick);
-    }
-    if (heroTitle && finePointer && !reduced) {
-      document.addEventListener("mousemove", function (e) {
-        pxTarget.x = (e.clientX / window.innerWidth) * 2 - 1;
-        pxTarget.y = (e.clientY / window.innerHeight) * 2 - 1;
-      }, { passive: true });
-      var heroSection = document.getElementById("arrival");
-      if (heroSection && "IntersectionObserver" in window) {
-        new IntersectionObserver(function (entries) {
-          heroInView = entries[0].isIntersecting;
-          if (heroInView && !pxRaf) pxRaf = requestAnimationFrame(pxTick);
-        }, { threshold: 0 }).observe(heroSection);
-      } else { heroInView = true; pxRaf = requestAnimationFrame(pxTick); }
-    }
-  })();
-</script>
-
-<script src="./vendor/gsap.min.js"></script>
-<script src="./vendor/ScrollTrigger.min.js"></script>
-<script src="./vendor/lenis.min.js"></script>
-<script type="module">
-import * as THREE from "three";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
-
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const isMobile = window.matchMedia("(max-width: 900px)").matches;
-const canvas = document.getElementById("scene");
-
-/* ---------- WebGL availability ---------- */
-let renderer = null;
-try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
-  renderer.setClearColor(0x000000, 0);
-} catch (e) { renderer = null; }
-if (!renderer || !window.WebGLRenderingContext) {
-  document.body.classList.add("no-webgl");
-  if (window.__auroraSceneReady) window.__auroraSceneReady();
-  document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("visible"); });
-  var heroT = document.getElementById("hero-title"); if (heroT) heroT.classList.add("in");
-} else {
-
-/* ---------- Renderer / scene / camera ---------- */
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-const scene = new THREE.Scene();
-/* Transparent canvas: the CSS body provides the background colour (lerped per
-   chapter in the tick), so the DOM copy shows through the canvas. An opaque
-   scene.background would hide the headline under the fixed canvas. */
-scene.background = null;
-scene.fog = new THREE.FogExp2(0x132039, 0.04);
-
-/* Chapter gating: each chapter's 3D set scales smoothly in as its chapter
-   approaches and out as it leaves, so the hero shows ONLY the bean (no terrain,
-   roaster, bag or brew gear cluttering the frame). Scale-lerp avoids the
-   material-sharing problem of opacity fades (cupMat is shared by brew + final). */
-let terrainGate = 0, roasterGate = 0, bagGate = 0, brewGate = 0, finalGate = 0;
-function gateGroup(group, pe, pIn, pOut, cur) {
-  const target = (pe >= pIn && pe <= pOut) ? 1 : 0.001;
-  const next = cur + (target - cur) * 0.08;
-  group.scale.setScalar(Math.max(next, 0.001));
-  group.visible = next > 0.02;
-  return next;
-}
-
-const camera = new THREE.PerspectiveCamera(46, window.innerWidth / window.innerHeight, 0.1, 120);
-camera.position.set(0, 1.1, 10);
-
-const pmrem = new THREE.PMREMGenerator(renderer);
-scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-
-/* ---------- Lights ---------- */
-const hemi = new THREE.HemisphereLight(0xece9e4, 0x132039, 0.5);
-scene.add(hemi);
-const key = new THREE.DirectionalLight(0xdfe8ff, 2.0);          /* cool key */
-key.position.set(-5, 7, 6);
-scene.add(key);
-const rim = new THREE.PointLight(0xff6a5c, 22, 18, 1.8);        /* coral rim */
-rim.position.set(4, 2.5, 2);
-scene.add(rim);
-const ember = new THREE.PointLight(0xe07a2e, 30, 20, 1.8);      /* warm ember */
-ember.position.set(0, 1.5, -2);
-scene.add(ember);
-const cursorLight = new THREE.PointLight(0xffe9c4, 0, 9, 1.6);  /* follows the mouse */
-cursorLight.position.set(0, 2, 3);
-scene.add(cursorLight);
-
-/* ---------- Helpers ---------- */
-function softTexture(size, inner, outer) {
-  const c = document.createElement("canvas"); c.width = c.height = size;
-  const g = c.getContext("2d");
-  const grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  grad.addColorStop(0, inner); grad.addColorStop(1, outer);
-  g.fillStyle = grad; g.fillRect(0, 0, size, size);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-  return t;
-}
-const dotTex = softTexture(64, "rgba(255,255,255,1)", "rgba(255,255,255,0)");
-const rayTex = softTexture(256, "rgba(255,220,170,0.55)", "rgba(255,220,170,0)");
-function mulberry(seed) { let a = seed >>> 0; return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-const rand = mulberry(20261111);
-
-/* ---------- Composer: bloom + split-RGB noise ----------
-   ?lite=1 skips the composer (direct render) — SwiftShader verification aid
-   and a fallback for very low-end GPUs. Full bloom runs in a real browser. */
-const useComposer = !new URLSearchParams(location.search).has("lite");
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.65, 0.82);
-composer.addPass(bloom);
-const rgbShiftShader = {
-  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uShift: { value: 0.0012 }, uNoise: { value: 0.035 } },
-  vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
-  fragmentShader: [
-    "uniform sampler2D tDiffuse; uniform float uTime; uniform float uShift; uniform float uNoise; varying vec2 vUv;",
-    "float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }",
-    "void main(){",
-    "  vec2 d = (vUv - 0.5) * uShift;",
-    "  float r = texture2D(tDiffuse, vUv + d).r;",
-    "  float g = texture2D(tDiffuse, vUv).g;",
-    "  float b = texture2D(tDiffuse, vUv - d).b;",
-    "  float n = hash(vUv * (uTime + 1.0)) * uNoise;",
-    "  gl_FragColor = vec4(r + n, g + n, b + n, 1.0);",
-    "}"
-  ].join("\n")
-};
-const rgbPass = new ShaderPass(rgbShiftShader);
-composer.addPass(rgbPass);
-composer.addPass(new OutputPass());
-
-/* ---------- The ONE bean (Kepaso 3-pass procedural deformation) ---------- */
-function makeBeanGeometry() {
-  const geo = new THREE.SphereGeometry(1, 96, 64);
-  const pos = geo.attributes.position;
-  const v = new THREE.Vector3();
-  for (let i = 0; i < pos.count; i++) {
-    v.fromBufferAttribute(pos, i);
-    /* Pass 1 — squash to ellipsoid. */
-    v.x *= 1.0; v.y *= 0.72; v.z *= 0.78;
-    /* Pass 2 — Gaussian valley crease along the X axis (the bean's crease). */
-    const valley = Math.exp(-Math.pow(v.z / 0.22, 2)) * Math.exp(-Math.pow(v.x / 0.85, 2));
-    v.y -= valley * 0.22 * (v.y > 0 ? 1 : 0.4);
-    /* Pass 3 — slight wave so the crease is not dead straight. */
-    v.y += Math.sin(v.x * 3.1) * 0.03;
-    v.z += Math.cos(v.y * 4.0) * 0.015;
-    pos.setXYZ(i, v.x, v.y, v.z);
-  }
-  geo.computeVertexNormals();
-  return geo;
-}
-const beanGeo = makeBeanGeometry();
-const beanMat = new THREE.MeshPhysicalMaterial({
-  color: 0xc8a165, roughness: 0.42, metalness: 0.0, clearcoat: 0.65, clearcoatRoughness: 0.3,
-  sheen: 0.5, sheenRoughness: 0.6, sheenColor: 0xffe9c4, envMapIntensity: 1.15,
-  emissive: 0x000000, emissiveIntensity: 0
-});
-const bean = new THREE.Mesh(beanGeo, beanMat);
-bean.castShadow = false;
-const beanGroup = new THREE.Group();
-beanGroup.add(bean);
-/* Warm contact glow under the bean. */
-const beanGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: rayTex, color: 0xff8a5c, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }));
-beanGlow.scale.set(3.2, 1.6, 1);
-beanGlow.position.y = -0.9;
-beanGroup.add(beanGlow);
-scene.add(beanGroup);
-
-/* Floor reflection: a mirrored bean clone under the glossy floor (cheap, no Reflector).
-   Follows the bean's position/scale/rotation each frame, mirrored across y=-1.4. */
-const beanMirrorMat = new THREE.MeshPhysicalMaterial({
-  color: 0xc8a165, roughness: 0.4, metalness: 0, clearcoat: 0.5,
-  transparent: true, opacity: 0.16, depthWrite: false
-});
-const beanMirror = new THREE.Mesh(beanGeo, beanMirrorMat);
-beanMirror.scale.set(1.85, -1.85, 1.85);
-scene.add(beanMirror);
-
-/* Soft contact shadow: a radial-gradient dark disc on the floor that follows the
-   bean's x/z and fades as the bean rises (developer.jot render-quality bar). */
-function contactShadowTexture() {
-  const c = document.createElement("canvas"); c.width = c.height = 256;
-  const g = c.getContext("2d");
-  const grad = g.createRadialGradient(128, 128, 8, 128, 128, 128);
-  grad.addColorStop(0, "rgba(0,0,0,0.55)"); grad.addColorStop(0.55, "rgba(0,0,0,0.28)"); grad.addColorStop(1, "rgba(0,0,0,0)");
-  g.fillStyle = grad; g.fillRect(0, 0, 256, 256);
-  return new THREE.CanvasTexture(c);
-}
-const contactShadow = new THREE.Mesh(
-  new THREE.PlaneGeometry(3.4, 3.4),
-  new THREE.MeshBasicMaterial({ map: contactShadowTexture(), transparent: true, opacity: 0.8, depthWrite: false })
-);
-contactShadow.rotation.x = -Math.PI / 2;
-contactShadow.position.y = -1.38;
-scene.add(contactShadow);
-
-/* Depth planes of beans (near large/blurred/dim, far small/sharp) — shared geometry. */
-const beanToneA = new THREE.MeshPhysicalMaterial({ color: 0x4a2c1e, roughness: 0.6, clearcoat: 0.15 });
-const beanToneB = new THREE.MeshPhysicalMaterial({ color: 0x3a2217, roughness: 0.6, clearcoat: 0.15 });
-const beanToneC = new THREE.MeshPhysicalMaterial({ color: 0x2e1b12, roughness: 0.6, clearcoat: 0.15 });
-function beanField(material, count, area, zMin, zMax, sMin, sMax, minR) {
-  const inst = new THREE.InstancedMesh(beanGeo, material, count);
-  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), s = new THREE.Vector3(), p = new THREE.Vector3();
-  for (let i = 0; i < count; i++) {
-    let x = 0, y = 0, tries = 0;
-    do {
-      x = (rand() - 0.5) * area[0];
-      y = (rand() - 0.5) * area[1];
-      tries++;
-    } while (minR && Math.hypot(x, y) < minR && tries < 20);
-    p.set(x, y, zMin + rand() * (zMax - zMin));
-    e.set(rand() * Math.PI, rand() * Math.PI, rand() * Math.PI); q.setFromEuler(e);
-    const sc = sMin + rand() * (sMax - sMin); s.set(sc, sc, sc);
-    m.compose(p, q, s); inst.setMatrixAt(i, m);
-  }
-  inst.instanceMatrix.needsUpdate = true;
-  scene.add(inst);
-  return inst;
-}
-beanField(beanToneA, 8, [16, 8], -6, 2, 0.4, 0.7);          /* far, small, sharp */
-beanField(beanToneB, 8, [14, 7], -2, 4, 0.3, 0.5, 2.5);    /* mid, centre kept clear */
-beanField(beanToneC, 6, [12, 6], 2, 6, 0.5, 0.8, 4);       /* near, large, dim — EDGES ONLY */
-
-/* Reflective dark floor (arrival) — glossier so the mirrored bean reads as a reflection. */
-const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(80, 80),
-  new THREE.MeshStandardMaterial({ color: 0x0a0f1c, metalness: 0.9, roughness: 0.14 })
-);
-floor.rotation.x = -Math.PI / 2; floor.position.set(0, -1.4, -4);
-scene.add(floor);
-
-/* ---------- Chapter 2: highland terrain + plants ---------- */
-const terrainGroup = new THREE.Group();
-{
-  const tg = new THREE.PlaneGeometry(70, 46, 110, 70);
-  const tp = tg.attributes.position;
-  for (let i = 0; i < tp.count; i++) {
-    const x = tp.getX(i), y = tp.getY(i);
-    let z = Math.sin(x * 0.12) * 2.2 + Math.cos(y * 0.16) * 1.8 + Math.sin((x + y) * 0.07) * 2.6;
-    z += Math.sin(x * 0.45) * Math.cos(y * 0.4) * 0.5;
-    z -= Math.max(0, 8 - Math.abs(x)) * 0.12; /* gentle valley centre */
-    tp.setZ(i, z);
-  }
-  tg.computeVertexNormals();
-  const terrain = new THREE.Mesh(tg, new THREE.MeshStandardMaterial({ color: 0x1d2a1e, roughness: 0.95, metalness: 0 }));
-  terrain.rotation.x = -Math.PI / 2;
-  terrainGroup.add(terrain);
-  /* Instanced trees: trunk + canopy cones. */
-  const trunkGeo = new THREE.CylinderGeometry(0.09, 0.14, 1.1, 6);
-  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x3a2a1a, roughness: 0.9 });
-  const canopyGeo = new THREE.ConeGeometry(0.85, 2.2, 8);
-  const canopyMat = new THREE.MeshStandardMaterial({ color: 0x2c4a26, roughness: 0.9 });
-  const trees = 42;
-  const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, trees);
-  const canopies = new THREE.InstancedMesh(canopyGeo, canopyMat, trees);
-  const m4 = new THREE.Matrix4(), q4 = new THREE.Quaternion(), s4 = new THREE.Vector3();
-  /* Terrain height at group-local (x, z): the plane's local y maps to world -z, */
-  /* so the displacement is evaluated at (x, -z). */
-  function terrainH(x, z) {
-    const y = -z;
-    let h = Math.sin(x * 0.12) * 2.2 + Math.cos(y * 0.16) * 1.8 + Math.sin((x + y) * 0.07) * 2.6;
-    h += Math.sin(x * 0.45) * Math.cos(y * 0.4) * 0.5;
-    h -= Math.max(0, 8 - Math.abs(x)) * 0.12;
-    return h;
-  }
-  for (let i = 0; i < trees; i++) {
-    const x = (rand() - 0.5) * 56, z = (rand() - 0.5) * 34;
-    const sc = 0.7 + rand() * 1.1;
-    const gy = terrainH(x, z);
-    m4.compose(new THREE.Vector3(x, gy + 0.55 * sc, z), q4, s4.set(sc, sc, sc));
-    trunks.setMatrixAt(i, m4);
-    m4.compose(new THREE.Vector3(x, gy + 1.1 * sc + 0.9 * sc, z), q4, s4.set(sc, sc, sc));
-    canopies.setMatrixAt(i, m4);
-  }
-  trunks.instanceMatrix.needsUpdate = true; canopies.instanceMatrix.needsUpdate = true;
-  terrainGroup.add(trunks); terrainGroup.add(canopies);
-  /* Coffee cherries: small red instanced spheres on low bushes. */
-  const cherryGeo = new THREE.SphereGeometry(0.09, 8, 6);
-  const cherryMat = new THREE.MeshStandardMaterial({ color: 0xb03a2e, roughness: 0.4 });
-  const cherries = new THREE.InstancedMesh(cherryGeo, cherryMat, 90);
-  for (let i = 0; i < 90; i++) {
-    const x = (rand() - 0.5) * 34, z = (rand() - 0.5) * 20;
-    const gy = terrainH(x, z);
-    m4.compose(new THREE.Vector3(x, gy + 0.35 + rand() * 0.5, z), q4, s4.set(1, 1, 1));
-    cherries.setMatrixAt(i, m4);
-  }
-  cherries.instanceMatrix.needsUpdate = true;
-  terrainGroup.add(cherries);
-}
-terrainGroup.position.set(0, -2.4, -8);
-scene.add(terrainGroup);
-
-/* ---------- Chapter 4: roaster (procedural, rotating drum) ---------- */
-const roaster = new THREE.Group();
-const drumMat = new THREE.MeshStandardMaterial({ color: 0x8a8f98, metalness: 0.9, roughness: 0.35 });
-const drum = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.05, 1.7, 32), drumMat);
-drum.rotation.z = Math.PI / 2;
-roaster.add(drum);
-const drumInner = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.92, 0.92, 1.72, 32, 1, true),
-  new THREE.MeshStandardMaterial({ color: 0x1a0f08, metalness: 0.4, roughness: 0.6, side: THREE.BackSide, emissive: 0xe07a2e, emissiveIntensity: 0.25 })
-);
-drumInner.rotation.z = Math.PI / 2;
-roaster.add(drumInner);
-const frameMat = new THREE.MeshStandardMaterial({ color: 0x2a2f38, metalness: 0.85, roughness: 0.4 });
-[-0.95, 0.95].forEach(function (x) {
-  const leg = new THREE.Mesh(new THREE.BoxGeometry(0.14, 1.7, 1.9), frameMat);
-  leg.position.set(x, -0.4, 0); roaster.add(leg);
-});
-const ring = new THREE.Mesh(new THREE.TorusGeometry(1.12, 0.07, 12, 40), frameMat);
-ring.rotation.y = Math.PI / 2; ring.position.x = 0.9; roaster.add(ring);
-const drumGlow = new THREE.PointLight(0xe07a2e, 26, 9, 1.8);
-drumGlow.position.set(0, 0, 0); roaster.add(drumGlow);
-roaster.position.set(3, 0.6, -3);
-scene.add(roaster);
-
-/* ---------- Chapter 5: signature bag (procedural, canvas label) ---------- */
-function bagLabelTexture() {
-  const c = document.createElement("canvas"); c.width = 512; c.height = 640;
-  const g = c.getContext("2d");
-  g.fillStyle = "#ECE9E4"; g.fillRect(0, 0, 512, 640);
-  g.fillStyle = "#132039"; g.fillRect(0, 0, 512, 10); g.fillRect(0, 630, 512, 10);
-  g.fillStyle = "#FF6A5C"; g.fillRect(206, 78, 100, 6);
-  g.fillStyle = "#132039"; g.textAlign = "center";
-  g.font = "600 58px Antonio, sans-serif";
-  var njW = g.measureText("NJ ").width, cfW = g.measureText("COFFEE").width;
-  var lx = 256 - (njW + cfW) / 2;
-  g.textAlign = "left";
-  g.fillStyle = "#132039"; g.fillText("NJ ", lx, 200);
-  g.fillStyle = "#FF6A5C"; g.fillText("COFFEE", lx + njW, 200);
-  g.textAlign = "center";
-  g.fillStyle = "#132039"; g.font = "500 26px 'DM Sans', sans-serif";
-  g.fillText("S I N G L E   O R I G I N", 256, 300);
-  g.font = "700 30px 'DM Sans', sans-serif"; g.fillText("YIRGACHEFFE", 256, 352);
-  g.font = "500 26px 'DM Sans', sans-serif"; g.fillText("— ETHIOPIA —", 256, 392);
-  g.strokeStyle = "#132039"; g.lineWidth = 2;
-  g.beginPath(); g.moveTo(106, 440); g.lineTo(406, 440); g.stroke();
-  g.font = "700 44px Antonio, sans-serif"; g.fillText("250 g", 256, 510);
-  g.font = "500 22px 'DM Sans', sans-serif"; g.fillStyle = "rgba(19,32,57,0.6)";
-  g.fillText("ROASTED EVERY TUESDAY", 256, 556);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
-  return t;
-}
-const bagGroup = new THREE.Group();
-const paperMat = new THREE.MeshStandardMaterial({ color: 0xece9e4, roughness: 0.92, metalness: 0 });
-const bagBody = new THREE.Mesh(new THREE.BoxGeometry(1.7, 2.3, 0.75), paperMat);
-bagBody.position.y = 1.15;
-bagGroup.add(bagBody);
-const bagTop = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.42, 0.75), new THREE.MeshStandardMaterial({ color: 0xd8cfc2, roughness: 0.95 }));
-bagTop.position.y = 2.45; bagTop.rotation.z = 0.03;
-bagGroup.add(bagTop);
-const bagSeal = new THREE.Mesh(new THREE.BoxGeometry(1.72, 0.1, 0.77), new THREE.MeshStandardMaterial({ color: 0x132039, roughness: 0.6 }));
-bagSeal.position.y = 2.22;
-bagGroup.add(bagSeal);
-const label = new THREE.Mesh(
-  new THREE.PlaneGeometry(1.35, 1.7),
-  new THREE.MeshStandardMaterial({ map: bagLabelTexture(), roughness: 0.85 })
-);
-label.position.set(0, 1.15, 0.39);
-bagGroup.add(label);
-bagGroup.position.set(-3, 0, -5);
-bagGroup.rotation.y = 0.35;
-scene.add(bagGroup);
-
-/* ---------- Chapter 6: brewing setup (cups, dripper, kettle, grinder, vessel) ---------- */
-const brewGroup = new THREE.Group();
-const cupMat = new THREE.MeshPhysicalMaterial({ color: 0xece9e4, roughness: 0.25, clearcoat: 0.8, clearcoatRoughness: 0.2 });
-const cupProfile = [
-  [0.0, 0.0], [0.30, 0.0], [0.38, 0.04], [0.42, 0.22], [0.44, 0.5], [0.42, 0.52], [0.38, 0.5], [0.36, 0.24], [0.30, 0.08], [0.0, 0.08]
-].map(function (p) { return new THREE.Vector2(p[0], p[1]); });
-const cupGeo = new THREE.LatheGeometry(cupProfile, 40);
-const brewCups = [];
-const drinkCols = [0x2b1a12, 0x6b4a2f, 0x8a5a33, 0x3a2418, 0x4a2f1d];
-for (let i = 0; i < 5; i++) {
-  const cup = new THREE.Group();
-  const body = new THREE.Mesh(cupGeo, cupMat);
-  cup.add(body);
-  const cof = new THREE.Mesh(new THREE.CircleGeometry(0.36, 32), new THREE.MeshStandardMaterial({ color: drinkCols[i], roughness: 0.15 }));
-  cof.rotation.x = -Math.PI / 2; cof.position.y = 0.47; cup.add(cof);
-  const handle = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 10, 24, Math.PI), cupMat);
-  handle.rotation.z = -Math.PI / 2; handle.position.set(0.42, 0.26, 0); cup.add(handle);
-  const saucer = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.05, 32), new THREE.MeshStandardMaterial({ color: 0x132039, roughness: 0.5 }));
-  saucer.position.y = -0.03; cup.add(saucer);
-  cup.position.set((i - 2) * 1.15, 0, 0);
-  cup.userData.baseScale = 1;
-  brewGroup.add(cup);
-  brewCups.push(cup);
-}
-/* Dripper (cone) + kettle (lathe + spout) + grinder + glass vessel. */
-const dripper = new THREE.Mesh(new THREE.ConeGeometry(0.5, 0.6, 32, 1, true), new THREE.MeshStandardMaterial({ color: 0x132039, metalness: 0.6, roughness: 0.4, side: THREE.DoubleSide }));
-dripper.position.set(-2.6, 1.15, -0.6); brewGroup.add(dripper);
-const kettleProfile = [[0, 0], [0.34, 0], [0.42, 0.1], [0.44, 0.5], [0.4, 0.85], [0.3, 0.95], [0.28, 0.95], [0.3, 0.8], [0.32, 0.4], [0, 0.4]].map(function (p) { return new THREE.Vector2(p[0], p[1]); });
-const kettle = new THREE.Mesh(new THREE.LatheGeometry(kettleProfile, 32), new THREE.MeshStandardMaterial({ color: 0x1c1f26, metalness: 0.9, roughness: 0.3 }));
-kettle.position.set(2.9, 0, -0.7); brewGroup.add(kettle);
-const spout = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.09, 0.9, 12), kettle.material);
-spout.position.set(2.45, 0.75, -0.7); spout.rotation.z = 0.7; brewGroup.add(spout);
-const grinder = new THREE.Group();
-const gBody = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.48, 1.0, 24), new THREE.MeshStandardMaterial({ color: 0x2a2f38, metalness: 0.7, roughness: 0.45 }));
-gBody.position.y = 0.5; grinder.add(gBody);
-const gTop = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.34, 0.35, 24), new THREE.MeshStandardMaterial({ color: 0x8a8f98, metalness: 0.85, roughness: 0.35 }));
-gTop.position.y = 1.15; grinder.add(gTop);
-grinder.position.set(-3.9, 0, -0.4); brewGroup.add(grinder);
-const vessel = new THREE.Mesh(
-  new THREE.CylinderGeometry(0.5, 0.44, 1.3, 32, 1, true),
-  new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: 0.05, transmission: 0.9, transparent: true, opacity: 0.45, side: THREE.DoubleSide })
-);
-vessel.position.set(3.9, 0.65, 0.4); brewGroup.add(vessel);
-/* Pour stream (animates in during chapter 6) — glossy liquid (developer.jot render bar). */
-const pourMat = new THREE.MeshPhysicalMaterial({ color: 0x3a2418, roughness: 0.05, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.4, transparent: true, opacity: 0 });
-const pour = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.05, 1.1, 10), pourMat);
-pour.position.set(-2.6, 0.55, -0.6); brewGroup.add(pour);
-/* Glossy coffee pool at the base of the pour. */
-const poolMat = new THREE.MeshPhysicalMaterial({ color: 0x1e1008, roughness: 0.03, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.6, transparent: true, opacity: 0 });
-const pool = new THREE.Mesh(new THREE.CircleGeometry(0.32, 32), poolMat);
-pool.rotation.x = -Math.PI / 2; pool.position.set(-2.6, 0.02, -0.6); brewGroup.add(pool);
-/* Faceted translucent ICE CUBE (developer.jot reel hero element) beside the Cold Brew
-   cup, with a thin glossy coffee stream pouring onto it and a small pool beneath. */
-const iceMat = new THREE.MeshPhysicalMaterial({
-  color: 0xdfeaf2, roughness: 0.05, metalness: 0, transmission: 0.9, thickness: 1.2,
-  ior: 1.31, clearcoat: 1, clearcoatRoughness: 0.05, flatShading: true, envMapIntensity: 1.5,
-  transparent: true, opacity: 0.95
-});
-const iceCube = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), iceMat);
-iceCube.position.set(1.62, 0.4, 0.3);
-iceCube.rotation.set(0.3, 0.6, 0.15);
-brewGroup.add(iceCube);
-const iceStreamMat = new THREE.MeshPhysicalMaterial({ color: 0x3a1e10, roughness: 0.05, metalness: 0, clearcoat: 1, envMapIntensity: 1.4, transparent: true, opacity: 0 });
-const iceStream = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.55, 10), iceStreamMat);
-iceStream.position.set(1.62, 0.9, 0.3);
-brewGroup.add(iceStream);
-const icePool = new THREE.Mesh(new THREE.CircleGeometry(0.3, 32),
-  new THREE.MeshPhysicalMaterial({ color: 0x1e1008, roughness: 0.03, metalness: 0, clearcoat: 1, envMapIntensity: 1.6, transparent: true, opacity: 0 }));
-icePool.rotation.x = -Math.PI / 2;
-icePool.position.set(1.62, 0.02, 0.3);
-brewGroup.add(icePool);
-/* Grounds: instanced small deformed spheres that fall in chapter 6. */
-const groundsCount = 220;
-const grounds = new THREE.InstancedMesh(new THREE.SphereGeometry(0.035, 6, 5), new THREE.MeshStandardMaterial({ color: 0x2b1a12, roughness: 0.9 }), groundsCount);
-grounds.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-brewGroup.add(grounds);
-const groundsData = [];
-for (let i = 0; i < groundsCount; i++) {
-  groundsData.push({ x: -2.6 + (rand() - 0.5) * 0.7, y: 1.6 + rand() * 1.2, z: -0.6 + (rand() - 0.5) * 0.5, s: 0.6 + rand() * 0.9, v: 0.4 + rand() * 0.7 });
-}
-brewGroup.position.set(2, 0, -8);
-scene.add(brewGroup);
-
-/* ---------- Chapter 7: final cup + bean callback ---------- */
-const finalGroup = new THREE.Group();
-const finalCup = new THREE.Group();
-const fBody = new THREE.Mesh(cupGeo, cupMat);
-fBody.scale.setScalar(1.6); finalCup.add(fBody);
-const fCof = new THREE.Mesh(new THREE.CircleGeometry(0.58, 32), new THREE.MeshStandardMaterial({ color: 0x2b1a12, roughness: 0.15 }));
-fCof.rotation.x = -Math.PI / 2; fCof.position.y = 0.76; finalCup.add(fCof);
-const fHandle = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.08, 10, 24, Math.PI), cupMat);
-fHandle.rotation.z = -Math.PI / 2; fHandle.position.set(0.68, 0.42, 0); finalCup.add(fHandle);
-const fSaucer = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.07, 40), new THREE.MeshStandardMaterial({ color: 0x132039, roughness: 0.5 }));
-fSaucer.position.y = -0.04; finalCup.add(fSaucer);
-finalCup.position.set(-0.6, 0, 0);
-finalGroup.add(finalCup);
-finalGroup.position.set(0, 0.1, -10);
-scene.add(finalGroup);
-
-/* ---------- Atmosphere: dust, steam, light rays ---------- */
-function makePoints(count, area, color, size, opacity) {
-  const geo = new THREE.BufferGeometry();
-  const pos = new Float32Array(count * 3);
-  const base = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    base[i * 3] = (rand() - 0.5) * area[0];
-    base[i * 3 + 1] = (rand() - 0.5) * area[1];
-    base[i * 3 + 2] = (rand() - 0.5) * area[2];
-    pos[i * 3] = base[i * 3];
-    pos[i * 3 + 1] = base[i * 3 + 1];
-    pos[i * 3 + 2] = base[i * 3 + 2];
-  }
-  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  const mat = new THREE.PointsMaterial({ color, size, map: dotTex, transparent: true, opacity, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
-  const pts = new THREE.Points(geo, mat);
-  pts.userData.base = base;
-  scene.add(pts);
-  return pts;
-}
-const dust = makePoints(isMobile ? 260 : 620, [26, 12, 26], 0xffe9c4, 0.09, 0.55);
-dust.position.set(0, 1.5, -3);
-const steam = makePoints(90, [1.6, 1, 1.6], 0xffffff, 0.35, 0.0); /* opacity driven per chapter */
-steam.position.set(2, 1.2, -8);
-const finalSteam = makePoints(60, [1.2, 1, 1.2], 0xffffff, 0.3, 0.0);
-finalSteam.position.set(-0.6, 1.2, -10);
-/* Light-ray sprites. */
-const rays = [];
-for (let i = 0; i < 4; i++) {
-  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: rayTex, color: 0xffd9a0, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false }));
-  sp.scale.set(1.2 + rand() * 1.6, 7 + rand() * 5, 1);
-  sp.position.set(-4 + i * 2.6 + rand(), 3.5, -2 - rand() * 3);
-  sp.material.rotation = (rand() - 0.5) * 0.5;
-  scene.add(sp); rays.push(sp);
-}
-
-/* ---------- Scroll driver: one global progress 0→1 (GSAP scrub: 1, Lenis, fallback) ---------- */
-let targetProgress = 0, progress = 0, lastProgressChange = performance.now();
-const story = document.getElementById("story");
-if (!reducedMotion && window.gsap && window.ScrollTrigger) {
-  gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.create({
-    trigger: "#story", start: "top top", end: "bottom bottom", scrub: 1,
-    onUpdate: function (self) { targetProgress = self.progress; lastProgressChange = performance.now(); }
-  });
-  if (window.Lenis) {
-    try {
-      const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
-      const rafL = function (t) { lenis.raf(t); requestAnimationFrame(rafL); };
-      requestAnimationFrame(rafL);
-    } catch (e) { /* native scroll fallback */ }
-  }
-} else if (!reducedMotion) {
-  window.addEventListener("scroll", function () {
-    const max = document.body.scrollHeight - window.innerHeight;
-    targetProgress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
-    lastProgressChange = performance.now();
-  }, { passive: true });
-}
-if (reducedMotion) {
-  document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("visible"); });
-}
-
-/* ---------- Camera path: CatmullRom through 7 waypoints + lookAt curve ---------- */
-const camCurve = new THREE.CatmullRomCurve3([
-  new THREE.Vector3(0, 1.1, 10),
-  new THREE.Vector3(0, 2.6, 4.5),
-  new THREE.Vector3(0.4, 1.0, 2.2),
-  new THREE.Vector3(3.2, 1.3, -0.5),
-  new THREE.Vector3(-3.2, 1.3, -2.5),
-  new THREE.Vector3(2.2, 1.6, -5.5),
-  new THREE.Vector3(0, 2.2, -4.5)
-]);
-const lookCurve = new THREE.CatmullRomCurve3([
-  new THREE.Vector3(0.35, 0.7, 0),
-  new THREE.Vector3(0, 1.2, -4),
-  new THREE.Vector3(0, 0.8, 0.6),
-  new THREE.Vector3(3, 0.8, -3),
-  new THREE.Vector3(-3, 0.8, -5),
-  new THREE.Vector3(2, 0.8, -8),
-  new THREE.Vector3(0, 0.9, -10)
-]);
-
-/* ---------- Bean keyframes (position / scale / roast colour) ---------- */
-const beanKeys = [
-  { p: 0.00, pos: [-2.3, 0.7, 0], s: 1.6 },
-  { p: 0.14, pos: [0, 2.4, -3], s: 0.85 },
-  { p: 0.28, pos: [0, 0.9, 0.8], s: 3.2 },
-  { p: 0.43, pos: [3, 0.8, -3], s: 0.9 },
-  { p: 0.57, pos: [-2.1, 0.6, -5], s: 0.65 },
-  { p: 0.71, pos: [1.2, 0.7, -8], s: 0.45 },
-  { p: 0.86, pos: [1.2, 0.7, -8], s: 0.12 },
-  { p: 1.00, pos: [0.9, 0.6, -10], s: 0.6 }
-];
-const beanRaw = new THREE.Color(0xc8a165), beanRoast = new THREE.Color(0x2b1a12);
-function beanAt(p) {
-  let i = 0;
-  while (i < beanKeys.length - 2 && p > beanKeys[i + 1].p) i++;
-  const a = beanKeys[i], b = beanKeys[i + 1];
-  const t = Math.min(1, Math.max(0, (p - a.p) / (b.p - a.p)));
-  const sm = t * t * (3 - 2 * t);
-  return {
-    pos: [a.pos[0] + (b.pos[0] - a.pos[0]) * sm, a.pos[1] + (b.pos[1] - a.pos[1]) * sm, a.pos[2] + (b.pos[2] - a.pos[2]) * sm],
-    s: a.s + (b.s - a.s) * sm
+  /* Part sprites. hx/hy = top-left of the cutout in the 2752x1536 source.
+     w/h = the PNG size (px).
+     Each layer carries 4 pre-rendered blur levels [sharp, b1, b2, b3] for
+     the rack-focus pass (pre-rendered at load, never ctx.filter blur per
+     frame). cupFront/cupBack split the cup: cupBack = rim + coffee +
+     back wall (drawn BEHIND the beans); cupFront = front wall + saucer
+     (drawn OVER the beans, so they dip behind the rim and the cup reads
+     as a 3-D vessel, not a card). Shadow blur levels are [sharp, b6,
+     b12, b18] (6/12/18px radii) for the live contact shadow. */
+  var PART_DEFS = {
+    seal:    {src:"v12-parts/seal.png",        w:384, h:95,  hx:1175, hy:80,  blur:["seal","seal_b1","seal_b2","seal_b3"]},
+    bag:     {src:"v12-parts/bag.png",         w:447, h:571, hx:1153, hy:180, blur:["bag","bag_b1","bag_b2","bag_b3"]},
+    beans:   {src:"v12-parts/beans.png",       w:397, h:172, hx:1192, hy:753, blur:["beans","beans_b1","beans_b2","beans_b3"]},
+    cupBack: {src:"v12-parts/cupBack.png",     w:472, h:475, hx:1150, hy:920, blur:["cupBack","cupBack_b1","cupBack_b2","cupBack_b3"]},
+    cupFront:{src:"v12-parts/cupFront.png",    w:472, h:475, hx:1150, hy:920, blur:["cupFront","cupFront_b1","cupFront_b2","cupFront_b3"]},
+    shadow:  {src:"v12-parts/shadow.png",      w:600, h:136, hx:1100, hy:1400,blur:["shadow","shadow_b6","shadow_b12","shadow_b18"]}
   };
-}
-/* Background / fog keyframes per chapter. */
-const bgKeys = [
-  { p: 0.00, c: 0x132039, f: 0.028 },
-  { p: 0.14, c: 0x16263f, f: 0.022 },
-  { p: 0.28, c: 0x132039, f: 0.035 },
-  { p: 0.43, c: 0x1a120c, f: 0.030 },
-  { p: 0.57, c: 0x14243f, f: 0.024 },
-  { p: 0.71, c: 0x14100c, f: 0.030 },
-  { p: 0.86, c: 0xe8dfd2, f: 0.012 },
-  { p: 1.00, c: 0xe8dfd2, f: 0.012 }
-];
-const _cA = new THREE.Color(), _cB = new THREE.Color();
-function bgAt(p, out) {
-  let i = 0;
-  while (i < bgKeys.length - 2 && p > bgKeys[i + 1].p) i++;
-  const a = bgKeys[i], b = bgKeys[i + 1];
-  const t = Math.min(1, Math.max(0, (p - a.p) / (b.p - a.p)));
-  const sm = t * t * (3 - 2 * t);
-  _cA.setHex(a.c); _cB.setHex(b.c);
-  out.copy(_cA).lerp(_cB, sm);
-  return a.f + (b.f - a.f) * sm;
-}
+  var PART_NAMES = ["seal","bag","beans","cupBack","cupFront","shadow"];
+  /* All image files to preload (sharp + 3 blur levels per layer). */
+  var IMAGE_FILES = {
+    seal:"v12-parts/seal.png", seal_b1:"v12-parts/seal_b1.png", seal_b2:"v12-parts/seal_b2.png", seal_b3:"v12-parts/seal_b3.png",
+    bag:"v12-parts/bag.png", bag_b1:"v12-parts/bag_b1.png", bag_b2:"v12-parts/bag_b2.png", bag_b3:"v12-parts/bag_b3.png",
+    beans:"v12-parts/beans.png", beans_b1:"v12-parts/beans_b1.png", beans_b2:"v12-parts/beans_b2.png", beans_b3:"v12-parts/beans_b3.png",
+    cupBack:"v12-parts/cupBack.png", cupBack_b1:"v12-parts/cupBack_b1.png", cupBack_b2:"v12-parts/cupBack_b2.png", cupBack_b3:"v12-parts/cupBack_b3.png",
+    cupFront:"v12-parts/cupFront.png", cupFront_b1:"v12-parts/cupFront_b1.png", cupFront_b2:"v12-parts/cupFront_b2.png", cupFront_b3:"v12-parts/cupFront_b3.png",
+    shadow:"v12-parts/shadow.png", shadow_b6:"v12-parts/shadow_b6.png", shadow_b12:"v12-parts/shadow_b12.png", shadow_b18:"v12-parts/shadow_b18.png"
+  };
 
-/* ---------- Mouse: cursor light, particle push, bean glow ----------
-   SEPARATED INPUTS (mouse rules, @kamrann.ai reel): scroll owns the 3D
-   camera/progress; the mouse NEVER drives the camera or any scroll-driven
-   transform. The pointer here only feeds lighting/particle hover effects
-   (cursor light, dust push, bean glow) — and only for fine pointers. The
-   hero parallax lives in the plain script as a DOM-only ±8px translate. */
-const pointer = new THREE.Vector2(0, 0);
-const pointerTarget = new THREE.Vector2(0, 0);
-let beanHovered = false;
-const raycaster = new THREE.Raycaster();
-const finePointer3D = window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reducedMotion;
-if (finePointer3D) {
-  window.addEventListener("pointermove", function (e) {
-    pointerTarget.x = (e.clientX / window.innerWidth) * 2 - 1;
-    pointerTarget.y = -((e.clientY / window.innerHeight) * 2 - 1);
-  }, { passive: true });
-}
+  /* Choreography offsets (source px, measured from f_001 → f_119).
+     Bag and cup compose offsets are the measured f_119 centres minus the
+     f_001 centres (Claude's rounded numbers were -195/+250 in render px;
+     these are the exact measured values, including the vertical
+     convergence — the parts meet at a middle height). */
+  var BAG_DX = -411, BAG_DY = 296;    /* bag → left, down to middle height */
+  var CUP_DX = 435,  CUP_DY = -313;   /* cup → right, up to middle height */
+  var SEAL_DROP = 32;                 /* source px: closes the measured 28px gap + seats on the bag */
+  var BEANS_DROP = 75;                /* source px: beans reach the cup rim */
 
-/* CTA hover: ease the camera flight to a stop + disperse particles outward.
-   Fine pointers only (touch has no hover; the CTA still works by tap). */
-let hoverStop = false, disperse = 0;
-if (finePointer3D) {
-  document.querySelectorAll("[data-hover-stop]").forEach(function (el) {
-    el.addEventListener("mouseenter", function () { hoverStop = true; });
-    el.addEventListener("mouseleave", function () { hoverStop = false; });
-  });
-}
+  /* Composition anchor (source coords) — midpoint of the p=0 stack centre
+     (1385, 737) and the p=1 composition centre (1400, 779). Every part is
+     positioned relative to this anchor, so the product never jumps. */
+  var ANCHOR_X = 1392, ANCHOR_Y = 758;
 
-/* Menu drink selection drives the 3D cups. */
-let activeDrink = 0;
-let swapPulse = 0; /* cup-swap moment (developer.jot crossfade): pulses on drink change */
-window.addEventListener("aurora:drink", function (e) { activeDrink = e.detail.index; swapPulse = 1; });
-
-/* ---------- Resize with ~2.4M-pixel framebuffer budget ---------- */
-function applySize() {
-  const w = window.innerWidth, h = window.innerHeight;
-  camera.aspect = w / h; camera.updateProjectionMatrix();
-  let pr = Math.min(window.devicePixelRatio || 1, 2);
-  const budget = 2400000;
-  if (w * h * pr * pr > budget) pr = Math.sqrt(budget / (w * h));
-  renderer.setPixelRatio(pr);
-  renderer.setSize(w, h);
-  composer.setSize(w, h);
-}
-applySize();
-window.addEventListener("resize", applySize);
-
-/* ---------- Render loop ----------
-   ?still=1 renders exactly ONE frame and stops — SwiftShader verification aid
-   (the continuous RAF loop is too slow for CPU rendering to screenshot). */
-const stillMode = new URLSearchParams(location.search).has("still");
-const clock = new THREE.Clock();
-const vignetteEl = document.querySelector(".vignette");
-let rafId = null, running = true, firstFrame = true;
-let prevProgress = 0, speedSmooth = 0, idlePhase = 0;
-const _v3 = new THREE.Vector3(), _v3b = new THREE.Vector3(), _v3c = new THREE.Vector3();
-const _m4 = new THREE.Matrix4(), _q = new THREE.Quaternion(), _s = new THREE.Vector3(1, 1, 1);
-const cursorWorld = new THREE.Vector3(0, 2, 2);
-
-function tick() {
-  if (!running) { rafId = null; return; }
-  if (!stillMode) rafId = requestAnimationFrame(tick);
-  const dt = Math.min(clock.getDelta(), 0.05);
-  const t = clock.elapsedTime;
-
-  /* Smooth the scroll progress (eases to a stop while a CTA is hovered). */
-  const lerpF = hoverStop ? 0.015 : 0.08;
-  progress += (targetProgress - progress) * lerpF;
-  if (Math.abs(targetProgress - progress) > 0.0004) lastProgressChange = performance.now();
-  const p = progress;
-
-  /* Scroll speed → vignette tightens + RGB shift grows. */
-  const speed = Math.abs(p - prevProgress) / Math.max(dt, 0.001);
-  prevProgress = p;
-  speedSmooth += (speed - speedSmooth) * 0.1;
-  if (vignetteEl) vignetteEl.style.setProperty("--vig", (0.82 + Math.min(0.18, speedSmooth * 0.06)).toFixed(3));
-  rgbPass.uniforms.uShift.value = 0.0012 + Math.min(0.004, speedSmooth * 0.002);
-  rgbPass.uniforms.uTime.value = t;
-
-  /* Idle drift: the camera always moves gently, never static. */
-  const idle = !reducedMotion && (performance.now() - lastProgressChange > 2500) && !hoverStop;
-  if (idle) idlePhase += dt;
-  const drift = idle ? Math.sin(idlePhase * 0.35) * 0.004 : 0;
-  const pe = THREE.MathUtils.clamp(p + drift, 0, 1);
-
-  /* Chapter gating: only the current chapter's 3D set is visible. */
-  terrainGate = gateGroup(terrainGroup, pe, 0.08, 0.34, terrainGate);
-  roasterGate = gateGroup(roaster, pe, 0.36, 0.60, roasterGate);
-  bagGate = gateGroup(bagGroup, pe, 0.50, 0.74, bagGate);
-  brewGate = gateGroup(brewGroup, pe, 0.64, 0.88, brewGate);
-  finalGate = gateGroup(finalGroup, pe, 0.80, 1.01, finalGate);
-
-  /* Camera on its baked path + lookAt curve — SCROLL OWNS THE CAMERA.
-     The mouse never touches it (separated inputs; that was the fight). */
-  pointer.x += (pointerTarget.x - pointer.x) * 0.1;
-  pointer.y += (pointerTarget.y - pointer.y) * 0.1;
-  camCurve.getPoint(pe, _v3);
-  lookCurve.getPoint(pe, _v3b);
-  const bob = idle ? Math.sin(idlePhase * 0.6) * 0.05 : 0;
-  camera.position.set(_v3.x, _v3.y + bob, _v3.z);
-  camera.lookAt(_v3b);
-
-  /* The bean: position/scale along its keyframes, roast colour, idle spin. */
-  const bk = beanAt(pe);
-  const fade = pe < 0.71 ? 1 : (pe < 0.78 ? 1 - (pe - 0.71) / 0.07 : (pe < 0.86 ? 0 : (pe - 0.86) / 0.14));
-  beanGroup.position.set(bk.pos[0], bk.pos[1] + Math.sin(t * 0.8) * 0.05, bk.pos[2]);
-  beanGroup.scale.setScalar(bk.s);
-  beanGroup.rotation.y = pe * Math.PI * 2.2 + (idle ? idlePhase * 0.12 : 0);
-  beanGroup.rotation.x = 0.12;
-  /* Floor reflection + soft contact shadow follow the bean. */
-  beanMirror.position.set(bk.pos[0], -2.8 - bk.pos[1], bk.pos[2]);
-  beanMirror.scale.set(bk.s, -bk.s, bk.s);
-  beanMirror.rotation.copy(beanGroup.rotation);
-  beanMirrorMat.color.copy(beanMat.color);
-  beanMirrorMat.opacity = 0.16 * fade;
-  contactShadow.position.x = bk.pos[0];
-  contactShadow.position.z = bk.pos[2];
-  const shadowScale = bk.s * (1 + Math.max(0, bk.pos[1] - 0.7) * 0.25);
-  contactShadow.scale.setScalar(shadowScale);
-  contactShadow.material.opacity = 0.8 * fade * THREE.MathUtils.clamp(1.2 - Math.max(0, bk.pos[1] - 0.7) * 0.35, 0.15, 1);
-  const roastT = THREE.MathUtils.clamp((pe - 0.43) / 0.14, 0, 1);
-  beanMat.color.copy(beanRaw).lerp(beanRoast, roastT);
-  beanMat.transparent = fade < 1;
-  beanMat.opacity = fade;
-  beanGlow.material.opacity = 0.35 * fade * (0.8 + Math.sin(t * 1.4) * 0.15);
-
-  /* Bean hover glow (raycast, throttled to every other frame; fine pointers only). */
-  if (finePointer3D && (Math.floor(t * 30) % 2 === 0)) {
-    raycaster.setFromCamera(pointer, camera);
-    beanHovered = raycaster.intersectObject(bean, false).length > 0;
+  /* ---------- element handles ---------- */
+  var els = {};
+  function initializePage(){
+    reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    els.loader = document.getElementById("loader");
+    els.loaderFill = document.getElementById("loaderfill");
+    els.loaderPct = document.getElementById("loaderpct");
+    els.hero = document.getElementById("hero");
+    els.canvas = document.getElementById("stage");
+    els.statusText = document.getElementById("herostatustext");
+    els.scrollbar = document.getElementById("scrollbar");
+    els.labelBeans = document.getElementById("label-beans");
+    els.labelBag = document.getElementById("label-bag");
+    els.labelSeal = document.getElementById("label-seal");
+    els.labelCup = document.getElementById("label-cup");
+    els.altNum = document.getElementById("altnum");
+    els.copyA = document.getElementById("copylayer-a");
+    els.copyB = document.getElementById("copylayer-b");
+    els.copyC = document.getElementById("copylayer-c");
+    els.form = document.getElementById("orderform");
+    els.summary = document.getElementById("summary");
+    els.summaryText = document.getElementById("summarytext");
+    els.downloadBtn = document.getElementById("downloadbtn");
+    els.copyBtn = document.getElementById("copybtn");
+    els.copyFeedback = document.getElementById("copyfeedback");
+    initializeCanvas();
+    initializeNavigation();
+    initializeOrderForm();
+    initializeStageMotion();
+    initializeReducedMotion();
+    loadParts();
   }
-  beanMat.emissive.lerp(new THREE.Color(beanHovered ? 0x4a1408 : 0x000000), 0.12);
-  rim.intensity += ((beanHovered ? 34 : 22) - rim.intensity) * 0.08;
 
-  /* Cursor light follows the pointer (lights up the bean/particles near it). */
-  _v3c.set(pointer.x, pointer.y, 0.5).unproject(camera);
-  const dir = _v3c.sub(camera.position).normalize();
-  const dist = (2 - camera.position.z) / dir.z;
-  cursorWorld.copy(camera.position).add(dir.multiplyScalar(dist));
-  cursorLight.position.lerp(cursorWorld, 0.12);
-  cursorLight.intensity += ((Math.abs(pointer.x) + Math.abs(pointer.y) > 0.05 ? 14 : 0) - cursorLight.intensity) * 0.1;
-
-  /* Background + fog per chapter (body background lerped; canvas is transparent). */
-  const fogD = bgAt(pe, _cA);
-  document.body.style.backgroundColor = "#" + _cA.getHexString();
-  scene.fog.color.copy(_cA);
-  scene.fog.density += (fogD - scene.fog.density) * 0.05;
-
-  /* Roaster drum rotates in the roast chapter. */
-  const roastSpin = THREE.MathUtils.clamp((pe - 0.43) / 0.14, 0, 1) * (1 - THREE.MathUtils.clamp((pe - 0.57) / 0.1, 0, 1));
-  drum.rotation.x += dt * (0.15 + roastSpin * 2.4);
-  drumGlow.intensity = 14 + roastSpin * 30 + Math.sin(t * 3) * 4;
-  ember.intensity = 18 + roastSpin * 26;
-
-  /* Bag: slow VELORA-style orbit anchor. */
-  const bagT = THREE.MathUtils.clamp((pe - 0.57) / 0.14, 0, 1) * (1 - THREE.MathUtils.clamp((pe - 0.71) / 0.08, 0, 1));
-  bagGroup.rotation.y = 0.35 + Math.sin(t * 0.4) * 0.12 * bagT + pe * 0.6 * bagT;
-
-  /* Brewing: pour + pool + grounds + steam + ice cube in chapter 6. */
-  const brewT = THREE.MathUtils.clamp((pe - 0.71) / 0.05, 0, 1) * (1 - THREE.MathUtils.clamp((pe - 0.82) / 0.04, 0, 1));
-  pourMat.opacity = brewT * 0.9;
-  pour.scale.y = 0.4 + brewT * 0.6;
-  pour.position.y = 0.55 + (1 - brewT) * 0.2;
-  poolMat.opacity = brewT * 0.9;
-  pool.scale.setScalar(0.6 + brewT * 0.4);
-  iceStreamMat.opacity = brewT * 0.9;
-  icePool.material.opacity = brewT * 0.9;
-  icePool.scale.setScalar(0.6 + brewT * 0.4);
-  iceCube.rotation.y = 0.6 + t * 0.15;
-  iceCube.rotation.x = 0.3 + Math.sin(t * 0.5) * 0.06;
-  iceCube.visible = brewT > 0.01;
-  iceStream.visible = brewT > 0.01;
-  icePool.visible = brewT > 0.01;
-  for (let i = 0; i < groundsCount; i++) {
-    const g = groundsData[i];
-    let gy = 1.6 - ((t * g.v + i * 0.37) % 1.6);
-    if (brewT < 0.05) gy = 1.6 + (i % 5) * 0.01;
-    _m4.compose(_v3.set(g.x, gy, g.z), _q, _s.setScalar(g.s));
-    grounds.setMatrixAt(i, _m4);
+  /* ---------- canvas setup ---------- */
+  var ctx = null, dpr = 1, cw = 0, ch = 0;
+  function initializeCanvas(){
+    ctx = els.canvas.getContext("2d");
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas, {passive:true});
   }
-  grounds.instanceMatrix.needsUpdate = true;
-  grounds.material.opacity = brewT;
-  grounds.material.transparent = true;
-  finalSteam.material.opacity = THREE.MathUtils.clamp((pe - 0.86) / 0.08, 0, 1) * 0.45;
-
-  /* Menu cups: active cup enlarges, others dim (carousel-style) + swap pulse. */
-  swapPulse = Math.max(0, swapPulse - 0.02);
-  for (let i = 0; i < brewCups.length; i++) {
-    const target = (i === activeDrink) ? 1.28 + swapPulse * 0.18 : 0.85;
-    const cur = brewCups[i].scale.x;
-    brewCups[i].scale.setScalar(cur + (target - cur) * 0.08);
-    brewCups[i].rotation.y = t * 0.25 + i * 0.4;
+  function resizeCanvas(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cw = els.canvas.clientWidth;
+    ch = els.canvas.clientHeight;
+    els.canvas.width = Math.round(cw * dpr);
+    els.canvas.height = Math.round(ch * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    computeLayout();
+    if (partsLoaded) { evaluateTracks(pSpring.value()); render(current); }
   }
-  /* Swap puff: a brief steam burst when the drink changes. */
-  steam.material.opacity = brewT * 0.5 + swapPulse * 0.3;
-  finalCup.rotation.y = Math.sin(t * 0.3) * 0.15;
 
-  /* Dust: slow drift + mouse push + CTA-hover dispersal into glowing particles. */
-  disperse += ((hoverStop ? 1 : 0) - disperse) * 0.06;
-  const dPos = dust.geometry.attributes.position;
-  const dBase = dust.userData.base;
-  for (let i = 0; i < dPos.count; i++) {
-    const bx = dBase[i * 3], by = dBase[i * 3 + 1], bz = dBase[i * 3 + 2];
-    let x = bx + Math.sin(t * 0.25 + i) * 0.35;
-    let y = by + Math.sin(t * 0.18 + i * 1.7) * 0.3 + Math.sin(t * 0.1 + i) * 0.2;
-    let z = bz + Math.cos(t * 0.22 + i) * 0.3;
-    /* Mouse push: points near the cursor light up and move away. */
-    const dx = x - (cursorWorld.x - dust.position.x), dy = y - (cursorWorld.y - dust.position.y), dz = z - (cursorWorld.z - dust.position.z);
-    const d2 = dx * dx + dy * dy + dz * dz;
-    if (d2 < 2.2 && d2 > 0.001) {
-      const f = (1 - Math.sqrt(d2) / 1.5) * 0.9;
-      x += dx * f; y += dy * f; z += dz * f;
+  /* ---------- layout (world → canvas) ----------
+     S maps source px → canvas px. It is chosen so that:
+       • the p=0 stack is ≤70% of viewport height,
+       • the end bag is ≈46% of viewport height after the push-in,
+       • the p=1 composition (with push-in) fits 80% of viewport width.
+     The anchor is placed at 68% width / 50% height on desktop
+     (50% / 58% on portrait, where the copy sits on top). */
+  var layout = {S:0.38, OX:0, OY:0, targetX:0, targetY:0, wideScale:0.75, heroScale:1.12, spread:1, portrait:false};
+  function computeLayout(){
+    layout.portrait = cw < ch || cw < 768;
+    /* Portrait spread is NARROWER (0.55): the assembled bag and cup sit
+       closer together on a phone, so the composition fits the narrow
+       viewport. (The bag's dx now respects the spread — before this fix
+       the bag moved the full desktop offset on mobile and ran off the
+       left edge.) */
+    layout.spread = layout.portrait ? 0.55 : 1.0;
+    /* The camera owns ALL scale now (no CSS push-in/tilt — two zoom
+       systems would fight). The wide scale (p=0, z=240) is 0.75 and the
+       hero scale (p=1, z=0) is 1.12 (Claude's Beat E target), so S is
+       solved so the hero lands at 1.12x and the stack fits 70% height
+       at 0.75x. End bag ≈46% of viewport height, fits 80% width. */
+    layout.wideScale = 0.75;
+    layout.heroScale = 1.12;
+    var compW = 468 + 846 * layout.spread; /* p=1 composition width, source px */
+    /* On portrait the copy sits on TOP, so the product must fit in the band
+       below it: stack ≤ 50% of viewport height, anchored at 75% height
+       (its top clears the copy, its bottom clears the viewport edge). */
+    var heightFrac = layout.portrait ? 0.50 : 0.70;
+    var S = Math.min(
+      heightFrac * ch / (1314 * layout.wideScale),
+      0.46 * ch / (571 * layout.heroScale),
+      0.80 * cw / (compW * layout.heroScale)
+    );
+    layout.S = S;
+    layout.targetX = layout.portrait ? 0.50 * cw : 0.68 * cw;
+    layout.targetY = layout.portrait ? 0.75 * ch : 0.50 * ch;
+    layout.OX = layout.targetX - ANCHOR_X * S;
+    layout.OY = layout.targetY - ANCHOR_Y * S;
+  }
+
+  /* ---------- part loading (sharp + 3 blur levels per layer) ----------
+     All 24 images are preloaded and decoded up front (img.decode(),
+     fire-and-forget) so scroll never triggers a decode hitch. */
+  var parts = {};
+  var partsLoaded = false;
+  var veilStart = 0;   /* performance.now() when the parts finish loading — the load veil fades from here */
+  var loaderHidden = false;
+  function loadParts(){
+    var keys = Object.keys(IMAGE_FILES);
+    var total = keys.length, done = 0;
+    function update(){
+      var pct = Math.round(done / total * 100);
+      els.loaderFill.style.width = pct + "%";
+      els.loaderPct.textContent = done + " / " + total + " parts";
+      if (done >= total) {
+        partsLoaded = true;
+        veilStart = performance.now();
+        hideLoader();
+        evaluateTracks(pSpring.value());
+        render(current);
+      }
     }
-    /* CTA hover: disperse outward into floating glowing particles. */
-    if (disperse > 0.01) {
-      const len = Math.sqrt(x * x + y * y + z * z) || 1;
-      x += (x / len) * disperse * 2.4; y += (y / len) * disperse * 2.4; z += (z / len) * disperse * 2.4;
+    keys.forEach(function(key){
+      var im = new Image();
+      im.decoding = "async";
+      im.onload = function(){
+        parts[key] = im; done++; update();
+        /* Decode up front so the first draw never hitches; ignore errors. */
+        if (im.decode) { try { im.decode().catch(function(){}); } catch (e) {} }
+      };
+      im.onerror = function(){ parts[key] = null; done++; update(); };
+      im.src = IMAGE_FILES[key];
+    });
+    update();
+    setTimeout(hideLoader, 4000);
+  }
+  function hideLoader(){
+    if (loaderHidden) return;
+    loaderHidden = true;
+    els.loader.classList.add("done");
+    setTimeout(function(){ els.loader.style.display = "none"; }, 700);
+  }
+
+  /* ---------- easings ---------- */
+  function clamp01(t){ return Math.min(1, Math.max(0, t)); }
+  function stage(p, a, b){ return clamp01((p - a) / (b - a)); }
+  function smoothstep(a, b, t){
+    var x = clamp01((t - a) / (b - a));
+    return x * x * (3 - 2 * x);
+  }
+  function easeInOutCubic(t){
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+  function easeOutBack(t){
+    var c1 = 1.70158, c3 = c1 + 1;
+    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+  }
+  /* Standard cubic-bezier solver (Newton-Raphson + bisection fallback). */
+  function cubicBezier(x1, y1, x2, y2){
+    var cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+    var cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+    function sampleX(t){ return ((ax * t + bx) * t + cx) * t; }
+    function sampleY(t){ return ((ay * t + by) * t + cy) * t; }
+    function sampleDX(t){ return (3 * ax * t + 2 * bx) * t + cx; }
+    function solveX(x){
+      var t = x, i, err, d;
+      for (i = 0; i < 8; i++){
+        err = sampleX(t) - x;
+        if (Math.abs(err) < 1e-6) return t;
+        d = sampleDX(t);
+        if (Math.abs(d) < 1e-6) break;
+        t -= err / d;
+      }
+      var lo = 0, hi = 1;
+      t = x;
+      while (lo < hi){
+        var v = sampleX(t);
+        if (Math.abs(v - x) < 1e-6) return t;
+        if (v < x) lo = t; else hi = t;
+        t = (lo + hi) / 2;
+      }
+      return t;
     }
-    dPos.setXYZ(i, x, y, z);
+    return function(t){
+      if (t <= 0) return 0;
+      if (t >= 1) return 1;
+      return sampleY(solveX(t));
+    };
   }
-  dPos.needsUpdate = true;
-  dust.material.size = 0.09 + disperse * 0.12;
-  dust.material.opacity = 0.55 + disperse * 0.35;
+  var easeCompose = cubicBezier(0.65, 0, 0.35, 1);
+  function easeOutQuart(t){ return 1 - Math.pow(1 - t, 4); }
+  function easeOutExpo(t){ return t >= 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+  function easeInQuad(t){ return t * t; }
 
-  /* Steam rises. */
-  function riseSteam(pts, speed) {
-    const p = pts.geometry.attributes.position, b = pts.userData.base;
-    for (let i = 0; i < p.count; i++) {
-      const yy = ((b[i * 3 + 1] + t * speed + i * 0.13) % 2.4) - 0.4;
-      p.setXYZ(i, b[i * 3] + Math.sin(t * 0.6 + i) * 0.15, yy, b[i * 3 + 2] + Math.cos(t * 0.5 + i) * 0.12);
+  /* ---------- CINEMATIC CAMERA (Claude's plan, re-derived for this product) ----------
+     A real camera: every layer has an x/y/z in a fixed world, projected
+     through a lens with a shared horizon (H*0.68). The camera owns ALL
+     scale now — the old CSS push-in/tilt on .stage-scale is gone, so two
+     zoom systems can never fight.
+     REBUILT MATH (design ownership): Claude's project() as written is
+     internally inconsistent — his camZ track (240→0) makes the scale
+     SHRINK as the camera "dollies in", the opposite of a dolly-in, and
+     his dolly coefficients (650/550) grow the hero 1.81x, which overflows
+     this layout. So the model is re-derived here, cleanly: world z is
+     positive = farther from the camera; scale = F / (F + (z - camZ)).
+     camZ increasing = the camera pushing INTO the scene (everything
+     grows, far layers less). F widens with dolly (900→1450). The hero
+     lands at exactly 1.12x (Claude's Beat E target) while the far plane
+     shrinks to ~0.94x — that relative change IS the dolly-zoom "the
+     background falls away" effect. focusZ tracks the ACTIVE layer
+     (Claude's 30/-45 values don't line up with his own layer z), and
+     the DOF falloff is |dz|/50 (his aperture 22 makes everything not
+     exactly at focus max-blur).
+     The x projection centre is the product anchor (targetX), not W/2:
+     our composition is off-centre (product right, copy left), so the
+     product must not slide sideways as the camera dollies. The y centre
+     is the horizon (the ground line the set is built on). */
+  var HORIZON_FRAC = 0.68;
+  var cam = { f:900, z:-60, focusZ:240, roll:0, dolly:0, panX:0, panY:0, exposure:0 };
+  var DOLLY_F = 550;
+  function track(keys, p, ease){
+    ease = ease || easeInOutCubic;
+    if (p <= keys[0][0]) return keys[0][1];
+    if (p >= keys[keys.length-1][0]) return keys[keys.length-1][1];
+    for (var i = 0; i < keys.length-1; i++){
+      var p0 = keys[i][0], v0 = keys[i][1], p1 = keys[i+1][0], v1 = keys[i+1][1];
+      if (p >= p0 && p <= p1) return v0 + (v1-v0) * ease((p-p0)/(p1-p0));
     }
-    p.needsUpdate = true;
+    return keys[keys.length-1][1];
   }
-  riseSteam(steam, 0.35); riseSteam(finalSteam, 0.3);
-
-  /* Light rays breathe. */
-  rays.forEach(function (sp, i) {
-    sp.material.opacity = 0.12 + Math.sin(t * 0.5 + i * 1.3) * 0.05;
-    sp.material.rotation += dt * 0.02 * (i % 2 ? 1 : -1);
-  });
-
-  /* Bean field drift. */
-  beanGroup.rotation.z = Math.sin(t * 0.4) * 0.04;
-
-  if (useComposer) composer.render(); else renderer.render(scene, camera);
-  if (firstFrame) {
-    firstFrame = false;
-    if (window.__auroraSceneReady) window.__auroraSceneReady();
+  var E = {
+    /* camZ: pulled back (-60, wide) -> gentle dolly-in (40-50) for the
+       establishing + macro beats -> hold through the seal stillness ->
+       prep pull-back (40) -> whip push (140) -> settle (155, hero 1.12x).
+       The Beat B peak is CAPPED at 50 (not 100): the bag's centre sits
+       far above the horizon, so a hard dolly scales it up AND pushes it
+       off the top of the frame (the seal went behind the nav). The macro
+       comes from the rack focus + the bag's lean, not a big zoom. */
+    camZ:   [[0.00,-60],[0.07,40],[0.15,50],[0.38,50],[0.55,50],[0.61,40],[0.63,140],[0.72,120],[0.88,130],[1.00,155]],
+    camRoll:[[0.00,0],[0.10,0],[0.18,-1.2],[0.30,0],[0.38,0.6],[0.55,0],[0.61,0.6],[0.63,-0.9],[0.72,-0.4],[0.84,-0.1],[1.00,0]],
+    /* focusZ tracks the ACTIVE layer: cup (0) in the establishing shot,
+       bag (60->0) as it presents, seal (10->0) as it snaps, 0 for hero. */
+    focusZ: [[0.00,240],[0.04,120],[0.07,0],[0.10,60],[0.19,30],[0.27,0],[0.35,10],[0.505,0],[0.65,0],[1.00,0]],
+    exposure:[[0.00,0.0],[0.06,0.0],[0.13,0.05],[0.26,0.10],[0.38,0.08],[0.60,0.12],[0.68,0.25],[0.80,0.28],[0.86,0.18],[0.95,0.12],[1.00,0.10]],
+    dolly:  [[0.00,0],[0.78,0],[0.88,0.7],[0.96,1],[1.00,1]],
+    /* Whip pan (Beat D): fast lateral camera move 0.61-0.63. */
+    panX:   [[0.00,0],[0.61,-60],[0.63,40],[0.72,0],[1.00,0]],
+    /* Pan down (Beat B): the camera dips 80px as the bag presents, so
+       the whole stack (seal included) stays framed below the nav instead
+       of the dolly pushing the seal behind it. Returns to 0 for the seal
+       stillness. */
+    panY:   [[0.00,0],[0.15,0],[0.20,80],[0.30,80],[0.38,0],[1.00,0]]
+  };
+  function evaluateTracks(p){
+    cam.z = track(E.camZ, p);
+    cam.roll = track(E.camRoll, p);
+    cam.focusZ = track(E.focusZ, p);
+    cam.exposure = track(E.exposure, p);
+    cam.dolly = track(E.dolly, p);
+    cam.panX = track(E.panX, p, easeInOutCubic);
+    cam.panY = track(E.panY, p);
   }
-}
-document.addEventListener("visibilitychange", function () {
-  if (document.hidden) { running = false; if (rafId) cancelAnimationFrame(rafId); rafId = null; }
-  else if (!running && !stillMode) { running = true; clock.getDelta(); rafId = requestAnimationFrame(tick); }
-});
-tick(); /* render the first frame immediately; the loop re-schedules unless ?still=1 */
-}
+  function projectScale(z){
+    var f = cam.f + cam.dolly * DOLLY_F;
+    return f / Math.max(120, f + (z - cam.z));
+  }
+  /* Project a base screen rect (already mapped by layout S) through the
+     camera. Returns {x, y, w, h, s, cx, cy} in canvas px. */
+  function projectRect(def, offX, offY, z, layerScale){
+    var bx = (def.hx + offX - ANCHOR_X) * layout.S + layout.targetX;
+    var by = (def.hy + offY - ANCHOR_Y) * layout.S + layout.targetY;
+    var s = projectScale(z) * (layerScale || 1);
+    var cx = bx + def.w * layout.S / 2, cy = by + def.h * layout.S / 2;
+    var px = layout.targetX + (cx - layout.targetX) * s + cam.panX;
+    var py = ch * HORIZON_FRAC + (cy - ch * HORIZON_FRAC) * s + cam.panY;
+    return { x: px - def.w * layout.S * s / 2, y: py - def.h * layout.S * s / 2,
+             w: def.w * layout.S * s, h: def.h * layout.S * s, s: s, cx: px, cy: py };
+  }
+
+  /* ---------- springs (damped, for overshoot + recoil) ---------- */
+  function makeSpring(opts){
+    var omega = (opts && opts.omega) || 14, zeta = (opts && opts.zeta) || 0.65;
+    var x = 0, v = 0, target = 0;
+    return {
+      set: function(t){ target = t; },
+      kick: function(dv){ v += dv; },
+      step: function(dt){
+        var a = -omega * omega * (x - target) - 2 * zeta * omega * v;
+        v += a * dt; x += v * dt; return x;
+      },
+      value: function(){ return x; }
+    };
+  }
+  var pSpring = makeSpring({ omega: 9, zeta: 0.75 });    /* master scroll spring — the scene arrives just after the scroll, that lag is the weight */
+  var rollSpring = makeSpring({ omega: 16, zeta: 0.4 }); /* bag settle rock */
+  var cupSpring = makeSpring({ omega: 12, zeta: 0.35 }); /* cup shudder / dip */
+
+  /* ---------- impacts + shake (the "slam") ----------
+     Three landings: beans 0.235, seal 0.505, hero 0.80. Each fires once
+     per upward crossing (re-armed when p drops 0.05 below), so scrubbing
+     back and forth doesn't machine-gun the shake. */
+  var impacts = [
+    { p: 0.235, s: 0.55, f: 0.28, armed: true },
+    { p: 0.505, s: 0.70, f: 0.25, armed: true },
+    { p: 0.80,  s: 1.00, f: 0.34, armed: true }
+  ];
+  var shakeT = 1, shakeMag = 0, shakeDur = 0.28;
+  var exposureKick = 0, bagSquash = 0;
+  function fireImpacts(prevP, p){
+    for (var i = 0; i < impacts.length; i++){
+      var im = impacts[i];
+      if (p < im.p - 0.05) im.armed = true;
+      if (im.armed && prevP < im.p && p >= im.p){
+        im.armed = false;
+        shakeT = 0; shakeMag = 8 * im.s; shakeDur = 0.28;
+        exposureKick = 1.0;
+        if (i === 0){ cupSpring.kick(90); }          /* beans hit: cup shudders */
+        if (i === 1){ cupSpring.kick(50); bagSquash = 1; } /* seal slams: bag compresses 2% */
+        if (i === 2){ cupSpring.kick(120); rollSpring.kick(60); } /* hero slam: whole scene shudders */
+      }
+    }
+  }
+  /* Camera shake: dying 26Hz sine, decaying. */
+  function shakeOffset(){
+    if (shakeT > 1) return { x: 0, y: 0, r: 0 };
+    var t = shakeT;
+    var s = shakeMag * (Math.sin(t * Math.PI * 2 * 6.5) * (1 - t));
+    var r = 0.35 * Math.sin(t * Math.PI * 2 * 5.5) * (1 - t);
+    return { x: s * 0.55, y: s * 0.30, r: r };
+  }
+
+  /* ---------- CINEMATIC ASSEMBLY — design ownership ----------
+     Fahad: "tum ny sare transition dakhy tu hamary product khod hi
+     professional sa transition banao" — design the transition for THIS
+     product, using Claude's plan, ThreeUI and the real-website notes as
+     INPUT, not as a spec to follow mechanically. This is that design.
+     SOURCES (what was taken, what was rejected, why):
+     - Claude's cinematic plan: the real camera (project() with z-depth,
+       roll, dolly), keyframed tracks, springs, three impacts, rack
+       focus, smear ghosts, the set, the 5-beat sheet, recoil, load
+       veil — KEPT, with two fixes (see the camera note below).
+     - ThreeUI Retro "Exploded Construction": per-part flight paths with
+       rotation, staggered lock-in, a reveal beat — KEPT in Beat D (the
+       bag sweeps in diagonally, the cup from lower-right, the seal
+       twirls); Kerf K1's exploded stack IS the p=0 hero; Country
+       Towers' bottom-up stacking informs the landing order.
+     - Real websites: beat HOLDS with pauses (SCMP + Apple — the single
+       biggest fix for "too simple"); the light pass as the STAR (Apple);
+       numbered part labels (SONARA); a rolling counter (Porsche / Deep
+       Sea); snap-to-land beats (Hear.ai, absorbed into the holds +
+       pSpring rather than a separate quantiser, so the scroll never
+       feels sticky); parallax from the z-depth camera (Firewatch).
+       The bag-open reveal (Apple case-open) is SKIPPED — it needs a new
+       Flow frame of an open bag mouth, and the seal snap already serves
+       as the reveal beat.
+     COLOUR (Fahad: "color combination ka khas kheyal rakho... ya na
+     lagy ky ai generated hy" + the Diego Aranda 60/30/10 reel is the
+     authority): 60% Cream (the stage), 30% Navy (chrome/type + the bag),
+     10% Coral (small accents only). The exposure lift and the light
+     sweeps are CAPPED and warm-cream-toned so cream never clips to
+     white; the set stays in the cream family; no grain, no starfield,
+     no glow blobs, no amber/gold wash, no pure #000/#FFF. One light
+     direction (upper-left) throughout.
+     The five beats (retimed to Claude's impact anchors):
+       A 0.00–0.10  Establishing — wide, dolly-in, focus finds the cup.
+       B 0.10–0.28  Macro — the bag presents, the beans pour (impact 1).
+       C 0.28–0.55  The seal snap — anticipation, slam (impact 2), then
+                    total stillness.
+       D 0.55–0.85  The convergence — prep, whip pan, sweep in, slam
+                    (impact 3). A cut, not a glide.
+       E 0.80–1.00  The hero — stillness, the light arrives, dolly to
+                    1.12x, end close / warm / sharp / still. */
+  function computePose(p, timeMs){
+    var pose = {};
+    var windup = stage(p, 0.55, 0.63);                 /* prep wind-up for the sweep */
+    var compT = easeOutQuart(stage(p, 0.63, 0.72));    /* Beat D sweep — a cut, not a glide */
+    var settleT = stage(p, 0.72, 0.80);                /* spring settle after the sweep */
+    var floatFade = 1 - stage(p, 0.06, 0.15);
+    var floatY = Math.sin(timeMs * 0.0012) * 4 * floatFade;
+    var floatRot = Math.sin(timeMs * 0.0009) * 0.6 * floatFade * Math.PI / 180;
+    var rock = rollSpring.value() * 0.008;             /* bag settle rock (rad) */
+    var cupDip = cupSpring.value();                    /* cup shudder dip (source px) */
+    var cupYaw = cupDip * 0.0025;                      /* coupled yaw (rad) */
+
+    /* --- BAG (Beat B: presents; Beat D: sweeps in diagonally) --- */
+    var present = Math.sin(Math.PI * stage(p, 0.10, 0.28));
+    var bagLift = -12 * present;
+    var bagPresentRot = 0.14 * present;                /* +8° lean while presenting */
+    var bagSweepRot = 0.31 * windup * (1 - compT);     /* +18° wind-up, sweeps to 0 */
+    var bagScale = 1 + 0.05 * Math.sin(Math.PI * clamp01((p - 0.70) / 0.12));
+    pose.bag = {
+      dx: compT * BAG_DX * layout.spread,
+      dy: compT * BAG_DY + bagLift + floatY,
+      z: 240 - 180 * easeInOutCubic(stage(p, 0, 0.10)) - 60 * easeInOutCubic(stage(p, 0.10, 0.28)),
+      rot: bagPresentRot + bagSweepRot + rock,
+      scale: bagScale,
+      scaleY: 1 - 0.02 * bagSquash,
+      alpha: 1
+    };
+
+    /* --- SEAL (Beat C: anticipation rise, twirl, slam; then rides the bag) --- */
+    var rise = -6 * stage(p, 0.30, 0.33);
+    var dropT = stage(p, 0.33, 0.505);
+    var sealDrop = SEAL_DROP * easeOutExpo(dropT);
+    var sealTwirl = 0.52 * Math.sin(Math.PI * dropT);  /* ~30° twirl, settles to 0 */
+    pose.seal = {
+      dx: compT * BAG_DX * layout.spread,
+      dy: rise + sealDrop + compT * BAG_DY + floatY,
+      z: 240 - 230 * easeInOutCubic(stage(p, 0, 0.28)) - 10 * easeOutExpo(dropT),
+      rot: sealTwirl,
+      scale: 1,
+      alpha: 1
+    };
+
+    /* --- BEANS (Beat B: pour into the cup, accelerating = heavy) --- */
+    var beansDrop = stage(p, 0.10, 0.235);
+    var beansE = easeInQuad(beansDrop);
+    var bounceY = 0;
+    if (p > 0.235) {
+      var bt = clamp01((p - 0.235) / 0.035);
+      bounceY = -5 * Math.sin(bt * Math.PI) * (1 - bt);
+    }
+    pose.beans = {
+      dx: 24 * Math.sin(beansE * Math.PI),
+      dy: beansE * BEANS_DROP + bounceY + floatY,
+      z: 240 - 90 * easeInOutCubic(stage(p, 0, 0.10)) - 150 * beansE,
+      rot: 0.35 * Math.sin(Math.PI * beansDrop),
+      scale: 0.9 + 0.1 * beansDrop,
+      alpha: 1 - stage(p, 0.235, 0.27)
+    };
+
+    /* --- CUP (the anchor; sweeps in from lower-right in Beat D) --- */
+    var cupSweepRot = -0.21 * windup * (1 - compT);    /* -12° wind-up, sweeps to 0 */
+    var cupScale = 1 + 0.02 * Math.sin(Math.PI * clamp01((p - 0.70) / 0.12));
+    pose.cup = {
+      dx: compT * CUP_DX * layout.spread,
+      dy: compT * CUP_DY + floatY + cupDip,
+      z: 240 - 240 * easeInOutCubic(stage(p, 0, 0.07)),
+      rot: cupSweepRot + cupYaw + rock * 0.7,
+      scale: cupScale,
+      alpha: 1
+    };
+
+    pose.floatRot = floatRot;
+    pose.ripple = stage(p, 0.235, 0.33);
+    pose.settle = settleT;
+    pose.compT = compT;
+    pose.steam = smoothstep(0.235, 0.50, p) * (0.55 + 0.45 * settleT);
+    pose.land = stage(p, 0.82, 0.97);
+    pose.glowBoost = 0.06 * settleT;
+    /* Load veil: time-based, NOT scroll-based. The old scroll-based veil
+       (0.35 alpha at p=0) washed the hero out — the first thing the user
+       sees was a faded product. Now it fades over 700ms after the parts
+       load (a gentle fade-in as the loader lifts) and is gone before the
+       user starts scrolling. */
+    pose.veil = veilStart > 0 ? 0.35 * clamp01(1 - (timeMs - veilStart) / 700) : 0.35;
+    return pose;
+  }
+
+  /* ---------- the set (a real studio, not a flat backdrop) ----------
+     Cyclorama + horizon band + floor ellipse + light pool, all drawn in
+     the canvas so they move with the camera. Every colour is in the
+     cream family — warm cream, never white-hot glare, never charcoal.
+     One light direction (upper-left) throughout. */
+  function drawSet(pose){
+    /* Cyclorama: the same cream stops as the body, so there is no seam. */
+    var g = ctx.createLinearGradient(0, 0, 0, ch);
+    g.addColorStop(0, "#F3E9DA"); g.addColorStop(0.38, "#E9D9C1"); g.addColorStop(1, "#DFC7A4");
+    ctx.fillStyle = g;
+    ctx.fillRect(-cw, -ch, cw * 3, ch * 3);
+    /* Horizon band: a soft light seam where wall meets floor. */
+    var hy = ch * HORIZON_FRAC;
+    var hb = ctx.createLinearGradient(0, hy - 26, 0, hy + 26);
+    hb.addColorStop(0, "rgba(255,246,232,0)");
+    hb.addColorStop(0.5, "rgba(255,246,232,0.05)");
+    hb.addColorStop(1, "rgba(255,246,232,0)");
+    ctx.fillStyle = hb;
+    ctx.fillRect(-cw, hy - 26, cw * 3, 52);
+    /* Floor ellipse: a real floor under the product. Two-tone cream —
+       far edge slightly darker, near edge catching the beam. It scales
+       with the background (far) plane, so the dolly zoom stretches it. */
+    var bgS = projectScale(240);
+    var fx = layout.targetX, fy = hy + 0.09 * ch;
+    var frx = 0.42 * cw * bgS, fry = 0.10 * ch * bgS;
+    var fg = ctx.createLinearGradient(0, fy - fry, 0, fy + fry);
+    fg.addColorStop(0, "rgba(239,227,204,0.55)");
+    fg.addColorStop(1, "rgba(220,195,158,0.55)");
+    ctx.fillStyle = fg;
+    ctx.beginPath(); ctx.ellipse(fx, fy, frx, fry, 0, 0, Math.PI * 2); ctx.fill();
+    /* Light pool: a warm radial wash under the hero. Subtle and
+       cream-toned — felt, not seen (alpha ≤0.055). */
+    var lr = Math.max(cw, ch) * 0.30 * (1 + pose.glowBoost);
+    var lg = ctx.createRadialGradient(fx, fy, 0, fx, fy, lr);
+    lg.addColorStop(0, "rgba(255,242,220,0.055)");
+    lg.addColorStop(1, "rgba(255,242,220,0)");
+    ctx.fillStyle = lg;
+    ctx.beginPath(); ctx.ellipse(fx, fy, lr, lr * 0.55, 0, 0, Math.PI * 2); ctx.fill();
+  }
+
+  /* ---------- live contact shadows ----------
+     The shadows live on the floor: when a part is high/far its shadow
+     stays on the floor (wide, blurred, light); as it lands the shadow
+     contracts, darkens and sharpens into contact. Warm dark brown
+     (74,52,32) — the coffee neutral, never pure black. */
+  function drawOneShadow(partPose, rect, floorY){
+    if (!rect || !parts.shadow) return;
+    var hF = clamp01(partPose.z / 240);                 /* 0 = landed, 1 = far/high */
+    var img = parts[PART_DEFS.shadow.blur[Math.round(hF * 3)]];
+    if (!img || !img.naturalWidth) return;
+    var partBottom = rect.y + rect.h;
+    var shY = partBottom + (floorY - partBottom) * hF;
+    var shW = rect.w * 0.85 * (1 + 0.35 * hF);
+    var shH = shW * (136 / 600);
+    var op = 0.35 + 0.45 * (1 - hF);
+    ctx.globalAlpha = op;
+    ctx.drawImage(img, rect.cx - shW / 2, shY - shH * 0.5, shW, shH);
+    ctx.globalAlpha = 1;
+  }
+  function drawLiveShadows(pose){
+    var floorY = ch * HORIZON_FRAC + 0.09 * ch;
+    drawOneShadow(pose.bag, lastRects.bag, floorY);
+    drawOneShadow(pose.cup, lastRects.cup, floorY);
+  }
+
+  /* ---------- rack focus (DOF) ----------
+     Pre-rendered blur x3 per layer; crossfade sharp <-> blurred by
+     distance from cam.focusZ. Blurrier first at full alpha, sharper on
+     top fading out — that order avoids the see-through edge problem.
+     Falloff |dz|/50: a layer 50z away is one blur level, 150z is max. */
+  function drawDOF(def, rect, z, alpha){
+    alpha = (alpha === undefined) ? 1 : alpha;
+    if (alpha <= 0.003) return;
+    var keys = def.blur;
+    var b = Math.min(3, Math.abs(z - cam.focusZ) / 50);
+    if (b >= 2.999) {
+      var img3 = parts[keys[3]];
+      if (img3 && img3.naturalWidth){
+        ctx.globalAlpha = alpha; ctx.imageSmoothingQuality = "low";
+        ctx.drawImage(img3, rect.x, rect.y, rect.w, rect.h);
+        ctx.globalAlpha = 1; ctx.imageSmoothingQuality = "high";
+      }
+      return;
+    }
+    var i = Math.floor(b), f = b - i;
+    var hi = parts[keys[i + 1]], lo = parts[keys[i]];
+    if (f > 0.001 && hi && hi.naturalWidth){
+      ctx.globalAlpha = alpha; ctx.imageSmoothingQuality = "low";
+      ctx.drawImage(hi, rect.x, rect.y, rect.w, rect.h);
+    }
+    if (lo && lo.naturalWidth){
+      ctx.globalAlpha = alpha * (1 - f); ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(lo, rect.x, rect.y, rect.w, rect.h);
+    }
+    ctx.globalAlpha = 1; ctx.imageSmoothingQuality = "high";
+  }
+
+  /* ---------- smear ghosts (velocity motion blur, fast layers only) ----------
+     When a layer moves fast, 2-4 ghost copies of its blur[2] trail along
+     the motion path at low alpha. Slow movement gets none. Never in the
+     late hero settle (the parts are barely moving there, so the distance
+     threshold keeps it off by itself). */
+  var prevC = {};
+  function drawSmear(layerKey, def, rect, z, alpha){
+    if (reducedMotion || alpha <= 0.01) return;
+    var prev = prevC[layerKey];
+    if (!prev){ prevC[layerKey] = { x: rect.cx, y: rect.cy }; return; }
+    var dx = rect.cx - prev.x, dy = rect.cy - prev.y;
+    var dist = Math.hypot(dx, dy);
+    prevC[layerKey] = { x: rect.cx, y: rect.cy };
+    if (dist < 6) return;
+    var img = parts[def.blur[2]];
+    if (!img || !img.naturalWidth) return;
+    var n = Math.min(4, Math.floor(dist / 6));
+    for (var k = n; k >= 1; k--){
+      var t = k / (n + 1);
+      ctx.globalAlpha = alpha * 0.16 * (1 - t);
+      ctx.imageSmoothingQuality = "low";
+      ctx.drawImage(img, rect.x - dx * t, rect.y - dy * t, rect.w, rect.h);
+    }
+    ctx.globalAlpha = 1; ctx.imageSmoothingQuality = "high";
+  }
+
+  /* ---------- rim light (one consistent light direction: upper-left) ----------
+     A soft warm highlight on the left edge of the product — the cue the
+     light comes from one place. Subtle (0.07), warm cream, never white. */
+  function drawRimLight(rect){
+    var w = Math.max(2, rect.w * 0.14);
+    var g = ctx.createLinearGradient(rect.x, 0, rect.x + w, 0);
+    g.addColorStop(0, "rgba(255,246,232,0.07)");
+    g.addColorStop(1, "rgba(255,246,232,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(rect.x, rect.y, w, rect.h);
+  }
+
+  /* ---------- the light pass as the STAR (Apple) ----------
+     A warm highlight travelling across the product for the whole
+     compose, tied to scroll — not a garnish at the end. Cream-toned,
+     capped at 0.12 alpha (the bag) / 0.07 (the cup), so it never reads
+     as a white-hot glare. */
+  function drawComposeLightPass(t, rect, maxAlpha){
+    if (t <= 0 || t >= 1) return;
+    var bandW = rect.w * 0.35;
+    var bx = rect.x - bandW + t * (rect.w + 2 * bandW);
+    var a = maxAlpha * Math.sin(t * Math.PI);
+    if (a <= 0.003) return;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(rect.x, rect.y, rect.w, rect.h); ctx.clip();
+    var g = ctx.createLinearGradient(bx - bandW, 0, bx + bandW, 0);
+    g.addColorStop(0, "rgba(255,240,214,0)");
+    g.addColorStop(0.5, "rgba(255,240,214," + a.toFixed(3) + ")");
+    g.addColorStop(1, "rgba(255,240,214,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(bx - bandW, rect.y, bandW * 2, rect.h);
+    ctx.restore();
+  }
+
+  /* ---------- rendering (Claude's frame order) ----------
+     springs -> impacts -> camera transform -> set -> glow -> shadows ->
+     layers by depth (far -> near; [cupBack, beans, cupFront] as one
+     group) -> steam -> light sweep -> overlays (exposure + veil). */
+  var lastRects = {};
+  function render(p, now){
+    if (!partsLoaded || !cw || !ch) return;
+    var timeMs = now || performance.now();
+    var pose = computePose(p, timeMs);
+    /* Projected rects first (the shadows and labels need them). */
+    var bagR = projectRect(PART_DEFS.bag, pose.bag.dx, pose.bag.dy, pose.bag.z, pose.bag.scale);
+    var sealR = projectRect(PART_DEFS.seal, pose.seal.dx, pose.seal.dy, pose.seal.z, pose.seal.scale);
+    var cupR = projectRect(PART_DEFS.cupBack, pose.cup.dx, pose.cup.dy, pose.cup.z, pose.cup.scale);
+    var beansR = projectRect(PART_DEFS.beans, pose.beans.dx, pose.beans.dy, pose.beans.z, pose.beans.scale);
+    /* Bag squash: vertical compression around the bag centre (seal slam). */
+    if (bagSquash > 0.01) {
+      var sqH = bagR.h * (1 - 0.02 * bagSquash);
+      bagR.y = bagR.cy - sqH / 2; bagR.h = sqH;
+    }
+    lastRects.bag = bagR; lastRects.seal = sealR; lastRects.cup = cupR; lastRects.beans = beansR;
+
+    ctx.clearRect(0, 0, cw, ch);
+    var sh = reducedMotion ? { x: 0, y: 0, r: 0 } : shakeOffset();
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.translate(cw / 2 + sh.x, ch / 2 + sh.y);
+    ctx.rotate((cam.roll + sh.r) * Math.PI / 180);
+    ctx.translate(-cw / 2, -ch / 2);
+
+    drawSet(pose);
+    /* Breathing cream glow behind the product (felt, not seen). */
+    drawProductGlow(p, timeMs, pose.glowBoost);
+    drawLiveShadows(pose);
+
+    /* --- BAG + SEAL (one rotated context; the seal rides the bag).
+         The seal's twirl only runs in Beat C, when the bag's rotation is
+         0 — so the nested twirl around the seal's own centre is exact. */
+    ctx.save();
+    if (pose.bag.rot) { ctx.translate(bagR.cx, bagR.cy); ctx.rotate(pose.bag.rot); ctx.translate(-bagR.cx, -bagR.cy); }
+    drawSmear("bag", PART_DEFS.bag, bagR, pose.bag.z, pose.bag.alpha);
+    drawDOF(PART_DEFS.bag, bagR, pose.bag.z, pose.bag.alpha);
+    drawRimLight(bagR);
+    if (pose.compT > 0 && pose.compT < 1) drawComposeLightPass(pose.compT, bagR, 0.12);
+    if (pose.land > 0) drawBagSweep(pose.land, bagR);
+    if (pose.seal.rot) {
+      ctx.save();
+      ctx.translate(sealR.cx, sealR.cy); ctx.rotate(pose.seal.rot); ctx.translate(-sealR.cx, -sealR.cy);
+      drawDOF(PART_DEFS.seal, sealR, pose.seal.z, pose.seal.alpha);
+      ctx.restore();
+    } else {
+      drawDOF(PART_DEFS.seal, sealR, pose.seal.z, pose.seal.alpha);
+    }
+    ctx.restore();
+
+    /* --- CUP group: cupBack, beans, cupFront (one rotated context).
+         The beans rotate on their own centre and only while the cup is
+         still (Beat B), so the nested rotation is exact. The cupFront
+         drawn over the beans is what makes them dip BEHIND the rim. */
+    ctx.save();
+    if (pose.cup.rot) { ctx.translate(cupR.cx, cupR.cy); ctx.rotate(pose.cup.rot); ctx.translate(-cupR.cx, -cupR.cy); }
+    drawDOF(PART_DEFS.cupBack, cupR, pose.cup.z, pose.cup.alpha);
+    if (pose.beans.alpha > 0.01) {
+      ctx.save();
+      if (pose.beans.rot) { ctx.translate(beansR.cx, beansR.cy); ctx.rotate(pose.beans.rot); ctx.translate(-beansR.cx, -beansR.cy); }
+      drawSmear("beans", PART_DEFS.beans, beansR, pose.beans.z, pose.beans.alpha);
+      drawDOF(PART_DEFS.beans, beansR, pose.beans.z, pose.beans.alpha);
+      ctx.restore();
+    }
+    drawDOF(PART_DEFS.cupFront, cupR, pose.cup.z, pose.cup.alpha);
+    drawRimLight(cupR);
+    if (pose.compT > 0 && pose.compT < 1) drawComposeLightPass(pose.compT, cupR, 0.07);
+    if (pose.ripple > 0 && pose.ripple < 1) drawRipples(pose.ripple, cupR);
+    ctx.restore();
+
+    /* --- steam + light sweep --- */
+    if (pose.steam > 0) drawSteam(pose.steam, cupR, timeMs);
+    if (pose.settle > 0) drawLightSweep(pose.settle, timeMs);
+
+    /* --- overlays: exposure (CAPPED, cream-toned — never clips cream
+         to white) + load veil. Max combined overlay is 0.12 alpha of
+         warm cream (255,240,214): over #E9D9C1 that lands at ~(236,220,
+         196) — still clearly cream, no white-hot glare. */
+    var expA = Math.min(0.12, cam.exposure * 0.30 + exposureKick * 0.10);
+    if (expA > 0.003) {
+      ctx.fillStyle = "rgba(255,240,214," + expA.toFixed(3) + ")";
+      ctx.fillRect(-cw, -ch, cw * 3, ch * 3);
+    }
+    if (pose.veil > 0.003) {
+      ctx.fillStyle = "rgba(243,233,218," + pose.veil.toFixed(3) + ")";
+      ctx.fillRect(-cw, -ch, cw * 3, ch * 3);
+    }
+    ctx.restore();
+  }
+
+  /* ---------- part labels (SONARA) + altitude counter (Porsche) ---------- */
+  var labelWindows = {
+    beans: { show: [0.235, 0.26], hide: [0.27, 0.30], part: "beans" },
+    bag:   { show: [0.28, 0.33],  hide: [0.50, 0.55], part: "bag" },
+    seal:  { show: [0.505, 0.55], hide: [0.60, 0.65], part: "seal" },
+    cup:   { show: [0.80, 0.85],  hide: [0.97, 1.00], part: "cup" }
+  };
+  function updateLabels(p){
+    if (reducedMotion){ return; }
+    var keys = ["beans", "bag", "seal", "cup"];
+    for (var i = 0; i < keys.length; i++){
+      var key = keys[i], w = labelWindows[key];
+      var el = els["label" + key.charAt(0).toUpperCase() + key.slice(1)];
+      if (!el) continue;
+      var o = smoothstep(w.show[0], w.show[1], p) * (1 - smoothstep(w.hide[0], w.hide[1], p));
+      el.style.opacity = o.toFixed(3);
+      if (o > 0.01) {
+        var r = lastRects[w.part];
+        if (r) {
+          var lx = r.x + r.w + 16, ly = r.y + r.h * 0.30;
+          if (lx > cw - 130) lx = r.x - 130;   /* flip to the left near the right edge */
+          if (lx < 8) lx = 8;
+          el.style.transform = "translate(" + lx.toFixed(1) + "px," + ly.toFixed(1) + "px)";
+        }
+      }
+    }
+  }
+  function updateAlt(p){
+    var v = Math.round(2200 * clamp01(p / 0.80));
+    var txt = v.toLocaleString("en-US");
+    if (els.altNum && els.altNum.textContent !== txt) els.altNum.textContent = txt;
+  }
+  function drawRipples(t, cupR){
+    /* Two expanding ellipse rings on the coffee surface, staggered. */
+    var cx = cupR.x + cupR.w / 2;
+    var cy = cupR.y + cupR.h * 0.06; /* coffee surface, just below the rim */
+    var maxR = cupR.w * 0.32;
+    for (var i = 0; i < 2; i++){
+      var lt = clamp01((t - i * 0.25) / 0.75);
+      if (lt <= 0 || lt >= 1) continue;
+      var r = maxR * (0.25 + 0.75 * easeOutBack(lt));
+      var a = 0.28 * (1 - lt);
+      ctx.save();
+      ctx.globalAlpha = a;
+      ctx.strokeStyle = "#FBF3E8";
+      ctx.lineWidth = Math.max(1, 2 * layout.S / 0.38);
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, r, r * 0.28, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  /* ENRICHED — warm glow behind the product (breathing, cream-toned).
+     A radial gradient centred on the composition anchor, alpha ≤0.044 —
+     felt, not seen. It strengthens slightly as the product assembles.
+     Never white, never purple. */
+  function drawProductGlow(p, timeMs){
+    var breathe = 0.5 + 0.5 * Math.sin(timeMs * 0.00045);
+    var base = 0.030 + 0.014 * breathe;
+    var strength = base * (0.7 + 0.3 * p);
+    var r = Math.max(cw, ch) * (0.34 + 0.03 * breathe);
+    var g = ctx.createRadialGradient(
+      layout.targetX, layout.targetY, 0, layout.targetX, layout.targetY, r);
+    g.addColorStop(0, "rgba(255,238,210," + strength.toFixed(3) + ")");
+    g.addColorStop(1, "rgba(255,238,210,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, cw, ch);
+  }
+
+  /* ENRICHED — warm light sweep across the bag as it lands. A soft
+     highlight band travels once, left→right, across the bag body
+     (clipped to the bag rect, so it follows the bag's rotation), then
+     settles as a faint warm glow on the bag. Cream-toned only. */
+  function drawBagSweep(landT, bagR){
+    if (landT <= 0) return;
+    var bandW = bagR.w * 0.30;
+    var bx = bagR.x - bandW + landT * (bagR.w + 2 * bandW);
+    var sweepA = 0.11 * Math.sin(landT * Math.PI);
+    var residual = 0.035 * landT;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(bagR.x, bagR.y, bagR.w, bagR.h);
+    ctx.clip();
+    if (sweepA > 0.003) {
+      var g = ctx.createLinearGradient(bx - bandW, 0, bx + bandW, 0);
+      g.addColorStop(0, "rgba(255,240,214,0)");
+      g.addColorStop(0.5, "rgba(255,240,214," + sweepA.toFixed(3) + ")");
+      g.addColorStop(1, "rgba(255,240,214,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(bx - bandW, bagR.y, bandW * 2, bagR.h);
+    }
+    if (residual > 0.003) {
+      var rg = ctx.createRadialGradient(
+        bagR.x + bagR.w * 0.5, bagR.y + bagR.h * 0.45, 0,
+        bagR.x + bagR.w * 0.5, bagR.y + bagR.h * 0.45, bagR.w * 0.75);
+      rg.addColorStop(0, "rgba(255,240,214," + residual.toFixed(3) + ")");
+      rg.addColorStop(1, "rgba(255,240,214,0)");
+      ctx.fillStyle = rg;
+      ctx.fillRect(bagR.x, bagR.y, bagR.w, bagR.h);
+    }
+    ctx.restore();
+  }
+
+  function drawSteam(amt, cupR, timeMs){
+    /* ENRICHED — 3 soft wisps rising from the cup, present through the
+       assembly (amt fades in as the beans land, boosted at the settle),
+       not only at the very end. Cream-toned, subtle. */
+    var cx = cupR.x + cupR.w / 2;
+    var top = cupR.y + cupR.h * 0.02;
+    for (var i = 0; i < 3; i++){
+      var ph = (timeMs * 0.00045 + i * 0.33) % 1;
+      var wob = Math.sin(timeMs * 0.0011 + i * 2.1) * 6 * layout.S;
+      var y = top - ph * 90 * layout.S;
+      var a = 0.12 * amt * Math.sin(ph * Math.PI);
+      if (a <= 0.005) continue;
+      var r = (12 + ph * 20) * layout.S;
+      var g = ctx.createRadialGradient(cx + wob, y, 0, cx + wob, y, r);
+      g.addColorStop(0, "rgba(251,243,232," + a.toFixed(3) + ")");
+      g.addColorStop(1, "rgba(251,243,232,0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.ellipse(cx + wob, y, r, r * 1.9, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawLightSweep(settle, timeMs){
+    /* One soft diagonal band sweeping across, only at the end. */
+    var sweepT = clamp01((settle - 0.25) / 0.75);
+    if (sweepT <= 0) return;
+    var x = -cw * 0.3 + sweepT * cw * 1.6;
+    var grad = ctx.createLinearGradient(x - 90, 0, x + 90, 0);
+    grad.addColorStop(0, "rgba(255,246,230,0)");
+    grad.addColorStop(0.5, "rgba(255,246,230," + (0.05 * settle).toFixed(3) + ")");
+    grad.addColorStop(1, "rgba(255,246,230,0)");
+    ctx.save();
+    ctx.translate(cw / 2, ch / 2);
+    ctx.rotate(-0.35);
+    ctx.translate(-cw / 2, -ch / 2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(x - 90, -ch, 180, ch * 3);
+    ctx.restore();
+  }
+
+  /* ---------- scroll progress (frame-rate-independent smoothing) ---------- */
+  var target = 0, current = 0, prevCurrent = 0, lastT = 0;
+  function calculateScrollProgress(){
+    var rect = els.hero.getBoundingClientRect();
+    var total = rect.height - window.innerHeight;
+    if (total <= 0) return 0;
+    return Math.min(1, Math.max(0, -rect.top / total));
+  }
+  function updateSequence(now){
+    if (reducedMotion){ updateScrollbar(); return; }
+    target = calculateScrollProgress();
+    var dt = lastT ? Math.min(0.1, (now - lastT) / 1000) : 1 / 60;
+    lastT = now;
+    /* Frame-rate-independent smoothing (Claude Track A):
+       k = 1 - (1 - 0.1)^(dt*60). The spring (pSpring) is the second
+       smoothing stage — it adds the overshoot and the landing settle
+       that a plain lerp never gives, and it is also the clock the
+       impacts ring on. */
+    var k = 1 - Math.pow(1 - 0.1, dt * 60);
+    current += (target - current) * k;
+    if (Math.abs(target - current) < 0.0005) current = target;
+    pSpring.set(current);
+    pSpring.step(dt);
+    rollSpring.step(dt); cupSpring.step(dt);
+    /* Impacts (the three moments the film lands on). The old code only
+       rippled at the beans; the springs make all three felt. */
+    fireImpacts(prevCurrent, current);
+    prevCurrent = current;
+    /* Decay the impact state (the previous builder wired the fire but
+       never the decay — without this the shake/squash would stick). */
+    shakeT += dt / shakeDur;
+    exposureKick *= Math.pow(0.5, dt / 0.08);
+    bagSquash *= Math.pow(0.5, dt / 0.06);
+    /* The camera tracks are keyframed on the spring's (settled) p — so
+       a fast scroll whip-pans and then the camera catches up and
+       settles, instead of the camera teleporting with the raw scroll. */
+    evaluateTracks(pSpring.value());
+    render(current);
+    updateCopy(current);
+    updateStatus(current);
+    updateLabels(current);
+    updateAlt(current);
+    updateScrollbar();
+  }
+  function updateScrollbar(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? (h.scrollTop / max) : 0;
+    els.scrollbar.style.width = (p * 100).toFixed(1) + "%";
+  }
+  function updateStatus(p){
+    /* Beat-aware status: the line names the moment you are in, so the
+       scroll always has a job. (A top agency's micro-copy: never a
+       generic "loading", always the beat.) */
+    var txt = p >= 0.80 ? "Assembled — NJ Coffee"
+      : p >= 0.55 ? "The assembly"
+      : p >= 0.28 ? "The seal snaps"
+      : p >= 0.10 ? "Beans pour into the cup"
+      : "Scroll to assemble";
+    if (els.statusText.textContent !== txt) els.statusText.textContent = txt;
+  }
+
+  /* ---------- copy moves WITH the product (v12 brief §8), retimed to
+     the beats ----------
+     SEQUENTIAL fades, never overlapping: two different headlines ghosting
+     over each other in the same spot reads as a mistake. Each layer fades
+     out completely before the next fades in; the brief gap between them
+     is a deliberate beat (a pause before the next claim), not a hole.
+     A out 0.22–0.27 (leaves as the beans land); B in 0.29–0.34, out
+     0.52–0.56 (leaves before the whip pan); C in 0.58–0.64 (arrives
+     with the sweep). */
+  function updateCopy(p){
+    var aO = 1 - smoothstep(0.22, 0.27, p);
+    var bO = smoothstep(0.29, 0.34, p) * (1 - smoothstep(0.52, 0.56, p));
+    var cO = smoothstep(0.58, 0.64, p);
+    setLayer(els.copyA, aO, -24 * (1 - aO));
+    setLayer(els.copyB, bO, -24 * (1 - bO));
+    setLayer(els.copyC, cO, 24 * (1 - cO));
+  }
+  function setLayer(el, opacity, tx){
+    if (!el) return;
+    el.style.opacity = opacity.toFixed(3);
+    el.style.transform = "translateX(" + tx.toFixed(1) + "px)";
+    el.classList.toggle("on", opacity > 0.5);
+  }
+
+  /* ---------- navigation (active link) ---------- */
+  function initializeNavigation(){
+    var links = document.querySelectorAll("nav a[data-nav]");
+    var map = {};
+    links.forEach(function(a){ map[a.getAttribute("data-nav")] = a; });
+    var sections = ["origin", "bean", "menu", "final"];
+    var observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) {
+          links.forEach(function(a){ a.classList.remove("active"); });
+          var a = map[e.target.id];
+          if (a) a.classList.add("active");
+        }
+      });
+    }, {rootMargin: "-40% 0px -55% 0px"});
+    sections.forEach(function(id){
+      var s = document.getElementById(id);
+      if (s) observer.observe(s);
+    });
+  }
+
+  /* ---------- local order form (on-device only) ---------- */
+  var lastOrderText = "";
+  function initializeOrderForm(){
+    els.form.addEventListener("submit", function(ev){
+      ev.preventDefault();
+      var nameField = document.getElementById("field-name");
+      var qtyField = document.getElementById("field-qty");
+      var name = document.getElementById("custname").value.trim();
+      var productSel = document.getElementById("product");
+      var qtyRaw = document.getElementById("qty").value.trim();
+      var note = document.getElementById("note").value.trim();
+      var ok = true;
+      nameField.classList.toggle("invalid", name === "");
+      if (name === "") ok = false;
+      var qty = Number(qtyRaw);
+      var qtyOk = qtyRaw !== "" && Number.isInteger(qty) && qty >= 1;
+      qtyField.classList.toggle("invalid", !qtyOk);
+      if (!qtyOk) ok = false;
+      if (!productSel.value) ok = false;
+      if (!ok) return;
+      var parts = productSel.value.split("|");
+      var productName = parts[0];
+      var unit = Number(parts[1]) || UNIT_PRICE;
+      var total = qty * unit;
+      var lines = [
+        "NJ COFFEE — DEMO ORDER",
+        "------------------------------",
+        "Name: " + name,
+        "Product: " + productName,
+        "Unit price: $" + unit,
+        "Quantity: " + qty + " bag" + (qty > 1 ? "s" : ""),
+        "Total: $" + total,
+        note ? "Note: " + note : "Note: —",
+        "------------------------------",
+        "DEMO ONLY — NO ORDER HAS BEEN SENT."
+      ];
+      lastOrderText = lines.join("\n");
+      els.summaryText.textContent = lastOrderText;
+      els.summary.classList.add("show");
+      els.copyFeedback.textContent = "";
+      els.summary.scrollIntoView({behavior: "smooth", block: "nearest"});
+    });
+    els.downloadBtn.addEventListener("click", downloadOrderSummary);
+    els.copyBtn.addEventListener("click", copyOrderSummary);
+  }
+  function downloadOrderSummary(){
+    if (!lastOrderText) return;
+    var blob = new Blob([lastOrderText], {type: "text/plain;charset=utf-8"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "nj-coffee-order.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+  function copyOrderSummary(){
+    if (!lastOrderText) return;
+    function done(){ els.copyFeedback.textContent = "Order summary copied."; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(lastOrderText).then(done, function(){ fallbackCopy(); });
+    } else {
+      fallbackCopy();
+    }
+    function fallbackCopy(){
+      var ta = document.createElement("textarea");
+      ta.value = lastOrderText;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); done(); }
+      catch (e) { els.copyFeedback.textContent = "Copy did not work — please select the summary text manually."; }
+      document.body.removeChild(ta);
+    }
+  }
+
+  /* ---------- reduced motion ----------
+     Static assembled view (p=1 composition) instead of the 350vh pinned
+     hero; no animation loop. Listens for changes so toggling the OS
+     setting re-applies at runtime. */
+  var reducedMotion = false;
+  var motionLoopStarted = false;
+  function startMotionLoop(){
+    if (motionLoopStarted) return;
+    motionLoopStarted = true;
+    (function loop(now){
+      updateSequence(now || performance.now());
+      updateStageMotion();
+      requestAnimationFrame(loop);
+    })(performance.now());
+  }
+  function applyReducedMotion(){
+    if (reducedMotion) {
+      /* Static key frame: the assembled product. The camera renders the
+         hero (1.12x) with no shake, smear or dolly — the beats become a
+         calm fade (copy layers) and the labels stay hidden. The camera
+         must be evaluated for p=1 first, or the hero would render with
+         the wide (p=0) camera. */
+      current = 1; target = 1; prevCurrent = 1;
+      evaluateTracks(1);
+      render(1);
+      updateCopy(1);
+      updateStatus(1);
+      updateAlt(1);
+    } else {
+      startMotionLoop();
+    }
+  }
+  function initializeReducedMotion(){
+    var mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    function onChange(){
+      reducedMotion = mq.matches;
+      applyReducedMotion();
+    }
+    if (mq.addEventListener) mq.addEventListener("change", onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+    applyReducedMotion();
+  }
+
+  /* ---------- stage motion (ambient only) ----------
+     (a) Breathing cream light-field behind the stage: separate full-bleed
+         2D canvases at 0.5 DPR, warm-cream radial gradients only, <5%
+         opacity, pointer-events:none. Arrival, Roast, Final Moment only.
+     (b) Headline fade + rise reveal (robust — never covers text).
+     No pointer tilt, no parallax while scrolling, no
+     orb/particles/vignette/WebGL — the camera owns the motion; the
+     ambient layer only breathes. */
+  var stageMotionReady = false;
+  var lightFields = [];
+  function initializeStageMotion(){
+    if (reducedMotion) return;
+    ["lf-arrival", "lf-roast", "lf-final"].forEach(function(id){
+      var cv = document.getElementById(id);
+      if (!cv) return;
+      var c2 = cv.getContext("2d");
+      if (!c2) return;
+      lightFields.push({cv: cv, ctx: c2});
+    });
+    sizeLightFields();
+    window.addEventListener("resize", sizeLightFields, {passive:true});
+    initializeHeadlineReveals();
+    stageMotionReady = true;
+  }
+  function sizeLightFields(){
+    lightFields.forEach(function(lf){
+      var parent = lf.cv.parentElement;
+      if (!parent) return;
+      var w = Math.max(2, Math.round(parent.clientWidth * 0.5));
+      var h = Math.max(2, Math.round(parent.clientHeight * 0.5));
+      if (lf.cv.width !== w || lf.cv.height !== h) {
+        lf.cv.width = w;
+        lf.cv.height = h;
+      }
+    });
+  }
+  function updateStageMotion(){
+    if (!stageMotionReady || reducedMotion || document.hidden) return;
+    drawLightFields(performance.now());
+  }
+  function drawLightFields(t){
+    for (var i = 0; i < lightFields.length; i++) {
+      var lf = lightFields[i];
+      var parent = lf.cv.parentElement;
+      if (!parent) continue;
+      var pr = parent.getBoundingClientRect();
+      if (pr.bottom < 0 || pr.top > window.innerHeight) continue;
+      var bw = Math.max(2, Math.round(parent.clientWidth * 0.5));
+      var bh = Math.max(2, Math.round(parent.clientHeight * 0.5));
+      if (lf.cv.width !== bw || lf.cv.height !== bh) {
+        lf.cv.width = bw;
+        lf.cv.height = bh;
+      }
+      var c = lf.ctx, w = lf.cv.width, h = lf.cv.height;
+      if (!w || !h) continue;
+      c.clearRect(0, 0, w, h);
+      var breathe = 0.5 + 0.5 * Math.sin(t * 0.00045);
+      var gx = w * 0.62, gy = h * 0.42;
+      var gr = Math.max(w, h) * (0.40 + 0.06 * breathe);
+      var g = c.createRadialGradient(gx, gy, 0, gx, gy, gr);
+      g.addColorStop(0, "rgba(255,242,220," + (0.030 + 0.015 * breathe).toFixed(3) + ")");
+      g.addColorStop(1, "rgba(255,242,220,0)");
+      c.fillStyle = g;
+      c.fillRect(0, 0, w, h);
+      var cx = w * 0.22, cy = h * 0.72;
+      var cr = Math.max(w, h) * 0.22;
+      var cg = c.createRadialGradient(cx, cy, 0, cx, cy, cr);
+      cg.addColorStop(0, "rgba(233,217,193,0.030)");
+      cg.addColorStop(1, "rgba(233,217,193,0)");
+      c.fillStyle = cg;
+      c.fillRect(0, 0, w, h);
+      var bandX = (Math.sin(t * 0.00012) * 0.5 + 0.5) * w;
+      var band = c.createLinearGradient(bandX - w * 0.18, 0, bandX + w * 0.18, 0);
+      band.addColorStop(0, "rgba(255,246,230,0)");
+      band.addColorStop(0.5, "rgba(255,246,230,0.020)");
+      band.addColorStop(1, "rgba(255,246,230,0)");
+      c.fillStyle = band;
+      c.fillRect(0, 0, w, h);
+    }
+  }
+  function initializeHeadlineReveals(){
+    if (!("IntersectionObserver" in window)) return;
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (!en.isIntersecting) return;
+        var wrap = en.target;
+        setTimeout(function(){ wrap.classList.add("in"); }, 120);
+        io.unobserve(wrap);
+      });
+    }, {threshold: 0.3});
+    function wrapHead(h, ordText){
+      var wrap = document.createElement("div");
+      wrap.className = "head-reveal";
+      var ord = document.createElement("span");
+      ord.className = "ordinal";
+      ord.setAttribute("aria-hidden", "true");
+      ord.textContent = ordText;
+      h.parentNode.insertBefore(wrap, h);
+      wrap.appendChild(ord);
+      wrap.appendChild(h);
+      io.observe(wrap);
+    }
+    /* The hero is ONE chapter (01): all three copy layers share ordinal
+       "01". (The old code numbered every h1/h2 in document order, so the
+       three hero layers got 01/02/03 and the "02" ghosted over the
+       headline during the crossfade.) The sections below are 02–07. */
+    var heroHeads = document.querySelectorAll(".hero-copy h1");
+    heroHeads.forEach(function(h){ wrapHead(h, "01"); });
+    var sectionHeads = document.querySelectorAll("main section h2");
+    sectionHeads.forEach(function(h, idx){
+      wrapHead(h, String(idx + 2).padStart(2, "0"));
+    });
+  }
+
+  /* ---------- boot ---------- */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializePage);
+  } else {
+    initializePage();
+  }
+})();
 </script>
 </body>
 </html>
