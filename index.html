@@ -2,576 +2,991 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NJ Coffee — Single Origin Yirgacheffe (Demo)</title>
-<meta name="description" content="NJ Coffee — a demo website. Single-origin Yirgacheffe, roasted every Tuesday.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NJ Coffee — Single Origin Yirgacheffe</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta name="description" content="NJ Coffee — Single Origin Yirgacheffe, 250g whole bean, $18. Good coffee, no shortcuts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--cream-top:#F2E8DC;--cream-mid:#E9D9C1;--cream-floor:#DFC7A4;--ink:#3B2416;--body:#5A3A28;--coral:#E8A33D;--coral-hover:#C97A1F;--coral-text:#8A5A12;--copper:#7A4A2B;--cream-text:#FBF3E8;--paper:#F2E8DC;--paper-body:#3B2416;--brown:#3B2416;--card:#F8F1E6;--hairline:rgba(59,36,22,.16);--hairline-paper:rgba(59,36,22,.16)}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{font-family:'DM Sans','Inter','Helvetica Neue',Arial,sans-serif;color:var(--body);background:linear-gradient(180deg,#F2E8DC 0%,#E9D9C1 38%,#DFC7A4 100%);background-attachment:fixed;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-::selection{background:var(--coral);color:var(--ink)}
-a{color:inherit;text-decoration:none}img{display:block;max-width:100%}button{font-family:inherit;cursor:pointer}
-#loader{position:fixed;inset:0;z-index:200;background:linear-gradient(180deg,#F2E8DC 0%,#E9D9C1 60%,#DFC7A4 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity .6s ease}
-#loader.done{opacity:0;pointer-events:none}
-.loader-mark{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:.14em;color:var(--ink)}
-.loader-mark b{color:var(--coral-text)}
-.loader-sub{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--body)}
-.loader-bar{width:min(240px,60vw);height:2px;background:rgba(59,36,22,.18);overflow:hidden}
-.loader-bar i{display:block;height:100%;width:0%;background:var(--coral);transition:width .4s ease}
-.loader-pct{font-size:11px;letter-spacing:.2em;color:var(--body)}
-header{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--brown);color:#F2E8DC}
-.nav-inner{max-width:1280px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.wordmark{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:22px;letter-spacing:.08em;color:#F2E8DC;white-space:nowrap}
-.wordmark b{color:var(--coral);font-weight:700}
-nav{display:flex;align-items:center;gap:28px}
-nav a{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#F2E8DC;opacity:.85;transition:opacity .2s,color .2s}
-nav a:hover{opacity:1;color:var(--coral)}nav a.active{color:var(--coral);opacity:1}
-.nav-cta{background:var(--coral);color:var(--ink);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:10px 18px;border:none;border-radius:999px;transition:background .2s,transform .2s;white-space:nowrap}
-nav a.nav-cta{color:var(--ink);opacity:1}
-.nav-cta:hover{background:var(--coral-hover);transform:translateY(-1px)}
-#scrollbar{position:fixed;top:64px;left:0;height:3px;background:var(--coral);width:0%;z-index:101}
-main{display:block}section{position:relative}
-.wrap{max-width:1200px;margin:0 auto;padding:96px 24px}
-.eyebrow{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--coral-text);margin-bottom:18px}
-h1,h2{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;text-transform:uppercase;line-height:1.02;color:var(--ink);letter-spacing:.01em}
-h1{font-size:clamp(40px,4.2vw,52px)}h2{font-size:clamp(38px,4vw,48px)}
-.lede{margin-top:20px;font-size:clamp(16px,1.15vw,18px);line-height:1.6;color:var(--body);max-width:38ch}
-.cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
-.btn{display:inline-block;background:var(--coral);color:var(--ink);font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:15px 26px;border:none;border-radius:999px;transition:background .2s,transform .2s}
-.btn:hover{background:var(--coral-hover);transform:translateY(-2px)}
-.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
-.btn.ghost:hover{background:var(--ink);color:var(--cream-text)}
-@property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
-.beam{position:relative}
-.beam::after{content:"";position:absolute;inset:-5px;border-radius:999px;padding:2px;background:conic-gradient(from var(--a),transparent 0 70%,var(--ink) 92%,transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:bm 3.2s linear infinite;pointer-events:none}
-@keyframes bm{to{--a:360deg}}
-.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-.frame-img{width:100%;height:auto;border-radius:4px;-webkit-mask-image:radial-gradient(ellipse 95% 100% at 50% 50%,#000 75%,transparent 100%);mask-image:radial-gradient(ellipse 95% 100% at 50% 50%,#000 75%,transparent 100%)}
-.fact-row{display:flex;gap:40px;flex-wrap:wrap;margin-top:36px}
-.fact{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:20px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
-.fact small{display:block;font-family:'DM Sans','Inter',Arial,sans-serif;font-weight:500;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--body);margin-top:6px}
-.fact::before{content:"";display:block;width:10px;height:10px;border-radius:50%;background:var(--coral);margin-bottom:12px}
-.price,.fact{font-variant-numeric:tabular-nums}
-#hero{height:350vh}
-.hero-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
-#stage{position:absolute;inset:0;width:100%;height:100%;z-index:1}
-.hero-copy{pointer-events:none;position:absolute;z-index:3;left:48px;top:50%;transform:translateY(-50%);max-width:520px}
-.copy-stack{position:relative;min-height:250px}
-.copy-layer{position:absolute;left:0;top:0;right:0;opacity:0;pointer-events:none}
-.copy-layer.on{pointer-events:auto}
-.prod-line,.price-line{margin-top:24px;display:flex;align-items:baseline;gap:14px}
-.price-line{margin-top:28px}
-.product{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:22px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
-.prod-line .price,.price-line .price{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:32px;color:var(--coral-text)}
-.hero-status{margin-top:36px;display:flex;align-items:center;gap:12px;font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--body)}
-.hero-status .dot{width:8px;height:8px;border-radius:50%;background:var(--coral)}
-.hero-status .line{width:56px;height:1px;background:var(--body);opacity:.5}
-.part-labels{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
-.part-label{position:absolute;left:0;top:0;display:flex;align-items:center;gap:8px;opacity:0;will-change:transform,opacity;white-space:nowrap}
-.pl-num{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:15px;color:var(--coral-text);letter-spacing:.04em}
-.pl-name{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ink)}
-.part-label::before{content:"";display:block;width:26px;height:1px;background:var(--coral);opacity:.8}
-.part-label.flip{flex-direction:row-reverse}
-.alt-counter{position:absolute;right:48px;bottom:32px;z-index:3;text-align:right;pointer-events:none}
-.alt-num{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:clamp(28px,2.6vw,38px);color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
-.alt-unit{display:block;margin-top:6px;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--body)}
-.marq{overflow:hidden;background:var(--brown);color:#F2E8DC;padding:14px 0;white-space:nowrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.3em;opacity:.95}
-.marq span{display:inline-block;animation:mq 28s linear infinite}
-.marq i{color:var(--coral);font-style:normal}
-@keyframes mq{to{transform:translateX(-50%)}}
-.paper{background:var(--paper);color:var(--paper-body)}
-.paper h2{color:var(--brown)}.paper .lede{color:var(--paper-body)}.paper .fact{color:var(--brown)}.paper .fact small{color:var(--paper-body)}
-#roast{background:var(--cream-floor)}
-.roast-line{margin-top:28px;font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:clamp(28px,3vw,38px);letter-spacing:.02em;text-transform:uppercase;color:var(--ink)}
-.roast-line em{font-style:normal;color:var(--coral-text)}
-.menu-list{margin-top:40px;max-width:640px}
-.menu-item{display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:20px 4px;border-bottom:1px solid var(--hairline-paper);transition:padding-left .2s}
-.menu-item:first-child{border-top:1px solid var(--hairline-paper)}.menu-item:hover{padding-left:12px}
-.menu-item .name{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:clamp(20px,2vw,24px);letter-spacing:.06em;text-transform:uppercase;color:var(--brown)}
-.menu-item .name::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--coral);margin-right:14px;vertical-align:middle}
-.menu-item .price{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:clamp(20px,2vw,24px);color:var(--brown)}
-#final .split{grid-template-columns:1.05fr 1fr;gap:64px}
-.form-card{background:var(--card);border:1px solid rgba(59,36,22,.12);border-radius:12px;padding:32px;box-shadow:0 18px 50px rgba(59,36,22,.14)}
-.form-card h3{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:24px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink)}
-.form-note{margin-top:8px;font-size:13px;line-height:1.5;color:var(--body)}
-.field{margin-top:20px}
-.field label{display:block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin-bottom:8px}
-.field input,.field select,.field textarea{width:100%;font-family:inherit;font-size:15px;color:var(--ink);background:#F7F5F1;border:1px solid #D5D0C8;border-radius:8px;padding:12px 14px;outline:none}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--coral)}
-.field .err{display:none;margin-top:6px;font-size:12px;color:var(--coral-text)}
-.field.invalid input,.field.invalid select{border-color:var(--coral-text)}.field.invalid .err{display:block}
-.form-card .btn{width:100%;text-align:center;margin-top:26px}
-#summary{display:none;margin-top:24px;border-top:1px solid var(--hairline);padding-top:22px}
-#summary.show{display:block}
-#summary h4{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
-.demo-flag{margin-top:8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--coral-text)}
-#summary pre{margin-top:14px;white-space:pre-wrap;word-wrap:break-word;font-family:'DM Sans','Inter',Arial,sans-serif;font-size:14px;line-height:1.7;color:var(--ink);background:#F7F5F1;border:1px solid #D5D0C8;border-radius:8px;padding:16px}
-.summary-actions{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
-.summary-actions .btn{flex:1;margin-top:0;padding:13px 18px;font-size:12px}
-#copyfeedback{margin-top:10px;font-size:12px;color:var(--coral-text);min-height:16px}
-footer{background:var(--brown);color:#F2E8DC}
-.foot-inner{max-width:1200px;margin:0 auto;padding:56px 24px 48px;display:flex;flex-wrap:wrap;gap:32px;align-items:flex-start;justify-content:space-between}
-.foot-inner .wordmark{font-size:26px}
-.foot-inner p{margin-top:12px;font-size:14px;line-height:1.6;color:rgba(242,232,220,.75);max-width:38ch}
-.foot-links{display:flex;gap:26px;flex-wrap:wrap}
-.foot-links a{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#F2E8DC;opacity:.85}
-.foot-links a:hover{color:var(--coral);opacity:1}
-.foot-base{border-top:1px solid rgba(242,232,220,.14);padding:18px 24px;text-align:center;font-size:12px;letter-spacing:.08em;color:rgba(242,232,220,.6)}
-.head-reveal{position:relative}
-.head-reveal .ordinal{position:absolute;top:2px;right:0;font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:.28em;color:var(--coral-text);opacity:0;transition:opacity .6s ease .35s;pointer-events:none}
-.head-reveal.in .ordinal{opacity:1}
-.head-reveal.js h1,.head-reveal.js h2{opacity:0;transform:translateY(14px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1)}
-.head-reveal.js.in h1,.head-reveal.js.in h2{opacity:1;transform:none}
-@media (max-width:900px){.split,#final .split{grid-template-columns:1fr;gap:36px}nav a{display:none}nav a.nav-keep,nav a.nav-cta{display:inline-block}}
-@media (max-width:768px){
-.wrap{padding:72px 20px}h1{font-size:40px}h2{font-size:36px}
-.hero-copy{left:20px;right:20px;top:76px;transform:none;max-width:none}
-.hero-copy .eyebrow{margin-bottom:10px}.copy-stack{min-height:172px}.hero-copy .lede,.hero-copy .prod-line{margin-top:10px}
-.hero-copy .cta-row{margin-top:16px;gap:8px;flex-wrap:nowrap}.hero-copy .btn{padding:12px 14px;font-size:11px;letter-spacing:.1em}
-.hero-status{margin-top:14px}.nav-inner{padding:0 16px}.alt-counter{right:20px;bottom:20px}.alt-num{font-size:24px}.head-reveal .ordinal{display:none}}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}#hero{height:100vh}.marq span,.beam::after,.loader-mark span{animation:none}}
-.hero-sticky{background:#3B2416}
-#hero h1,#hero .product,#hero .alt-num,#hero .pl-name{color:#F2E8DC}
-#hero .lede,#hero .hero-status,#hero .alt-unit,#hero .eyebrow,#hero .pl-num,#hero .price,#hero .ordinal{color:#E9D9C1}
-#hero .hero-status .dot{background:#E9D9C1}#hero .hero-status .line{background:#E9D9C1}#hero .part-label::before{background:#E9D9C1}
-#hero .btn.ghost{color:#F2E8DC;border-color:#F2E8DC}#hero .btn.ghost:hover{background:#F2E8DC;color:var(--ink)}
-.hero-copy .btn{pointer-events:auto}
-#glass{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
-.rot-hint{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);z-index:3;opacity:0;pointer-events:none;font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:#E9D9C1;white-space:nowrap}
-.loader-mark span{display:inline-block;animation:kl 1.3s cubic-bezier(.65,0,.35,1) infinite}.loader-mark .cf{color:var(--coral)}
-@keyframes kl{0%{transform:translateY(.5em) scaleY(.6);opacity:0;filter:blur(6px)}35%,70%{transform:none;opacity:1;filter:none}100%{transform:translateY(-.4em);opacity:0;filter:blur(4px)}}
-.crack{display:grid;grid-template-columns:auto 1fr;gap:56px;align-items:center;margin-top:56px}
-.crack-l{text-align:center}
-.bean-btn{width:200px;height:200px;background:none;border:none;border-radius:50%;touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer}
-.bean-btn svg{width:100%;height:100%}.bn{fill:#8A5A33}#hl,#hr{transform-box:fill-box;transform-origin:center}
-.crack-hint{margin-top:12px;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--body)}
-.crack-reset{margin-top:10px;background:none;border:none;border-bottom:1px solid var(--ink);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink)}.crack-reset[hidden]{display:none}
-.rail{list-style:none;border-left:1px solid var(--hairline);padding-left:24px;display:flex;flex-direction:column;gap:14px}
-.rail li{opacity:.3;transition:opacity .4s,transform .4s;position:relative}.rail li.on{opacity:1}
-.rail li::before{content:"";position:absolute;left:-29px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;background:var(--ink)}
-.rail .lv{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
-.rail .nt{font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--body);padding-left:14px}
-.swipe{margin-top:40px}
-.track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 18px;scrollbar-width:none;cursor:grab;-webkit-user-select:none;user-select:none;-webkit-overflow-scrolling:touch}
-.track::-webkit-scrollbar{display:none}.track.drag{scroll-snap-type:none;cursor:grabbing}
-.mcard{flex:0 0 min(260px,70vw);scroll-snap-align:start;background:var(--card);border:1px solid var(--hairline);border-radius:14px;padding:26px 22px;min-height:230px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .25s}
-.mcard:hover{transform:translateY(-4px)}
-.mcard .no{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--body)}
-.mcard .name{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:600;font-size:30px;letter-spacing:.06em;text-transform:uppercase;color:var(--brown)}
-.mcard .name::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--coral);margin-right:12px;vertical-align:middle}
-.mcard .price{font-family:'Antonio','Arial Narrow',Impact,sans-serif;font-weight:700;font-size:34px;color:var(--brown);border-top:1px solid var(--hairline);padding-top:14px}
-.sw-ctl{display:flex;gap:12px;margin-top:6px}.sw-ctl .btn{padding:10px 22px}
-@media (max-width:768px){.rot-hint{left:20px;transform:none;font-size:10px;max-width:55vw;white-space:normal;bottom:64px}.crack{grid-template-columns:1fr;gap:32px}}
-:focus-visible{outline:2px solid var(--coral);outline-offset:3px}
+  :root{
+    --paper:#FBF7F0; --ink:#221A14; --red:#C22A1B;
+    --cream-tint:#EFE5D2; --panel:#2E241C; --kraft:#C9A876; --steam:#CFC8BC;
+    --hairline:rgba(34,26,20,.2);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:17px; line-height:1.55; overflow-x:hidden;
+    opacity:0; transition:opacity .8s ease;
+  }
+  body.ready{opacity:1}
+  img{max-width:100%; display:block}
+  a{color:inherit}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace; text-transform:uppercase; letter-spacing:.14em}
+  .display{font-family:Fraunces,Georgia,"Times New Roman",serif; font-weight:600; line-height:1.08; letter-spacing:-.01em}
+  .red-word{color:var(--red)}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 20px; min-width:0}
+  section{position:relative}
+
+  /* ---------- header: 56px, logo + ONE compact CTA ---------- */
+  header{
+    position:fixed; inset:0 0 auto 0; height:56px; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 16px; background:var(--paper);
+    border-bottom:1px solid var(--hairline);
+  }
+  .logo{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:13px; letter-spacing:.22em; color:var(--ink); text-decoration:none}
+  @property --beam-a{syntax:'<angle>'; initial-value:0deg; inherits:false}
+  @keyframes beam-spin{to{--beam-a:360deg}}
+  .cta{
+    position:relative;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--red); color:var(--paper); border:0; cursor:pointer;
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:12px; font-weight:500;
+    letter-spacing:.12em; text-transform:uppercase; text-decoration:none;
+    height:36px; padding:0 16px; border-radius:999px; white-space:nowrap;
+  }
+  /* Border Beam: a paper-white beam travels the CTA border on a 2.4s loop */
+  .cta::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; padding:2px; pointer-events:none;
+    background:conic-gradient(from var(--beam-a,0deg), transparent 0deg, rgba(251,247,240,.95) 70deg, transparent 140deg, transparent 360deg);
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor; mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite:exclude;
+    animation:beam-spin 2.4s linear infinite;
+  }
+  .cta:hover{filter:brightness(1.07)}
+  .cta:active{transform:translateY(1px)}
+  .cta-inverse{background:var(--paper); color:var(--red)}
+  .cta-inverse::before{display:none}
+
+  /* ---------- hero: 150vh sticky track, 100svh daylight studio ---------- */
+  #track{height:150vh; background:var(--paper)}
+  .sticky{position:sticky; top:0; height:100svh; height:100dvh; overflow:hidden; padding-top:56px}
+  .hero-grid{
+    display:grid; height:100%;
+    grid-template-rows:minmax(0,2.6fr) minmax(0,1fr);
+    grid-template-columns:minmax(0,1fr);
+  }
+  .canvas-cell{position:relative; min-width:0; min-height:0}
+  #scene{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y; opacity:0; transition:opacity .8s ease}
+  body.ready #scene{opacity:1}
+  .hero-copy{
+    min-width:0; padding:8px 20px calc(16px + env(safe-area-inset-bottom,0px));
+    text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  }
+  .hero-copy .eyebrow{font-size:11px; letter-spacing:.24em; color:var(--ink); text-transform:uppercase; margin-bottom:10px}
+  .hero-copy .display{font-size:clamp(28px,8vw,40px); color:var(--ink); max-width:640px}
+  #heroLine{transition:opacity .25s ease}
+  #heroSpec{margin-top:10px; font-size:12px; letter-spacing:.16em; color:var(--ink); text-transform:uppercase; transition:opacity .25s ease}
+  .hero-cta{margin-top:16px; height:48px; padding:0 26px; font-size:13px; width:min(100%,340px)}
+  .scroll-cue{margin-top:14px; font-size:11px; letter-spacing:.22em; color:rgba(34,26,20,.6); text-transform:uppercase; transition:opacity .25s ease}
+  /* Beat 2 spec line: paper scrim pill, pinned to the bottom of the viewport */
+  #specPill{
+    position:absolute; left:50%; bottom:18px; transform:translateX(-50%); z-index:6;
+    background:var(--paper); color:var(--ink); border-radius:8px; padding:12px 16px;
+    font-size:12px; letter-spacing:.16em; text-transform:uppercase; white-space:nowrap;
+    opacity:0; transition:opacity .25s ease; pointer-events:none;
+  }
+
+  /* ---------- kinetic text loader (max 800ms, then gone) ---------- */
+  #loader{position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; background:var(--paper); transition:opacity .35s ease}
+  #loader.hide{opacity:0; pointer-events:none}
+  #loader .kl-word{font-family:Fraunces,Georgia,"Times New Roman",serif; font-weight:600; font-size:clamp(34px,9vw,54px); color:var(--ink); letter-spacing:.02em; white-space:nowrap}
+  #loader .kl-word span{display:inline-block; animation:kl .8s ease both; animation-delay:calc(var(--i)*60ms)}
+  #loader .kl-word span:nth-child(n+4){color:var(--red)}
+  @keyframes kl{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:translateY(0)}}
+
+  /* ---------- WebGL fallback (designed state, never blank) ---------- */
+  #webgl-fallback{display:none; position:absolute; inset:0; z-index:4; background:var(--paper); overflow:auto; padding:76px 20px 24px; text-align:center}
+  #webgl-fallback.show{display:block}
+  #webgl-fallback img{max-width:300px; margin:0 auto 18px}
+  #webgl-fallback .display{font-size:clamp(28px,8vw,40px); margin-bottom:10px}
+
+  /* ---------- generic sections ---------- */
+  .section-pad{padding:84px 0}
+  .section-pad h2{font-size:clamp(30px,7vw,52px); margin-bottom:16px}
+  .section-pad p.lede{max-width:560px; font-size:17px}
+  .eyebrow{font-size:11px; letter-spacing:.24em; text-transform:uppercase; margin-bottom:14px}
+  .caption{font-size:11px; letter-spacing:.16em; text-transform:uppercase; margin-top:10px}
+  .hairline{border:0; border-top:1px solid var(--hairline)}
+  .on-paper{background:var(--paper); color:var(--ink)}
+  .on-cream{background:var(--cream-tint); color:var(--ink)}
+
+  /* CSS Scroll-Driven reveals: fade + 12px rise, once, no JS smoothing */
+  @supports (animation-timeline: view()){
+    .reveal-view{animation:fade-up .4s ease-out both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+    .reveal-view-d1{animation:fade-up .4s ease-out .05s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+    .reveal-view-d2{animation:fade-up .4s ease-out .1s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+    .reveal-view-d3{animation:fade-up .4s ease-out .15s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+    .reveal-view-d4{animation:fade-up .4s ease-out .2s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+  }
+  @keyframes fade-up{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:translateY(0)}}
+
+  /* ---------- origin: full-bleed photo band, no overlay ---------- */
+  .origin-band{overflow:hidden; max-width:100%}
+  .origin-band img{width:100%; height:auto; min-height:320px; object-fit:cover}
+  .origin-body{padding:56px 0 84px}
+  .spec-row{display:flex; flex-wrap:wrap; gap:10px 28px; font-size:12px; letter-spacing:.16em; text-transform:uppercase}
+
+  /* ---------- roast & process ---------- */
+  .roast-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:36px; align-items:start}
+  .roast-grid img.roast-img{width:100%; max-width:480px}
+  .process-cards{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin-top:36px}
+  .process-card{background:var(--paper); border:1px solid var(--hairline); padding:24px; min-width:0}
+  .process-card h3{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:13px; letter-spacing:.2em; text-transform:uppercase; margin-bottom:10px}
+  .process-card img{width:100%; max-width:480px; margin-top:14px}
+  .marquee{overflow:hidden; max-width:100%; border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline); padding:14px 0; margin:40px 0 0}
+  .marquee-track{display:flex; width:max-content; animation:marquee 24s linear infinite}
+  .marquee-track span{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:13px; letter-spacing:.2em; text-transform:uppercase; white-space:nowrap; padding-right:16px}
+  @keyframes marquee{to{transform:translateX(-50%)}}
+
+  /* ---------- menu: full red band ---------- */
+  .menu-band{background:var(--red); color:var(--paper)}
+  .menu-band h2{color:var(--paper)}
+  .menu-band .lede{color:var(--paper)}
+  .menu-band .eyebrow{color:var(--paper)}
+  .menu-photo{max-width:720px; margin:0 auto 32px; border:12px solid var(--paper); background:var(--paper)}
+  .menu-photo img{width:100%}
+  .menu-photo figcaption{color:var(--paper); margin-top:12px; text-align:center}
+  .swiper{display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding:4px 2px 18px; -webkit-overflow-scrolling:touch}
+  .menu-card{
+    flex:0 0 min(78%,300px); scroll-snap-align:center; min-width:0;
+    background:var(--paper); color:var(--ink); padding:26px 22px; border-radius:4px;
+    box-shadow:0 2px 12px rgba(34,26,20,.15);
+  }
+  .menu-card h3{font-family:Fraunces,Georgia,serif; font-size:26px; font-weight:600; margin-bottom:6px}
+  .menu-card p{font-size:15px}
+  .menu-card .price{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:15px; color:var(--red); margin-top:14px; letter-spacing:.08em}
+  .menu-cta-wrap{text-align:center; margin-top:28px}
+  .menu-cta-wrap .cta{height:48px; padding:0 28px; font-size:13px}
+
+  /* ---------- inspect ---------- */
+  #inspectCanvasWrap{position:relative; height:min(72vh,620px); background:var(--paper); border:1px solid var(--hairline); overflow:hidden}
+  #inspectCanvas{width:100%; height:100%; display:block; touch-action:pan-y}
+  #dragCue{
+    position:absolute; left:50%; bottom:16px; transform:translateX(-50%);
+    background:var(--paper); color:var(--ink); border:1px solid var(--hairline);
+    border-radius:999px; padding:8px 16px; font-size:11px; letter-spacing:.2em;
+    text-transform:uppercase; pointer-events:none; white-space:nowrap;
+  }
+
+  /* ---------- order ---------- */
+  .order-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:36px; align-items:start}
+  .order-photo img{width:100%; max-width:520px}
+  form label{display:block; font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; margin:18px 0 8px}
+  form input{
+    width:100%; max-width:420px; padding:12px 14px; font:inherit; font-size:16px;
+    background:var(--paper); color:var(--ink); border:1px solid rgba(34,26,20,.4); border-radius:4px;
+  }
+  form input:focus{outline:2px solid var(--red); outline-offset:1px}
+  .qty-fixed{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:14px; letter-spacing:.1em; text-transform:uppercase; padding:12px 14px; border:1px solid var(--hairline); max-width:420px; background:var(--cream-tint)}
+  .order-submit{margin-top:24px; height:48px; padding:0 28px; font-size:13px; width:min(100%,420px)}
+  .demo-note{margin-top:16px; font-size:12px; letter-spacing:.14em; text-transform:uppercase}
+  #orderResult{display:none; margin-top:24px; padding:22px; border:1px solid var(--hairline); background:var(--cream-tint); max-width:520px}
+  #orderResult .big{font-family:Fraunces,Georgia,serif; font-size:24px; font-weight:600; margin-bottom:8px}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--ink); color:var(--paper); border-top:4px solid var(--red); padding:56px 0 40px}
+  footer .display{font-size:30px; margin-bottom:12px}
+  footer p{color:var(--paper); max-width:560px}
+  footer .credits{margin-top:28px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--paper)}
+
+  @media (max-width:767px){
+    /* Taller canvas cell on phones (2.6fr above) leaves a shorter copy row —
+       tighten the copy stack so the CTA + scroll cue stay in the viewport. */
+    .hero-copy{padding:4px 20px calc(12px + env(safe-area-inset-bottom,0px))}
+    .hero-copy .eyebrow{margin-bottom:6px}
+    .hero-cta{margin-top:10px}
+    .scroll-cue{margin-top:8px}
+  }
+  @media (min-width:768px){
+    .process-cards{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}
+    .roast-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+    .order-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  }
+  @media (min-width:1024px){
+    .hero-grid{grid-template-rows:minmax(0,1fr); grid-template-columns:minmax(0,1.55fr) minmax(0,1fr)}
+    .hero-copy{text-align:left; align-items:flex-start; justify-content:center; padding:24px 32px 24px 8px}
+    .hero-cta{width:auto}
+    .swiper{overflow-x:visible}
+    .menu-card{flex:1 1 0; scroll-snap-align:none}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .marquee-track{animation:none}
+    .cta::before{animation:none}
+    .scroll-cue{animation:none}
+    .reveal-view,.reveal-view-d1,.reveal-view-d2,.reveal-view-d3,.reveal-view-d4{animation:none}
+  }
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="rip" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".012 .03" numOctaves="2" seed="3" result="n"/><feDisplacementMap id="ripd" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
-<div id="loader" role="status" aria-live="polite">
- <div class="loader-mark">NJ <b>COFFEE</b></div>
- <div class="loader-sub">Preparing the experience</div>
- <div class="loader-bar"><i id="loaderfill"></i></div>
- <div class="loader-pct" id="loaderpct">Loading 3D scene</div>
-</div>
-<header><div class="nav-inner">
- <a class="wordmark" href="#top" aria-label="NJ Coffee — home">NJ <b>COFFEE</b></a>
- <nav aria-label="Main navigation">
-  <a href="#origin" data-nav="origin">Origin</a><a href="#bean" data-nav="bean">Coffee</a><a href="#menu" data-nav="menu">Menu</a><a href="#final" data-nav="final">Order</a>
-  <a class="btn nav-cta" href="#final">Order Beans &rarr;</a>
- </nav>
-</div></header>
-<div id="scrollbar" aria-hidden="true"></div>
-<main id="top">
- <section id="hero" aria-label="NJ Coffee — watch the bag assemble as you scroll">
-  <div class="hero-sticky">
-   <canvas id="stage" role="img" aria-label="NJ Coffee 250g bag and cream cup assembling from floating parts as you scroll"></canvas>
-   
-   <canvas id="glass" aria-hidden="true"></canvas>
-   <div class="hero-copy">
-    <p class="eyebrow">NJ Coffee &mdash; Single Origin</p>
-    <div class="copy-stack" id="copystack">
-     <div class="copy-layer" id="copylayer-a"><h1>Coffee,<br>Redefined.</h1><p class="lede">One origin. One carefully crafted experience.</p></div>
-     <div class="copy-layer" id="copylayer-b"><h1>Roasted with<br>intention.</h1><p class="lede">12 kg at a time. Every Tuesday.</p></div>
-     <div class="copy-layer" id="copylayer-c"><h1>Your coffee.<br>Your ritual.</h1><p class="lede">250 g. Roasted Tuesday. At your door Friday.</p>
-      <div class="prod-line"><span class="product">Yirgacheffe 250g</span><span class="price">$18</span></div></div>
-    </div>
-    <div class="cta-row"><a class="btn" href="#origin">Discover the Origin</a><a class="btn ghost" href="#menu">See the Menu</a></div>
-    <p class="hero-status"><span class="dot"></span><span id="herostatustext">Scroll to assemble</span><span class="line"></span></p>
-   </div>
-   <div class="part-labels" id="partlabels" aria-hidden="true">
-    <div class="part-label" id="label-beans"><span class="pl-num">01</span><span class="pl-name">Beans</span></div>
-    <div class="part-label" id="label-bag"><span class="pl-num">02</span><span class="pl-name">Bag</span></div>
-    <div class="part-label" id="label-seal"><span class="pl-num">03</span><span class="pl-name">Seal</span></div>
-    <div class="part-label" id="label-cup"><span class="pl-num">04</span><span class="pl-name">Cup</span></div>
-   </div>
-   <p class="rot-hint" id="hint" aria-hidden="true">Drag to rotate · pinch or double-click to zoom</p>
-   <div class="alt-counter" id="altcounter" aria-hidden="true"><span class="alt-num" id="altnum">0</span><span class="alt-unit">m &middot; Yirgacheffe altitude</span></div>
-  </div>
- </section>
- <div class="marq" aria-hidden="true"><span id="mq"></span></div>
- <section id="origin" class="paper" aria-label="Origin"><div class="wrap">
-  <p class="eyebrow">The Origin</p><h2>Rooted in Yirgacheffe.</h2>
-  <p class="lede">From the highlands of Ethiopia, discover the origin behind every NJ Coffee experience.</p>
-  <div class="fact-row"><div class="fact">Single-origin<small>Yirgacheffe</small></div><div class="fact">Ethiopia<small>Grown high</small></div><div class="fact">2,200 m<small>Altitude</small></div></div>
-  <div class="cta-row"><a class="btn" href="#bean">Explore the Bean</a></div>
- </div></section>
- <section id="bean" aria-label="The bean"><div class="wrap split">
-  <div><p class="eyebrow">The Bean</p><h2>Every detail matters.</h2><p class="lede">Single-origin Yirgacheffe coffee.</p><div class="cta-row"><a class="btn" href="#roast">See the Roast</a></div></div>
-  <div><img class="frame-img" src="v11-scroll/frame-start-cream.jpg" alt="Exploded view of the NJ Coffee bag — seal strip, pouch, roasted beans, grounds and cream cup floating apart" loading="lazy"></div>
- </div></section>
- <section id="roast" aria-label="Roast"><div class="wrap">
-  <p class="eyebrow">Roast</p><h2>Roasted with intention.</h2><p class="roast-line">12 kg at a time. <em>Every Tuesday.</em></p>
-  <div class="cta-row"><a class="btn" href="#bag">Meet the Bag</a></div>
-  <div class="crack">
-   <div class="crack-l"><button type="button" id="crackbtn" class="bean-btn" aria-label="Press and hold to crack the bean, or tap"><svg viewBox="0 0 160 160" aria-hidden="true"><defs><clipPath id="cL"><rect x="0" y="0" width="80" height="160"/></clipPath><clipPath id="cR"><rect x="80" y="0" width="80" height="160"/></clipPath></defs><circle cx="80" cy="80" r="74" fill="none" stroke="rgba(59,36,22,.18)" stroke-width="3"/><circle id="ring" cx="80" cy="80" r="74" fill="none" stroke="#3B2416" stroke-width="3" stroke-linecap="round" stroke-dasharray="465" stroke-dashoffset="465" transform="rotate(-90 80 80)"/><ellipse id="core" cx="80" cy="80" rx="34" ry="46" fill="#C8A165" opacity="0"/><g id="hl"><ellipse class="bn" cx="80" cy="80" rx="48" ry="62" clip-path="url(#cL)"/></g><g id="hr"><ellipse class="bn" cx="80" cy="80" rx="48" ry="62" clip-path="url(#cR)"/></g><path id="crease" d="M80 20C70 50 92 62 80 82S70 112 80 140" fill="none" stroke="#2A180D" stroke-width="3" stroke-linecap="round"/></svg></button>
-    <p class="crack-hint" id="crackhint">Press and hold to crack · tap works too</p><button type="button" class="crack-reset" id="crackreset" hidden>Reset</button></div>
-   <ol class="rail" id="rail" aria-label="Descent into the roast"><li class="lv" data-t=".04">Light</li><li class="nt" data-t=".2">Caramel</li><li class="lv" data-t=".4">Medium</li><li class="nt" data-t=".58">Cherry</li><li class="lv" data-t=".76">Dark</li><li class="nt" data-t=".92">Cocoa</li></ol>
-  </div>
- </div></section>
- <section id="bag" aria-label="Signature bag"><div class="wrap">
-  <div><p class="eyebrow">Select</p><h2>Your coffee. Your ritual.</h2><p class="lede">250 g. Roasted Tuesday. At your door Friday.</p>
-   <div class="price-line"><span class="product">Yirgacheffe 250g</span><span class="price">$18</span></div>
-   <div class="cta-row"><a class="btn beam" href="#final">Select Your Bag</a></div></div>
- </div></section>
- <section id="menu" class="paper" aria-label="Brew and menu"><div class="wrap">
-  <p class="eyebrow">Brew</p><h2>Find your perfect cup.</h2>
-  <div class="swipe"><div class="track" id="track" tabindex="0" aria-label="Drinks, swipe or drag"><div class="mcard"><span class="no">01 / 05</span><span class="name">Espresso</span><span class="price">$3.50</span></div><div class="mcard"><span class="no">02 / 05</span><span class="name">Cappuccino</span><span class="price">$4.50</span></div><div class="mcard"><span class="no">03 / 05</span><span class="name">Pour Over</span><span class="price">$5.00</span></div><div class="mcard"><span class="no">04 / 05</span><span class="name">Cold Brew</span><span class="price">$5.50</span></div><div class="mcard"><span class="no">05 / 05</span><span class="name">Flat White</span><span class="price">$5.00</span></div></div><div class="sw-ctl"><button class="btn ghost" type="button" id="swprev" aria-label="Previous drink">&larr;</button><button class="btn ghost" type="button" id="swnext" aria-label="Next drink">&rarr;</button></div></div>
-  <div class="cta-row"><a class="btn" href="#final">Order Your Bag</a></div>
- </div></section>
- <section id="final" aria-label="Final moment and demo order"><div class="wrap split">
-  <div><p class="eyebrow">NJ Coffee</p><h2>Make it your moment.</h2><p class="lede">Single-origin Yirgacheffe. Thoughtfully roasted every Tuesday.</p>
-   <div class="price-line"><span class="product">Yirgacheffe 250g</span><span class="price">$18</span></div>
-</div>
-  <div>
-   <form class="form-card" id="orderform" novalidate>
-    <h3>Demo Order</h3>
-    <p class="form-note">This is a demonstration form. Your order is built on this device only — nothing is sent anywhere.</p>
-    <div class="field" id="field-name"><label for="custname">Your name</label><input type="text" id="custname" name="name" autocomplete="name" placeholder="e.g. Fahad Khan"><p class="err">Please enter your name.</p></div>
-    <div class="field" id="field-product"><label for="product">Product</label><select id="product" name="product"><option value="Yirgacheffe 250g|18" selected>Yirgacheffe 250g — $18</option></select><p class="err">Please choose a product.</p></div>
-    <div class="field" id="field-qty"><label for="qty">Quantity (bags)</label><input type="number" id="qty" name="qty" min="1" step="1" value="1" inputmode="numeric"><p class="err">Quantity must be a whole number of 1 or more.</p></div>
-    <div class="field"><label for="note">Note (optional)</label><textarea id="note" name="note" rows="2" placeholder="Anything to add?"></textarea></div>
-    <button class="btn" type="submit">Place Your Demo Order</button>
-    <div id="summary" aria-live="polite">
-     <h4>NJ Coffee — Demo Order</h4><p class="demo-flag">Demo only — no order has been sent.</p><pre id="summarytext"></pre>
-     <div class="summary-actions"><button class="btn" type="button" id="downloadbtn">Download Order</button><button class="btn ghost" type="button" id="copybtn">Copy Order</button></div>
-     <p id="copyfeedback" aria-live="polite"></p>
-    </div>
-   </form>
-  </div>
- </div></section>
-</main>
-<footer>
- <div class="foot-inner">
-  <div><div class="wordmark">NJ <b>COFFEE</b></div><p>One origin. One carefully crafted experience.</p><p>A demo website. Built by Fahad Khan.</p></div>
-  <div class="foot-links"><a href="#top">Home</a><a href="#origin">Origin</a><a href="#bean">Coffee</a><a href="#menu">Menu</a><a href="#final">Order</a></div>
- </div>
- <div class="foot-base">&copy; 2026 NJ Coffee — a demo website.</div>
-</footer>
+<header>
+  <a class="logo" href="#top">NJ COFFEE</a>
+  <a class="cta" href="#order">Order — $18</a>
+</header>
 
-<script type="importmap">{"imports":{"three":"./three.module.min.js","three/addons/":"./jsm/"}}</script>
-<script src="./vendor/lenis.min.js"></script>
-<script src="./vendor/gsap.min.js"></script>
-<script src="./vendor/ScrollTrigger.min.js"></script>
-<script>
-(function(){
-var $=function(i){return document.getElementById(i)};
-var RM=matchMedia('(prefers-reduced-motion: reduce)');
-var Q=new URLSearchParams(location.search);
-(function(){var m=document.querySelector('.loader-mark');m.setAttribute('aria-label','NJ Coffee');var h='',i=0;'NJ COFFEE'.split('').forEach(function(c,k){h+=c===' '?'<span style="width:.4em"></span>':'<span'+(k>2?' class="cf"':'')+' style="animation-delay:'+(i++*.08)+'s">'+c+'</span>'});m.innerHTML=h})();
-/* ---- loader ---- */
-var loaded=false;
-function finishLoader(){if(loaded)return;loaded=true;$('loaderfill').style.width='100%';$('loaderpct').textContent='Ready';setTimeout(function(){$('loader').classList.add('done')},250)}
-setTimeout(function(){$('loaderfill').style.width='35%'},60);
-window.__auroraSceneReady=finishLoader;
-window.__njFallback=function(){finishLoader();window.__njNo3D=true;njUpdate(1,null)};
-setTimeout(function(){if(!loaded){finishLoader();if(!window.__njReadyOnce){window.__njNo3D=true;njUpdate(1,null)}}},4000);
-/* ---- progress ---- */
-var hero=$('hero');
-window.__getRaw=function(){var r=hero.getBoundingClientRect(),m=hero.offsetHeight-innerHeight;return m>0?Math.min(1,Math.max(0,-r.top/m)):1};
-if(window.Lenis&&!RM.matches){try{var ln=new Lenis({lerp:.08,smoothWheel:true});(function f(t){ln.raf(t);requestAnimationFrame(f)})(0)}catch(e){}}
-/* ---- per-frame DOM ---- */
-function sm(a,b,x){x=Math.min(1,Math.max(0,(x-a)/(b-a)));return x*x*(3-2*x)}
-var layers=['a','b','c'].map(function(k){return $('copylayer-'+k)});
-var LB=[['beans',.235,.26,.27,.30],['bag',.28,.33,.50,.55],['seal',.505,.55,.60,.65],['cup',.80,.85,.97,1.001]].map(function(a,i){return{el:$('label-'+a[0]),a:a,i:i}});
-var gc=$('glass'),gx=gc.getContext('2d'),gW=0,gH=0,gCells=[],gDone=false;
-function gInit(){gW=gc.width=gc.clientWidth;gH=gc.height=gc.clientHeight;var cs=gW<700?36:52,nx=Math.ceil(gW/cs),ny=Math.ceil(gH/cs),cx=gW<700?.5:.72,cy=gW<700?.72:.5,sd=7;function r(){sd=(sd*16807)%2147483647;return sd/2147483647}
- gCells=[];for(var j=0;j<ny;j++)for(var i=0;i<nx;i++){var d=Math.hypot(((i+.5)*cs-gW*cx)/gW,((j+.5)*cs-gH*cy)/gH);gCells.push({x:i*cs,y:j*cs,s:cs,t:.01+.13*(Math.min(1,d*1.3)*.6+r()*.4)})}gDone=false}
-function glass(p){if(!gCells.length||gW!==gc.clientWidth||gH!==gc.clientHeight)gInit();
- if(p>=.15){if(!gDone){gx.clearRect(0,0,gW,gH);gDone=true}return}
- gDone=false;gx.clearRect(0,0,gW,gH);
- for(var i=0;i<gCells.length;i++){var c=gCells[i],a=1-sm(c.t,c.t+.035,p);if(a<=.01)continue;var o=(1-a)*c.s*.3,x=c.x+1+o,y=c.y+1+o,w=c.s-2-2*o;
-  gx.globalAlpha=a*.84;gx.fillStyle='#6B4631';gx.fillRect(x,y,w,w);gx.globalAlpha=a*.3;gx.fillStyle='#F2E8DC';gx.fillRect(x,y,w,2);gx.fillRect(x,y,2,w)}
- gx.globalAlpha=1}
-function njUpdate(p,pts){glass(p);$('hint').style.opacity=sm(.95,.99,p)*.85;
- var op=[1-sm(.22,.27,p),sm(.29,.34,p)*(1-sm(.52,.56,p)),sm(.58,.64,p)];
- layers.forEach(function(e,i){e.style.opacity=op[i];e.classList.toggle('on',op[i]>.5)});
- $('herostatustext').textContent=p<.10?'Scroll to assemble':p<.28?'Beans pour into the cup':p<.55?'The seal snaps':p<.80?'The assembly':'Assembled — NJ Coffee';
- $('altnum').textContent=Math.round(2200*Math.min(1,p/.8)).toLocaleString('en-US');
- var w=hero.clientWidth;
- LB.forEach(function(l){var a=l.a,o=sm(a[1],a[2],p)*(1-sm(a[3],a[4],p));if(!pts||!pts[l.i])o=0;l.el.style.opacity=o;
-  if(o>0){var x=pts[l.i][0],y=pts[l.i][1],f=x>w*.78;l.el.classList.toggle('flip',f);l.el.style.transform='translate('+(f?x-14-l.el.offsetWidth:x+14)+'px,'+(y-26)+'px)'}});
-}
-window.__njUpdate=function(p,pts){window.__njReadyOnce=true;njUpdate(p,pts)};
-njUpdate(0,null);
-/* ---- scrollbar, nav, reveals, marquee ---- */
-addEventListener('scroll',function(){var m=document.documentElement.scrollHeight-innerHeight;$('scrollbar').style.width=(m>0?scrollY/m*100:0)+'%'},{passive:true});
-var links=document.querySelectorAll('[data-nav]');
-var nio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)links.forEach(function(a){a.classList.toggle('active',a.dataset.nav===e.target.id)})})},{threshold:.4});
-['origin','bean','menu','final'].forEach(function(i){nio.observe($(i))});
-var mq=$('mq'),unit='ROAST \u2726 GRIND \u2726 BREW \u2726 POUR \u2726 ',s='';for(var i=0;i<12;i++)s+=unit;mq.innerHTML=(s+s).replace(/\u2726/g,'<i>\u2726</i>');
-var secOrd={origin:'02',bean:'03',roast:'04',bag:'05',menu:'06',final:'07'};
-var rio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var t=e.target;setTimeout(function(){t.classList.add('in')},120);rio.unobserve(t)}})},{threshold:.3});
-document.querySelectorAll('h1,h2').forEach(function(h){
- var wrap=document.createElement('div');wrap.className='head-reveal';var sec=h.closest('section'),ord=document.createElement('span');ord.className='ordinal';ord.textContent=secOrd[sec.id]||'01';
- h.parentNode.insertBefore(wrap,h);wrap.appendChild(ord);wrap.appendChild(h);
- if(sec.id==='hero'){wrap.classList.add('in')}else if(!RM.matches){wrap.classList.add('js');rio.observe(wrap)}else wrap.classList.add('in');
-});
-/* ---- chapter wipe: ripple displacement reveal ---- */
-var ripd=$('ripd');
-function ripple(el){if(RM.matches||el.dataset.r)return;el.dataset.r=1;el.style.filter='url(#rip)';var t0=performance.now(),D=1000;
- el.animate([{clipPath:'circle(0% at 50% 35%)',opacity:.2},{clipPath:'circle(110% at 50% 35%)',opacity:1}],{duration:D,easing:'cubic-bezier(.22,1,.36,1)'});
- (function f(n){var k=Math.min(1,(n-t0)/D);ripd.setAttribute('scale',String(Math.round(70*(1-k)*(1-k))));if(k<1)requestAnimationFrame(f);else{el.style.filter='';ripd.setAttribute('scale','0')}})(t0)}
-var wio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){wio.unobserve(e.target);ripple(e.target)}})},{threshold:.2});
-['origin','bean','roast','bag','menu','final'].forEach(function(i){wio.observe($(i).querySelector('.wrap'))});
-/* ---- brew card swiper ---- */
-var tr=$('track'),sd=0,sx=0,sl=0;
-tr.addEventListener('pointerdown',function(e){if(e.pointerType!=='mouse')return;sd=1;sx=e.clientX;sl=tr.scrollLeft;tr.classList.add('drag')});
-addEventListener('pointermove',function(e){if(sd)tr.scrollLeft=sl-(e.clientX-sx)});
-addEventListener('pointerup',function(){if(sd){sd=0;tr.classList.remove('drag')}});
-function swgo(d){var c=tr.querySelector('.mcard');tr.scrollBy({left:d*(c.offsetWidth+18),behavior:'smooth'})}
-$('swprev').onclick=function(){swgo(-1)};$('swnext').onclick=function(){swgo(1)};
-tr.addEventListener('keydown',function(e){if(e.key==='ArrowRight')swgo(1);else if(e.key==='ArrowLeft')swgo(-1)});
-/* ---- hold to crack the bean ---- */
-var cb=$('crackbtn'),rg=$('ring'),hl=$('hl'),hr=$('hr'),cz=$('crease'),co=$('core'),rail=$('rail').children,rs=$('crackreset'),ch=$('crackhint'),bns=document.querySelectorAll('.bn');
-var hp=0,holding=false,tgt=-1,pd=0,cl=0,ra=0;
-function cdraw(){var k=sm(0,.33,hp);hl.style.transform='translateX('+(-k*16)+'px) rotate('+(-k*5)+'deg)';hr.style.transform='translateX('+(k*16)+'px) rotate('+(k*5)+'deg)';cz.style.opacity=1-k;co.setAttribute('opacity',k*.9);rg.setAttribute('stroke-dashoffset',465*(1-hp));
- var c=[138-96*hp,90-66*hp,51-38*hp].map(Math.round).join(',');for(var i=0;i<bns.length;i++)bns[i].style.fill='rgb('+c+')';
- for(i=0;i<rail.length;i++)rail[i].classList.toggle('on',hp>=parseFloat(rail[i].dataset.t));
- rs.hidden=!(hp>0&&!holding);ch.textContent=hp>=.95?'Dark roast reached':hp>=.33?'Keep holding to descend':'Press and hold to crack \u00B7 tap works too'}
-function cloop(n){var dt=Math.min(.05,(n-cl)/1000);cl=n;
- if(holding)hp=Math.min(1,hp+dt/3.2);else if(tgt>=0){hp=Math.min(tgt,hp+dt/1.4);if(hp>=tgt)tgt=-1}else if(hp<.33)hp=Math.max(0,hp-dt/1.2);
- cdraw();if(holding||tgt>=0||(hp>0&&hp<.33))ra=requestAnimationFrame(cloop);else ra=0}
-function cgo(){if(!ra){cl=performance.now();ra=requestAnimationFrame(cloop)}}
-function cdown(){holding=true;tgt=-1;pd=performance.now();cgo()}
-function cend(){if(!holding)return;holding=false;if(performance.now()-pd<250)tgt=1;cgo()}
-cb.addEventListener('pointerdown',function(e){e.preventDefault();cb.setPointerCapture(e.pointerId);cdown()});
-['pointerup','pointercancel'].forEach(function(t){cb.addEventListener(t,cend)});
-cb.addEventListener('keydown',function(e){if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();cdown()}});
-cb.addEventListener('keyup',function(e){if(e.key===' '||e.key==='Enter')cend()});
-rs.addEventListener('click',function(){hp=0;tgt=-1;cdraw()});
-cdraw();
-/* ---- order form (local only) ---- */
-var form=$('orderform'),txt='';
-form.addEventListener('submit',function(e){
- e.preventDefault();
- var name=$('custname').value.trim(),q=$('qty').value.trim(),n=Number(q),pr=$('product').value.split('|');
- var okN=name.length>0,okQ=/^\d+$/.test(q)&&n>=1;
- $('field-name').classList.toggle('invalid',!okN);$('field-qty').classList.toggle('invalid',!okQ);
- if(!okN||!okQ){$('summary').classList.remove('show');return}
- var note=$('note').value.trim()||'\u2014';
- txt=['NJ COFFEE \u2014 DEMO ORDER','------------------------------','Name: '+name,'Product: '+pr[0],'Unit price: $'+pr[1],'Quantity: '+n+' bag(s)','Total: $'+(n*Number(pr[1])),'Note: '+note,'------------------------------','DEMO ONLY \u2014 NO ORDER HAS BEEN SENT.'].join('\n');
- $('summarytext').textContent=txt;$('summary').classList.add('show');$('copyfeedback').textContent='';
-});
-$('downloadbtn').addEventListener('click',function(){var b=new Blob([txt],{type:'text/plain'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='nj-coffee-order.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},500)});
-$('copybtn').addEventListener('click',function(){
- var fb=$('copyfeedback');function ok(){fb.textContent='Order copied.'}
- function old(){var t=document.createElement('textarea');t.value=txt;t.style.cssText='position:fixed;opacity:0';document.body.appendChild(t);t.select();try{document.execCommand('copy');ok()}catch(e){fb.textContent='Copy failed — select the text manually.'}t.remove()}
- if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(ok,old);else old();
-});
-})();
+<div id="loader" aria-hidden="true">
+  <div class="kl-word" aria-hidden="true"><span style="--i:0">N</span><span style="--i:1">J</span><span style="--i:2">&nbsp;</span><span style="--i:3">C</span><span style="--i:4">o</span><span style="--i:5">f</span><span style="--i:6">f</span><span style="--i:7">e</span><span style="--i:8">e</span></div>
+</div>
+
+<main id="top">
+  <!-- S1 — Hero: sticky 3D track, 150vh -->
+  <div id="track">
+    <div class="sticky">
+      <div class="hero-grid">
+        <div class="canvas-cell">
+          <canvas id="scene" aria-label="NJ Coffee bag and takeaway cup in a daylight studio"></canvas>
+          <div id="webgl-fallback" aria-hidden="true">
+            <img src="v14-assets/takeaway-cup-unbranded.jpg" alt="Plain takeaway coffee cup">
+            <h2 class="display">Good <span class="red-word">coffee</span>, no shortcuts.</h2>
+            <p class="mono" style="font-size:12px; margin-top:10px">Single Origin Yirgacheffe · 250g · $18</p>
+            <p style="margin-top:18px"><a class="cta" href="#order" style="height:48px; padding:0 26px; font-size:13px">Order the bag — $18</a></p>
+          </div>
+          <div id="specPill" class="mono">250G · Whole Bean · $18</div>
+        </div>
+        <div class="hero-copy" id="heroCopy">
+          <p class="eyebrow mono" id="heroEyebrow">NJ Coffee — Single Origin</p>
+          <h1 class="display" id="heroLine">Good <span class="red-word">coffee</span>, no shortcuts.</h1>
+          <p class="mono" id="heroSpec">Single Origin Yirgacheffe · 250g · $18</p>
+          <p id="heroCtaWrap"><a class="cta hero-cta" id="heroCta" href="#order">Order the bag — $18</a></p>
+          <p class="scroll-cue mono" id="scrollCue">Scroll ↓</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2 — Origin -->
+  <section class="on-cream" id="origin">
+    <div class="origin-band">
+      <img src="v14-assets/beans-macro.jpg" alt="Roasted coffee beans, close up" width="1600" height="900">
+    </div>
+    <div class="wrap origin-body">
+      <p class="caption mono reveal-view">Roasted beans — Single Origin · Photo: Tima Miroshnichenko / Pexels</p>
+      <p class="eyebrow mono reveal-view" style="margin-top:36px">The Origin</p>
+      <h2 class="display reveal-view">One farm high in <span class="red-word">Yirgacheffe</span>.</h2>
+      <p class="lede reveal-view">Single origin, roasted light. The bag in the hero is the bag you get — 250g, whole bean, $18.</p>
+      <p class="spec-row mono reveal-view" style="margin-top:22px"><span>Yirgacheffe · Ethiopia · 250g · $18</span></p>
+    </div>
+  </section>
+
+  <!-- S3 — Roast & Process -->
+  <section class="on-paper section-pad" id="roast">
+    <div class="wrap">
+      <div class="roast-grid">
+        <div style="min-width:0">
+          <p class="eyebrow mono reveal-view">The Roast</p>
+          <h2 class="display reveal-view">Roast. Grind. Brew.</h2>
+          <p class="lede reveal-view">Three steps. Zero shortcuts.</p>
+          <div class="process-cards">
+            <div class="process-card reveal-view">
+              <h3>Roast</h3>
+              <p>Roasted light, in small batches, so the origin stays in the cup.</p>
+            </div>
+            <div class="process-card reveal-view-d1">
+              <h3>Grind</h3>
+              <p>Ground fresh for the brew you choose — never ground days ahead.</p>
+              <img src="v14-assets/beans-pour.jpg" alt="Coffee beans being poured" width="736" height="1103">
+              <p class="caption mono">Beans, poured</p>
+            </div>
+            <div class="process-card reveal-view-d2">
+              <h3>Brew</h3>
+              <p>Poured slow, served hot. One origin, five ways to drink it.</p>
+            </div>
+          </div>
+        </div>
+        <div style="min-width:0">
+          <img class="roast-img reveal-view" src="v14-assets/roast-texture.jpg" alt="Freshly roasted coffee beans on burlap" width="768" height="1368">
+          <p class="caption mono reveal-view">Fresh roast — on burlap</p>
+        </div>
+      </div>
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track">
+          <span>Roast ✦ Grind ✦ Brew ✦ Pour ✦&nbsp;</span><span>Roast ✦ Grind ✦ Brew ✦ Pour ✦&nbsp;</span><span>Roast ✦ Grind ✦ Brew ✦ Pour ✦&nbsp;</span><span>Roast ✦ Grind ✦ Brew ✦ Pour ✦&nbsp;</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S4 — Menu: full red band -->
+  <section class="menu-band section-pad" id="menu">
+    <div class="wrap">
+      <p class="eyebrow mono reveal-view">The Menu</p>
+      <h2 class="display reveal-view">Pick your pour.</h2>
+      <p class="lede reveal-view">Five drinks. One origin.</p>
+      <figure class="menu-photo reveal-view" style="margin-top:36px">
+        <img src="v14-assets/pour-over.jpg" alt="Barista pouring hot water over coffee grounds" width="1600" height="1067">
+        <figcaption class="caption mono">Pour over — brewed to order · Photo: Michael Burrows / Pexels</figcaption>
+      </figure>
+      <div class="swiper" role="list" aria-label="Drinks menu">
+        <article class="menu-card reveal-view" role="listitem">
+          <h3>Espresso</h3><p>Short, strong, straight up.</p><p class="price">$3.50</p>
+        </article>
+        <article class="menu-card reveal-view-d1" role="listitem">
+          <h3>Cappuccino</h3><p>Espresso, steamed milk, foam.</p><p class="price">$4.50</p>
+        </article>
+        <article class="menu-card reveal-view-d2" role="listitem">
+          <h3>Pour Over</h3><p>Slow, clean, brewed to order.</p><p class="price">$5.00</p>
+        </article>
+        <article class="menu-card reveal-view-d3" role="listitem">
+          <h3>Cold Brew</h3><p>Steeped cold, smooth and mellow.</p><p class="price">$5.50</p>
+        </article>
+        <article class="menu-card reveal-view-d4" role="listitem">
+          <h3>Flat White</h3><p>Double shot, silky microfoam.</p><p class="price">$5.00</p>
+        </article>
+      </div>
+      <div class="menu-cta-wrap">
+        <a class="cta cta-inverse" href="#order">Order the bag — $18</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- S5 — Brew & Inspect -->
+  <section class="on-paper section-pad" id="inspect">
+    <div class="wrap">
+      <p class="eyebrow mono reveal-view">Inspect the bag</p>
+      <h2 class="display reveal-view">Turn it around.</h2>
+      <p class="lede reveal-view">Drag to rotate — desktop only.</p>
+      <div id="inspectCanvasWrap" class="reveal-view" style="margin-top:32px">
+        <canvas id="inspectCanvas" aria-label="Finished NJ Coffee bag and cup — drag to rotate on desktop"></canvas>
+        <div id="dragCue" class="mono">Drag to rotate</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S6 — Order -->
+  <section class="on-paper section-pad" id="order" style="padding-top:24px">
+    <div class="wrap">
+      <hr class="hairline" style="margin-bottom:56px">
+      <div class="order-grid">
+        <div style="min-width:0">
+          <p class="eyebrow mono reveal-view">Order</p>
+          <h2 class="display reveal-view">Take it <span class="red-word">home</span>.</h2>
+          <p class="lede reveal-view">One bag — Single Origin Yirgacheffe, 250g — $18.</p>
+          <form id="orderForm" class="reveal-view" novalidate onsubmit="return false;">
+            <label for="fName">Your name</label>
+            <input id="fName" name="name" type="text" autocomplete="name" placeholder="Your name">
+            <label>Quantity</label>
+            <div class="qty-fixed">1 bag · Single Origin Yirgacheffe 250g · $18</div>
+            <button class="cta order-submit" type="button" id="orderSubmit">Order — $18</button>
+            <p class="demo-note mono">Demo only — no order has been sent</p>
+          </form>
+          <div id="orderResult" role="status">
+            <p class="big">Demo only — no order has been sent.</p>
+            <p>Nothing was sent anywhere. This is a demo site.</p>
+          </div>
+        </div>
+        <div class="order-photo" style="min-width:0">
+          <img class="reveal-view" src="v14-assets/takeaway-cup-unbranded.jpg" alt="Plain takeaway coffee cup" width="840" height="1134">
+          <p class="caption mono reveal-view">Takeaway — your cup, your ritual. · Photo: Cup of Couple / Pexels</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S7 — Footer -->
+  <footer>
+    <div class="wrap">
+      <p class="display">NJ COFFEE</p>
+      <p>Single Origin Yirgacheffe · 250g · $18 · Demo site — no orders are sent.</p>
+      <p class="credits mono">Photos — Pexels: Tima Miroshnichenko, Michael Burrows, Cup of Couple · Pinterest pins: “Freshly roasted coffee beans” (Sadafsadiq / Nature Canvas), “Coffee beans being poured into grinder” (Alaamalsharaya, Caffè Toscano)</p>
+    </div>
+  </footer>
+</main>
+
+<script type="importmap">
+{ "imports": {
+    "three": "./three.module.min.js",
+    "three/addons/": "./jsm/"
+} }
 </script>
 <script type="module">
-(async function(){
-const fail=()=>{if(window.__njFallback)window.__njFallback()};
-try{
-const T=await import('three');
-const [{RoomEnvironment},{EffectComposer},{RenderPass},{UnrealBloomPass},{OutputPass}]=await Promise.all([
- import('three/addons/environments/RoomEnvironment.js'),import('three/addons/postprocessing/EffectComposer.js'),
- import('three/addons/postprocessing/RenderPass.js'),import('three/addons/postprocessing/UnrealBloomPass.js'),import('three/addons/postprocessing/OutputPass.js')]);
-const cv=document.getElementById('stage'),hero=document.getElementById('hero'),Q=new URLSearchParams(location.search);
-const lite=Q.has('lite'),still=Q.has('still'),forced=Q.has('p')?Math.min(1,Math.max(0,parseFloat(Q.get('p'))||0)):null;
-const RM=matchMedia('(prefers-reduced-motion: reduce)');
-const r=new T.WebGLRenderer({canvas:cv,antialias:true,powerPreference:'high-performance'});
-r.setPixelRatio(Math.min(devicePixelRatio,1.75));r.toneMapping=T.ACESFilmicToneMapping;r.toneMappingExposure=.95;r.outputColorSpace=T.SRGBColorSpace;
-r.shadowMap.enabled=true;r.shadowMap.type=T.PCFSoftShadowMap;
-const scene=new T.Scene(),cam=new T.PerspectiveCamera(32,1,.1,80);
-/* ---- helpers ---- */
-const mk=(w,h,fn)=>{const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t};
-const radial=(a,b)=>mk(128,128,(g)=>{const gr=g.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,a);gr.addColorStop(1,b);g.fillStyle=gr;g.fillRect(0,0,128,128)});
-/* ---- the set: ONE palette (cream / horizon / floor) ---- */
-scene.background=mk(4,256,(g)=>{const gr=g.createLinearGradient(0,0,0,256);gr.addColorStop(0,'#2A190F');gr.addColorStop(.62,'#3B2416');gr.addColorStop(1,'#4A2F1E');g.fillStyle=gr;g.fillRect(0,0,4,256)});
-scene.environment=new T.PMREMGenerator(r).fromScene(new RoomEnvironment(),.04).texture;
-scene.add(new T.HemisphereLight(0xFFF1DE,0xDFC7A4,.75));
-const key=new T.DirectionalLight(0xFFF1DE,2.3);key.position.set(-4,9,6);key.castShadow=true;key.shadow.mapSize.set(1024,1024);
-Object.assign(key.shadow.camera,{left:-5,right:5,top:7,bottom:-4,near:1,far:30});key.shadow.bias=-.0008;key.shadow.normalBias=.02;scene.add(key);
-const rim=new T.PointLight(0xFFD9B0,5,16,1.8);rim.position.set(4,2.5,2);scene.add(rim);
-const floor=new T.Mesh(new T.PlaneGeometry(60,60),new T.ShadowMaterial({color:0x1A0E07,opacity:.55}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
-const pool=new T.Mesh(new T.PlaneGeometry(16,16),new T.MeshBasicMaterial({map:radial('rgba(255,241,222,.3)','rgba(255,241,222,0)'),transparent:true,depthWrite:false}));pool.rotation.x=-Math.PI/2;pool.position.y=.004;scene.add(pool);
-const discTex=radial('rgba(10,5,2,.8)','rgba(10,5,2,0)');
-const disc=(s)=>{const m=new T.Mesh(new T.PlaneGeometry(s,s),new T.MeshBasicMaterial({map:discTex,transparent:true,depthWrite:false}));m.rotation.x=-Math.PI/2;m.position.y=.008;scene.add(m);return m};
-const bagDisc=disc(2.8),cupDisc=disc(1.7);
-/* ---- BAG: pillow pouch, gold serif label, coral bean ---- */
-const gold='#D8B36A';
-const labelTex=mk(512,768,(g)=>{g.fillStyle='#3B2416';g.fillRect(0,0,512,768);g.textAlign='center';g.fillStyle=gold;g.font='600 64px Georgia,serif';g.fillText('NJ COFFEE',256,310);
- g.fillStyle='#E8A33D';g.beginPath();g.ellipse(256,440,22,31,.5,0,7);g.fill();g.strokeStyle='#3B2416';g.lineWidth=4;g.beginPath();g.moveTo(246,462);g.quadraticCurveTo(262,440,268,418);g.stroke();
- g.fillStyle=gold;g.fillRect(0,610,512,10);g.font='500 34px Georgia,serif';g.fillText('250 g',256,692)});
-labelTex.anisotropy=4;
-const sideM=new T.MeshPhysicalMaterial({color:0x3B2416,roughness:.58,sheen:.6,sheenColor:new T.Color(0x9a6a48),envMapIntensity:.4});
-const frontM=sideM.clone();frontM.map=labelTex;frontM.color.set(0xffffff);
-const bg=new T.BoxGeometry(1.7,2.3,.72,10,14,4);bg.translate(0,1.15,0);
-{const P=bg.attributes.position,cl=(v)=>Math.max(-1,Math.min(1,v));
- for(let i=0;i<P.count;i++){let x=P.getX(i),y=P.getY(i),z=P.getZ(i);const k=1-.1*(y/2.3);x*=k;z*=k;
-  z+=Math.sign(z)*.07*Math.cos(cl(x/.9)*Math.PI/2)*Math.cos(cl((y-1.15)/1.15)*Math.PI/2);P.setXYZ(i,x,y,z)}
- bg.computeVertexNormals()}
-const bagG=new T.Group();
-const bagBody=new T.Mesh(bg,[sideM,sideM,sideM,sideM,frontM,frontM]);bagBody.castShadow=true;bagBody.receiveShadow=true;bagG.add(bagBody);
-const cg=new T.BoxGeometry(1.5,.18,.5,30,1,1);{const P=cg.attributes.position;for(let i=0;i<P.count;i++)P.setY(i,P.getY(i)+Math.sin(P.getX(i)*40)*.012);cg.computeVertexNormals()}
-const crimp=new T.Mesh(cg,new T.MeshStandardMaterial({color:0x2C1A10,roughness:.7,envMapIntensity:.4}));crimp.position.y=2.38;crimp.rotation.z=.03;crimp.castShadow=true;bagG.add(crimp);
-const sealG=new T.Group();
-const sealM=new T.Mesh(new T.BoxGeometry(1.56,.09,.54),new T.MeshStandardMaterial({color:0x2C1A10,roughness:.5,envMapIntensity:.5}));sealM.castShadow=true;sealG.add(sealM);
-const sealE=new T.Mesh(new T.BoxGeometry(1.57,.018,.55),new T.MeshStandardMaterial({color:0xD8B36A,roughness:.3,metalness:.7}));sealE.position.y=-.04;sealG.add(sealE);
-bagG.add(sealG);
-const sweepTex=mk(256,256,(g)=>{const gr=g.createLinearGradient(80,0,176,256);gr.addColorStop(0,'rgba(255,246,232,0)');gr.addColorStop(.5,'rgba(255,246,232,1)');gr.addColorStop(1,'rgba(255,246,232,0)');g.fillStyle=gr;g.fillRect(0,0,256,256)});
-sweepTex.wrapS=T.RepeatWrapping;
-const sweep=new T.Mesh(new T.PlaneGeometry(1.6,2.2),new T.MeshBasicMaterial({map:sweepTex,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false}));sweep.position.set(0,1.15,.45);bagG.add(sweep);
-scene.add(bagG);
-/* ---- CUP: takeaway paper cup, plastic lid, NJ COFFEE kraft sleeve ---- */
-const cupG=new T.Group(),lathe=(pts,seg)=>new T.LatheGeometry(pts.map(p=>new T.Vector2(p[0],p[1])),seg||56);
-const paper=new T.MeshStandardMaterial({color:0xF4EFE6,roughness:.7,side:T.DoubleSide,envMapIntensity:.45});
-const body=new T.Mesh(lathe([[0,0],[.29,0],[.30,.03],[.41,1.18],[.43,1.2],[.415,1.2],[.40,1.18],[.29,.06],[0,.06]]),paper);body.castShadow=true;body.receiveShadow=true;cupG.add(body);
-const rc=y=>.30+.11*(y-.03)/1.15;
-const slT=mk(1024,256,(g,w,h)=>{g.fillStyle='#B08A5E';g.fillRect(0,0,w,h);g.fillStyle='#3B2416';g.textAlign='center';g.font='700 92px Antonio,Impact,sans-serif';g.fillText('NJ COFFEE',512,132);g.font='500 30px "DM Sans",Arial,sans-serif';g.fillText('S I N G L E   O R I G I N',512,190);g.fillRect(200,40,624,4);g.fillRect(200,214,624,4)});
-slT.wrapS=T.RepeatWrapping;slT.offset.x=.5;slT.anisotropy=4;
-const sleeve=new T.Mesh(lathe([[rc(.38)+.012,.38],[rc(.9)+.012,.9]]),new T.MeshStandardMaterial({map:slT,roughness:.85,side:T.DoubleSide,envMapIntensity:.4}));sleeve.castShadow=true;cupG.add(sleeve);
-const cof=new T.Mesh(new T.CircleGeometry(.38,40),new T.MeshStandardMaterial({color:0x1A0F08,roughness:.08,envMapIntensity:.6,side:T.DoubleSide}));cof.rotation.x=-Math.PI/2;cof.position.y=1.05;cupG.add(cof);
-const lidG=new T.Group(),lidM=new T.MeshPhysicalMaterial({color:0xF2EFEA,roughness:.35,clearcoat:.3,side:T.DoubleSide,envMapIntensity:.5});
-const lid=new T.Mesh(lathe([[0,.1],[.28,.1],[.33,.07],[.37,.02],[.46,0],[.48,.04],[.45,.06],[.39,.07],[.36,.12],[.28,.15],[0,.15]]),lidM);lid.castShadow=true;lidG.add(lid);cupG.add(lidG);
-/* ---- BEANS: Kepaso 3-pass deformation, 12 beans, fall into the cup ---- */
-const bgeo=new T.SphereGeometry(1,48,32);
-{const P=bgeo.attributes.position,v=new T.Vector3();for(let i=0;i<P.count;i++){v.fromBufferAttribute(P,i);v.y*=.72;v.z*=.78;
- const val=Math.exp(-Math.pow(v.z/.22,2))*Math.exp(-Math.pow(v.x/.85,2));v.y-=val*.22*(v.y>0?1:.4);v.y+=Math.sin(v.x*3.1)*.03;v.z+=Math.cos(v.y*4)*.015;P.setXYZ(i,v.x,v.y,v.z)}bgeo.computeVertexNormals()}
-const bm=new T.MeshPhysicalMaterial({color:0x5A3620,roughness:.45,clearcoat:.5,clearcoatRoughness:.3,envMapIntensity:.5});
-let seed=20261112;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
-const beans=[];for(let i=0;i<12;i++){const m=new T.Mesh(bgeo,bm);m.scale.setScalar(.15);m.castShadow=true;
- beans.push({m,x:(rnd()-.5)*.5,z:(rnd()-.5)*.4,y0:1.5+(i%4)*.18,rx:rnd()*6,rz:rnd()*6,sp:3+rnd()*4,ph:rnd()*6});cupG.add(m)}
-/* ---- SPLASH: crown + column + droplets, scrubbed by the pour ---- */
-const spM=new T.MeshPhysicalMaterial({color:0xE8A33D,roughness:.08,clearcoat:1,clearcoatRoughness:.05,envMapIntensity:1.2,emissive:0x5A3200});
-const spikes=[],drops=[],capG=new T.CapsuleGeometry(.045,.3,4,8);
-for(let i=0;i<16;i++){const m=new T.Mesh(capG,spM);m.castShadow=true;cupG.add(m);spikes.push({m,a:i/16*6.283+rnd()*.3,h:.5+rnd()*.5,w:rnd()*6})}
-const col=new T.Mesh(new T.SphereGeometry(1,24,16),spM);cupG.add(col);
-const dg=new T.SphereGeometry(1,10,8);
-for(let i=0;i<28;i++){const m=new T.Mesh(dg,spM);cupG.add(m);drops.push({m,a:rnd()*6.283,R:.3+rnd()*.8,H:.4+rnd()*.55,r:.025+rnd()*.035,ph:rnd()*6})}
-const _d=new T.Vector3(),_q=new T.Quaternion(),_u=new T.Vector3(0,1,0);
-function splash(A,tm,B){const on=A>.01;col.visible=on;
- spikes.forEach(s=>{s.m.visible=on;if(!on)return;const wb=1+.1*Math.sin(tm*1.6+s.w),bx=Math.cos(s.a)*.38,bz=Math.sin(s.a)*.38,rr=.38+.4*A*s.h*wb,tx=Math.cos(s.a)*rr,tz=Math.sin(s.a)*rr,ty=1.2+(.2+.55*s.h)*A*wb*B;
-  _d.set(tx-bx,ty-1.2,tz-bz);const L=_d.length()+.001;s.m.position.set((bx+tx)/2,(1.2+ty)/2,(bz+tz)/2);_q.setFromUnitVectors(_u,_d.normalize());s.m.quaternion.copy(_q);s.m.scale.set(1,L/.39,1)});
- col.position.y=1.2+A*.25*B;col.scale.set(.27*Math.min(1,A*2),.05+.3*A*B,.27*Math.min(1,A*2));
- drops.forEach(d=>{d.m.visible=on;if(!on)return;d.m.position.set(Math.cos(d.a)*d.R*A,1.25+d.H*B*Math.pow(A,.6)*(1+.1*Math.sin(tm*1.3+d.ph))-.2*A*A,Math.sin(d.a)*d.R*A);d.m.scale.setScalar(d.r*Math.min(1,A*3))})}
-/* ---- steam ---- */
-const steamTex=radial('rgba(255,250,240,1)','rgba(255,250,240,0)'),steam=[];
-for(let i=0;i<4;i++){const m=new T.Mesh(new T.PlaneGeometry(.22,1),new T.MeshBasicMaterial({map:steamTex,transparent:true,opacity:0,depthWrite:false}));m.position.x=(i-1.5)*.11;cupG.add(m);steam.push(m)}
-scene.add(cupG);
-/* ---- composer (skipped with ?lite=1) ---- */
-let comp=null;
-function size(){const w=cv.clientWidth||innerWidth,h=cv.clientHeight||innerHeight;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
- if(!lite){if(!comp){comp=new EffectComposer(r);comp.addPass(new RenderPass(scene,cam));comp.addPass(new UnrealBloomPass(new T.Vector2(w,h),.22,.6,.92));comp.addPass(new OutputPass())}comp.setPixelRatio(r.getPixelRatio());comp.setSize(w,h)}}
-size();addEventListener('resize',size);
-/* ---- tracks / easing ---- */
-const eio=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,eoc=t=>1-Math.pow(1-t,3),eoq=t=>1-Math.pow(1-t,4),eoe=t=>t>=1?1:1-Math.pow(2,-10*t),eob=t=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2)};
-const sm=(a,b,x)=>{x=Math.min(1,Math.max(0,(x-a)/(b-a)));return x*x*(3-2*x)};
-function track(k,p){if(p<=k[0][0])return k[0][1];const L=k[k.length-1];if(p>=L[0])return L[1];
- for(let i=0;i<k.length-1;i++){const a=k[i],b=k[i+1];if(p>=a[0]&&p<=b[0])return a[1]+(b[1]-a[1])*(b[2]||eio)((p-a[0])/(b[0]-a[0]))}}
-const E={
- bagY:[[0,2.7],[.10,2.7],[.20,2.5,eoc],[.28,2.4,eoe],[.61,2.4],[.72,0,eoq]],
- bagRY:[[0,.45],[.10,.45],[.28,.05],[.55,0],[.61,0],[.63,.31],[.72,0,eob]],
- bagRZ:[[0,-.05],[.28,-.01],[.61,0],[.72,.03],[.78,0]],
- cupRY:[[0,.3],[.28,.1],[.61,0],[.63,-.21],[.72,0,eob]],
- cupZ:[[0,0],[.61,0],[.63,1.8],[.72,0,eoq]],
- sealY:[[0,2.95],[.30,2.95],[.33,3.1,eoc],[.48,2.31,eoe],[.505,2.36]],
- sealRZ:[[0,.25],[.30,.25],[.48,0,eoe]],
- dist:[[0,13.6],[.04,13.6],[.07,12],[.18,10.2],[.28,10.2],[.38,10.6],[.55,10.6],[.61,11],[.63,9.7],[.84,9.7],[.96,7.2],[1,7.2]],
- look:[[0,2.7],[.28,2.9],[.38,2.7],[.55,2.7],[.72,1.1],[1,1.0]],
- fov:[[0,32],[.8,32],[.88,35],[.96,38],[1,38]],
- pan:[[0,0],[.55,0],[.61,-.45],[.63,.5],[.72,0]],
- splash:[[0,0],[.17,0],[.235,.55,eoc],[.30,1,eoe],[.55,.8],[.72,.75],[.80,1,eoc],[1,.95]],lidX:[[0,.95],[.22,.95],[.30,.45]],lidY:[[0,1.3],[.22,1.3],[.27,2.0,eoc],[.5,1.85]],
- roll:[[0,0],[.18,-.02],[.30,0],[.55,0],[.61,-.016],[.72,-.007],[.84,0]]};
-/* ---- impacts: beans .235 / seal .505 / hero .80 ---- */
-const IM=[{p:.235,s:.55,t:-9},{p:.505,s:.7,t:-9},{p:.80,s:1,t:-9}];
-const H=t=>t<0?0:Math.exp(-t*6)*Math.sin(t*18);
-const pts=[[0,0],[0,0],[0,0],[0,0]],V=new T.Vector3();
-function proj(x,y,z,i,w,h){V.set(x,y,z).project(cam);pts[i][0]=(V.x*.5+.5)*w;pts[i][1]=(-V.y*.5+.5)*h}
-let pS=0,pv=0,smo=0,prev=0,last=performance.now(),raf=0,visible=true,t0=performance.now(),first=true;
-const getRaw=()=>forced!==null?forced:RM.matches?1:window.__getRaw();
-const prod=new T.Group();scene.add(prod);prod.add(bagG,cupG);
-const W3=new T.Vector3(),ptr=new Map;let yaw=0,yawT=0,zoom=1,zoomT=1,pd0=1;
-cv.style.touchAction='pan-y';
-cv.addEventListener('pointerdown',e=>{if(pS<.95)return;ptr.set(e.pointerId,[e.clientX,e.clientY]);cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing';if(ptr.size==2){const a=[...ptr.values()];pd0=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])||1}});
-cv.addEventListener('pointermove',e=>{const o=ptr.get(e.pointerId);if(!o)return;ptr.set(e.pointerId,[e.clientX,e.clientY]);if(ptr.size==2){const a=[...ptr.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1])||1;zoomT=Math.min(1.5,Math.max(.8,zoomT*d/pd0));pd0=d}else yawT+=(e.clientX-o[0])*.012});
-const pu=e=>{ptr.delete(e.pointerId);if(!ptr.size)cv.style.cursor=''};cv.addEventListener('pointerup',pu);cv.addEventListener('pointercancel',pu);
-cv.addEventListener('dblclick',()=>{if(pS>=.95)zoomT=zoomT>1.1?1:1.3});
-addEventListener('keydown',e=>{if(pS<.95||/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;if(e.key==='ArrowLeft')yawT-=.3;else if(e.key==='ArrowRight')yawT+=.3;else if(e.key==='+'||e.key==='=')zoomT=Math.min(1.5,zoomT+.1);else if(e.key==='-')zoomT=Math.max(.8,zoomT-.1)});
-function tick(now){
- raf=0;if(!visible||document.hidden)return;
- const dt=Math.min(.05,(now-last)/1000);last=now;
- const raw=getRaw();
- if(forced!==null||RM.matches){smo=raw;pS=raw;pv=0}
- else{smo+=(raw-smo)*(1-Math.pow(.9,dt*60));const a=-81*(pS-smo)-2*.75*9*pv;pv+=a*dt;pS+=pv*dt}
- const p=Math.min(1,Math.max(0,pS)),tm=(now-t0)/1000,still0=RM.matches;
- if(!still0)for(const im of IM)if(prev<im.p&&p>=im.p)im.t=tm;
- prev=p;
- const w=cv.clientWidth,h=cv.clientHeight,asp=w/h,mob=asp<.8,S=mob?.85:1.1;
- const mf=mob?Math.max(1,(4.2/asp)/4.96):1;
- /* parts */
- const k0=still0?0:H(tm-IM[0].t),k1=still0?0:H(tm-IM[1].t),k2=still0?0:H(tm-IM[2].t);
- const bx=track([[0,0],[.61,0],[.72,-S,eob]],p),cx=track([[0,0],[.61,0],[.72,S+.05,eob]],p);
- const by=Math.max(0,track(E.bagY,p));
- bagG.position.set(bx,by,0);bagG.rotation.set(0,track(E.bagRY,p),track(E.bagRZ,p)+k2*.01);bagG.scale.set(1,1-.02*k1-.01*k2,1);
- sealG.position.y=track(E.sealY,p);sealG.rotation.z=track(E.sealRZ,p);
- cupG.position.set(cx,-.045*k0-.03*k2,track(E.cupZ,p));cupG.rotation.set(0,track(E.cupRY,p),.02*k0+.014*k1+.02*k2);
- /* beans drop behind the rim, vanish under the coffee */
- const bt=Math.min(1,Math.max(0,(p-.10)/.135));
- beans.forEach((b,i)=>{const f=eio(bt)*0+bt*bt,y=b.y0+(.3-b.y0)*f,arc=Math.sin(bt*Math.PI)*.35*((i%3)-1);
-  b.m.position.set(b.x*(1-f)+arc*.4+Math.sin(tm*b.sp*.2+b.ph)*.02*(1-bt),y+(bt<=0?Math.sin(tm*1.2+b.ph)*.03:0),b.z*(1-f));
-  b.m.rotation.set(b.rx+bt*b.sp,0,b.rz+bt*b.sp*.6);b.m.visible=p<.30});
- splash(track(E.splash,p),tm,1+.5*sm(.72,.80,p));lidG.position.set(track(E.lidX,p),track(E.lidY,p)+(still0?0:Math.sin(tm*1.1)*.03),-.15);lidG.rotation.set(.3+(still0?0:Math.sin(tm*.9)*.03),.2,.55-.25*sm(.2,.3,p));
- /* contact discs */
- bagDisc.position.x=bx;bagDisc.material.opacity=.7*Math.exp(-by*.9);bagDisc.scale.setScalar(1+by*.25);
- cupDisc.material.opacity=.7;
- if(p<.9){yawT=0;zoomT=1}const kk=1-Math.pow(.0005,dt);yaw+=(yawT-yaw)*kk;zoom+=(zoomT-zoom)*kk;prod.rotation.y=yaw;prod.scale.setScalar(zoom);prod.updateMatrixWorld(true);
- bagG.getWorldPosition(W3);bagDisc.position.set(W3.x,.008,W3.z);bagDisc.scale.setScalar((1+by*.25)*zoom);cupG.getWorldPosition(W3);cupDisc.position.set(W3.x,.008,W3.z);cupDisc.scale.setScalar(zoom);
- /* hero light sweep + steam */
- const st=sm(.82,.97,p);sweep.material.opacity=.18*Math.sin(Math.PI*st);sweepTex.offset.x=.7-1.4*st;
- const sv=sm(.80,.86,p);steam.forEach((s,i)=>{const f=((tm*.14+i*.25)%1);s.position.y=1.4+f*.8;s.scale.set(1+f*.6,1,1);s.material.opacity=.12*sv*Math.sin(Math.PI*f)});
- pool.material.opacity=.9+.1*sm(.6,.8,p);pool.scale.setScalar(1+.06*sm(.82,.97,p));
- /* camera: scroll owns it; the mouse never touches it */
- const mfD=mf,dist=track(E.dist,p)*mfD,fov=track(E.fov,p);
- let ly=track(E.look,p);const lx=mob?0:-1.7;
- if(mob)ly+=.22*2*dist*Math.tan(fov*Math.PI/360);
- let sx=0,sy=0;if(!still0){for(const im of IM){const t=tm-im.t;if(t>=0&&t<.8){const d=Math.exp(-t*8)*im.s*.05;sx+=Math.sin(t*45)*d;sy+=Math.cos(t*38)*d*.6}}}
- const roll=still0?0:track(E.roll,p);
- cam.fov=fov;cam.updateProjectionMatrix();
- cam.up.set(Math.sin(roll),Math.cos(roll),0);
- cam.position.set(lx+(still0?0:track(E.pan,p))+sx,ly+dist*.1+sy,dist);cam.lookAt(lx,ly,0);
- /* exposure: warm kick on each landing */
- let kick=0;for(const im of IM){const t=tm-im.t;if(t>=0)kick+=Math.exp(-t*8)*im.s*.22}
- r.toneMappingExposure=.92+.06*sm(.6,.8,p)+(still0?0:kick);
- (lite||!comp)?r.render(scene,cam):comp.render();
- /* DOM: labels follow projected parts */
- cam.updateMatrixWorld();
- proj(cupG.position.x,1.5,cupG.position.z,0,w,h);proj(bagG.position.x+.95,bagG.position.y+1.6,0,1,w,h);
- proj(bagG.position.x+.8,bagG.position.y+sealG.position.y,0,2,w,h);proj(cupG.position.x+.5,.8,cupG.position.z,3,w,h);
- window.__njUpdate(p,pts);
- if(first){first=false;if(window.__auroraSceneReady)window.__auroraSceneReady()}
- if(!still)raf=requestAnimationFrame(tick);
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* ============================================================
+   NJ Coffee v15 — "Alpine Light"
+   Native scroll + ONE lerp. Palette: Warm Paper / Espresso Ink /
+   Cherry Red (60/30/10). Daylight studio, dark bag on white.
+   ============================================================ */
+
+const PAPER = 0xFBF7F0, INK = 0x221A14, RED = 0xC22A1B, CREAM_TINT = 0xEFE5D2;
+const KRAFT = 0xC9A876, STEAM_GREY = 0xCFC8BC, BEAN = 0x4A2E1B, CUP_CREAM = 0xEFE5D2;
+const BAG_LIT = 0x3A2C20;   /* lit-face shading variation inside the 3D bag material only */
+
+const params = new URLSearchParams(location.search);
+const pParam = params.has('p') ? Math.min(1, Math.max(0, parseFloat(params.get('p')) || 0)) : null;
+const stillMode = params.get('still') === '1';
+const tiltLog = params.get('tiltlog') === '1';
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = () => innerWidth < 768;
+const lowMem = (navigator.deviceMemory || 8) <= 4;
+
+/* Camera distances: desktop base 6.4, closest 5.0; mobile base 5.6, closest 5.2
+   (mobile pulled closer + taller canvas cell so the product fills ~half the
+   phone viewport; 5.2 keeps the full bag + cup width in frame at FOV 42 and
+   the steam top >=80px below the viewport top at every beat). */
+const LAYOUT = isMobile()
+  ? { baseDist: 5.6, d1: 5.2, d2: 5.4, d3: 5.8 }
+  : { baseDist: 6.4, d1: 5.0, d2: 5.2, d3: 5.6 };
+
+const FLOOR_Y = -0.70;          /* stage floor */
+const BAG_POS = new THREE.Vector3(-0.45, 0.35, 0);
+const CUP_POS = new THREE.Vector3(0.75, FLOOR_Y, 0.45);
+
+/* Kinetic text loader: max 800ms, then gone (never delays first sight). */
+const loaderEl = document.getElementById('loader');
+let loaderHidden = false;
+function hideLoader(){ if (loaderHidden) return; loaderHidden = true; if (loaderEl) { loaderEl.classList.add('hide'); setTimeout(() => loaderEl.remove(), 450); } }
+setTimeout(hideLoader, 800);
+
+window.__auroraSceneReady = false;
+
+const track = document.getElementById('track');
+const canvas = document.getElementById('scene');
+
+/* ---------- helpers ---------- */
+const clamp01 = v => Math.min(1, Math.max(0, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = t => { t = clamp01(t); return t * t * (3 - 2 * t); };
+function seg(p, a, b) { return smooth((p - a) / (b - a)); } /* 0..1 across [a,b] */
+
+function canvasTexture(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  return t;
 }
-new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible&&!raf&&!still){last=performance.now();raf=requestAnimationFrame(tick)}},{threshold:0}).observe(hero);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!raf&&visible&&!still){last=performance.now();raf=requestAnimationFrame(tick)}});
-cv.addEventListener('webglcontextlost',e=>{e.preventDefault();fail()});
-raf=requestAnimationFrame(tick);
-}catch(e){console.warn('NJ Coffee 3D unavailable — showing assembled copy.',e);fail()}
+
+/* ---------- label + sleeve artwork (drawn, original) ---------- */
+const labelTex = canvasTexture(512, 384, (g, w, h) => {
+  g.fillStyle = '#FBF7F0'; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#C22A1B'; g.fillRect(0, 0, w, 18);            /* red seal echo */
+  g.fillStyle = '#221A14'; g.textAlign = 'center';
+  g.font = '600 84px Georgia, serif'; g.fillText('NJ', w / 2, 128);
+  g.font = '600 58px Georgia, serif'; g.fillText('COFFEE', w / 2, 196);
+  g.fillStyle = '#C22A1B'; g.fillRect(w / 2 - 80, 224, 160, 4);
+  g.fillStyle = '#221A14'; g.font = '500 28px monospace';
+  g.fillText('SINGLE ORIGIN', w / 2, 272);
+  g.fillText('YIRGACHEFFE · 250G', w / 2, 312);
+  g.fillStyle = '#C22A1B'; g.font = '600 40px monospace';
+  g.fillText('$18', w / 2, 362);
+});
+const sleeveTex = canvasTexture(1024, 256, (g, w, h) => {
+  g.fillStyle = '#C9A876'; g.fillRect(0, 0, w, h);
+  g.fillStyle = 'rgba(34,26,20,.10)';
+  for (let i = 0; i < 40; i++) g.fillRect(Math.random() * w, Math.random() * h, 60, 2);
+  g.fillStyle = '#221A14'; g.textAlign = 'center';
+  g.font = '600 60px Georgia, serif'; g.fillText('NJ COFFEE', w / 2, 92);
+  g.font = '500 26px monospace'; g.fillText('S I N G L E   O R I G I N', w / 2, 138);
+  g.fillStyle = '#221A14'; g.fillRect(w - 26, 0, 8, h);        /* overlap seam */
+});
+/* Bag body: dark ink paper with a soft lighter lit-face patch (left side, window light) + paper grain */
+const bagTex = canvasTexture(512, 512, (g, w, h) => {
+  g.fillStyle = '#221A14'; g.fillRect(0, 0, w, h);
+  const grad = g.createLinearGradient(0, 0, w * 0.55, 0);
+  grad.addColorStop(0, 'rgba(58,44,32,.55)'); grad.addColorStop(1, 'rgba(58,44,32,0)');
+  g.fillStyle = grad; g.fillRect(0, 0, w, h);
+  g.fillStyle = 'rgba(251,247,240,.03)';
+  for (let i = 0; i < 900; i++) g.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+});
+const bagBump = canvasTexture(256, 256, (g, w, h) => {
+  g.fillStyle = '#808080'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 1600; i++) {
+    const v = 110 + Math.floor(Math.random() * 40);
+    g.fillStyle = 'rgb(' + v + ',' + v + ',' + v + ')';
+    g.fillRect(Math.random() * w, Math.random() * h, 2, 2);
+  }
+});
+const shadowTex = canvasTexture(256, 256, (g, w, h) => {
+  const r = g.createRadialGradient(w/2, h/2, 8, w/2, h/2, w/2);
+  r.addColorStop(0, 'rgba(34,26,20,.50)'); r.addColorStop(.55, 'rgba(34,26,20,.25)'); r.addColorStop(1, 'rgba(34,26,20,0)');
+  g.fillStyle = r; g.fillRect(0, 0, w, h);
+});
+const steamTex = canvasTexture(128, 128, (g, w, h) => {
+  const r = g.createRadialGradient(w/2, h/2, 4, w/2, h/2, w/2);
+  r.addColorStop(0, 'rgba(207,200,188,.55)'); r.addColorStop(1, 'rgba(207,200,188,0)');
+  g.fillStyle = r; g.fillRect(0, 0, w, h);
+});
+/* Stage floor: vertical falloff — paper at the far edge (blends into the
+   paper backdrop, so no horizon line) to cream tint at the near edge.
+   Canvas top (v=1) maps to the far edge of the floor plane. */
+const floorTex = canvasTexture(512, 512, (g, w, h) => {
+  const grad = g.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#FBF7F0'); grad.addColorStop(1, '#EFE5D2');
+  g.fillStyle = grad; g.fillRect(0, 0, w, h);
+});
+
+/* ---------- renderer ---------- */
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+} catch (e) { renderer = null; }
+if (renderer) {
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, lowMem ? 1.75 : 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+}
+
+function showFallback() {
+  document.getElementById('webgl-fallback').classList.add('show');
+  document.getElementById('webgl-fallback').setAttribute('aria-hidden', 'false');
+  canvas.style.display = 'none';
+  /* The fallback carries its own Beat 0 copy + CTA — hide the hero copy
+     column so the headline / CTA are not shown twice. */
+  const hc = document.getElementById('heroCopy'); if (hc) hc.style.display = 'none';
+  const wrap = document.getElementById('inspectCanvasWrap');
+  if (wrap) wrap.style.display = 'none';
+  const cue = document.getElementById('dragCue'); if (cue) cue.style.display = 'none';
+}
+if (!renderer) { document.body.classList.add('ready'); hideLoader(); showFallback(); }
+
+/* ---------- scene, camera, lights ---------- */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(PAPER);
+const camera = new THREE.PerspectiveCamera(isMobile() ? 42 : 35, 1, 0.1, 60);
+const pmrem = renderer ? new THREE.PMREMGenerator(renderer) : null;
+if (pmrem) scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const key = new THREE.DirectionalLight(0xFFF2DF, 2.9);          /* warm window daylight, upper-left */
+key.position.set(-4, 6, 4); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.left = -4; key.shadow.camera.right = 4;
+key.shadow.camera.top = 4; key.shadow.camera.bottom = -4;
+key.shadow.camera.far = 20; key.shadow.bias = -0.0005;
+key.shadow.radius = 8;
+scene.add(key);
+const rim = new THREE.DirectionalLight(0xDCE8F0, 0.8);           /* cool daylight edge, back-right */
+rim.position.set(3, 4, -4); scene.add(rim);
+const fill = new THREE.HemisphereLight(0xEAF0F5, CREAM_TINT, 0.6); /* cool sky fill */
+scene.add(fill);
+const bounce = new THREE.PointLight(0xF5E6CC, 0.4, 12);          /* warm floor bounce, low front */
+bounce.position.set(0, 0.3, 3); scene.add(bounce);
+
+/* ---------- materials ---------- */
+const bagMat   = new THREE.MeshPhysicalMaterial({ map: bagTex, bumpMap: bagBump, bumpScale: 0.6, roughness: 0.85, metalness: 0 });
+const labelMat = new THREE.MeshStandardMaterial({ map: labelTex, roughness: 0.8, metalness: 0 });
+const sealMat  = new THREE.MeshStandardMaterial({ color: RED, roughness: 0.6, metalness: 0 });
+const kraftMat = new THREE.MeshStandardMaterial({ map: sleeveTex, roughness: 0.9, metalness: 0 });
+const lidMat   = new THREE.MeshPhysicalMaterial({ color: 0x000000, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.12 });
+const cupMat   = new THREE.MeshStandardMaterial({ color: CUP_CREAM, roughness: 0.7, metalness: 0 });
+const beanMat  = new THREE.MeshPhysicalMaterial({ color: BEAN, roughness: 0.25, clearcoat: 0.6, clearcoatRoughness: 0.3 });
+
+/* ---------- product builders (original procedural geometry) ---------- */
+function makeBean(scale = 1) {
+  const g = new THREE.SphereGeometry(0.12, 20, 14);
+  g.scale(1, 0.62, 0.8);
+  const m = new THREE.Mesh(g, beanMat);
+  m.scale.setScalar(scale); m.castShadow = true;
+  return m;
+}
+
+/* Pillow-pouch bag: subdivided box, vertex bulge + tapered seals — real volume, never a flat box.
+   Label zone (bag-local): x [-0.55, 0.55], y [0.10, 0.90] — the label plane sits inside it. */
+function makeBag() {
+  const group = new THREE.Group();
+  const geo = new THREE.BoxGeometry(1.5, 2.05, 0.55, 14, 18, 6);
+  const pos = geo.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+    const nx = x / 0.75, ny = y / 1.025;
+    const bulge = (1 - nx * nx) * (1 - ny * ny);                 /* pillow bulge, max at centre */
+    const pinch = 1 - 0.2 * Math.pow(Math.abs(ny), 3);            /* crimped toward seals */
+    pos.setX(i, x * pinch);
+    pos.setZ(i, z + Math.sign(z || 1) * bulge * 0.16);
+  }
+  geo.computeVertexNormals();
+  const body = new THREE.Mesh(geo, bagMat);
+  body.castShadow = true; body.receiveShadow = true;
+  group.add(body);
+  const topSeal = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.14, 0.62), bagMat);
+  topSeal.position.y = 1.08; topSeal.castShadow = true; group.add(topSeal);
+  const stripe = new THREE.Mesh(new THREE.BoxGeometry(1.54, 0.07, 0.64), sealMat);
+  stripe.position.y = 1.16; group.add(stripe);                    /* red seal stripe */
+  const botSeal = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.10, 0.62), bagMat);
+  botSeal.position.y = -1.02; botSeal.castShadow = true; group.add(botSeal);
+  const label = new THREE.Mesh(new THREE.PlaneGeometry(1.10, 0.80), labelMat);
+  label.position.set(0, 0.50, 0.46); group.add(label);            /* paper label block */
+  return group;
+}
+
+/* Takeaway cup: lathe with real wall thickness + kraft sleeve + glossy black lid.
+   Cup height 1.66; rim at local y 1.44, lid top 1.66. */
+function makeCup() {
+  const group = new THREE.Group();
+  const pts = [];
+  pts.push(new THREE.Vector2(0.001, 0));
+  pts.push(new THREE.Vector2(0.30, 0));
+  pts.push(new THREE.Vector2(0.34, 0.08));
+  pts.push(new THREE.Vector2(0.47, 1.38));                        /* outer wall, tapered */
+  pts.push(new THREE.Vector2(0.49, 1.44));                        /* rim */
+  pts.push(new THREE.Vector2(0.44, 1.44));                        /* over the rim */
+  pts.push(new THREE.Vector2(0.42, 1.30));                        /* inner wall down */
+  pts.push(new THREE.Vector2(0.40, 1.28));
+  const cup = new THREE.Mesh(new THREE.LatheGeometry(pts, 40), cupMat);
+  cup.castShadow = true; cup.receiveShadow = true; group.add(cup);
+  /* kraft sleeve, wrapped tight, visible overlap seam (in the texture) */
+  const sleevePts = [];
+  for (let i = 0; i <= 10; i++) {
+    const t = i / 10, y = 0.42 + t * 0.62;
+    sleevePts.push(new THREE.Vector2(0.365 + t * 0.085, y));
+  }
+  const sleeve = new THREE.Mesh(new THREE.LatheGeometry(sleevePts, 40, 0, Math.PI * 2), kraftMat);
+  sleeve.castShadow = true;
+  sleeve.rotation.y = Math.PI; /* lathe UV: the printed mark sits at u~0.5 (the back); rotate so it faces the camera */
+  group.add(sleeve);
+  /* glossy black lid — domed, reads as a separate object against the cream cup */
+  const lidPts = [
+    new THREE.Vector2(0.001, 1.66), new THREE.Vector2(0.16, 1.66), new THREE.Vector2(0.34, 1.62),
+    new THREE.Vector2(0.47, 1.56), new THREE.Vector2(0.50, 1.50), new THREE.Vector2(0.50, 1.44),
+    new THREE.Vector2(0.47, 1.44)
+  ];
+  const lid = new THREE.Mesh(new THREE.LatheGeometry(lidPts, 40), lidMat);
+  lid.castShadow = true; group.add(lid);
+  return group;
+}
+
+/* ---------- hero scene assembly ---------- */
+const product = new THREE.Group();
+const bag = makeBag();
+bag.position.copy(BAG_POS);
+const cup = makeCup();
+cup.position.copy(CUP_POS);
+product.add(bag, cup);
+scene.add(product);
+
+/* stage floor: paper falloff plane, unlit so its far edge matches the paper
+   backdrop exactly (no horizon line); the shadow catcher below carries the
+   live directional shadow */
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(60, 60),
+  new THREE.MeshBasicMaterial({ map: floorTex, toneMapped: false })
+);
+floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR_Y;
+scene.add(floor);
+const catcher = new THREE.Mesh(
+  new THREE.PlaneGeometry(60, 60),
+  new THREE.ShadowMaterial({ opacity: 0.30 })
+);
+catcher.rotation.x = -Math.PI / 2; catcher.position.y = FLOOR_Y + 0.005; catcher.receiveShadow = true;
+scene.add(catcher);
+
+/* live contact shadow: radial plane that tightens/darkens as the product lands */
+const contactShadow = new THREE.Mesh(
+  new THREE.PlaneGeometry(4.4, 2.2),
+  new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: 0.85, depthWrite: false })
+);
+contactShadow.rotation.x = -Math.PI / 2; contactShadow.position.set(0.35, FLOOR_Y + 0.01, 0.15);
+scene.add(contactShadow);
+
+/* scattered beans on the stage floor (foreground, sharp, close) */
+[[-1.15, 0.85, 0.4], [-0.95, 1.0, 1.2], [1.25, 0.9, 2.0], [1.55, 0.75, 0.7], [0.05, 1.05, 1.6]].forEach(([x, z, r]) => {
+  const b = makeBean(0.85); b.position.set(x, FLOOR_Y + 0.07, z); b.rotation.set(r, r * 2, r); scene.add(b);
+});
+
+/* foreground beans — low in the frame, drifting slowly; they stay on the floor
+   (y = floor) and never rise toward the label */
+const fgBeans = [];
+[[-1.15, 0.8, 1.0], [1.3, 0.95, 1.1], [0.1, 1.05, 1.2]].forEach(([x, z, s], i) => {
+  const b = makeBean(s);
+  b.position.set(x, FLOOR_Y + 0.07, z);
+  b.rotation.set(0.6, i, 0.4);
+  b.userData.baseX = x;
+  scene.add(b); fgBeans.push(b);
+});
+
+/* 12 beans that pour from the bag in Beat 1: arc over the cup, pass behind the
+   rim, land in the fenced floor zone and stay there.
+   Landing zone (floor): x in [-1.4,-0.7] U [0.7,1.4], z in [0.8,1.4] — outside the
+   bag footprint, below the label's vertical span, never on the label. */
+const LANDINGS = [
+  [-1.10, 0.85], [-0.85, 1.05], [0.95, 0.95], [1.18, 0.75], [-1.05, 0.70],
+  [1.10, 1.10], [-1.15, 1.00], [0.80, 0.75], [1.15, 0.95], [-0.75, 0.90],
+  [1.12, 0.70], [-1.05, 1.15]
+];
+const pourBeans = [];
+const bagMouth = new THREE.Vector3(BAG_POS.x, BAG_POS.y + 1.15, BAG_POS.z);
+const cupMouth = new THREE.Vector3(CUP_POS.x, CUP_POS.y + 1.55, CUP_POS.z);
+for (let i = 0; i < 12; i++) {
+  const b = makeBean(0.85); b.visible = false; scene.add(b); pourBeans.push(b);
+}
+
+/* steam — 14 soft sprites rising from the cup, parented to the cup so the column
+   moves with it through every beat. Grey tint reads on the white stage.
+   Column (cup-local): y 1.65 -> 2.25, i.e. world 0.95 -> 1.55. Full loop at p=0. */
+const steam = [];
+for (let i = 0; i < 14; i++) {
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: steamTex, color: STEAM_GREY, transparent: true, opacity: 0, depthWrite: false }));
+  s.position.set(0, 1.65, 0); s.scale.setScalar(0.4); s.userData.jx = (i % 5 - 2) * 0.03; cup.add(s); steam.push(s);
+}
+
+/* ---------- scroll mapping: native scroll + ONE lerp ---------- */
+let target = 0, smoothed = 0, lastScrollY = -1, lastScrollT = 0;
+function trackProgress() {
+  const rect = track.getBoundingClientRect();
+  const travel = track.offsetHeight - innerHeight;
+  return clamp01(-rect.top / Math.max(1, travel));
+}
+
+const heroLine = document.getElementById('heroLine');
+const heroEyebrow = document.getElementById('heroEyebrow');
+const heroSpec = document.getElementById('heroSpec');
+const heroCtaWrap = document.getElementById('heroCtaWrap');
+const scrollCue = document.getElementById('scrollCue');
+const specPill = document.getElementById('specPill');
+const LINE_BEAT0 = 'Good <span class="red-word">coffee</span>, no shortcuts.';
+const LINE_BEAT1 = 'Grown high, roasted light.';
+
+/* Tilt is a closed loop: 0 -> 12 deg over p 0.25-0.40, hold to 0.55,
+   ease 12 -> 0 over p 0.55-0.65, exactly 0 from 0.65 to 1.0. */
+function tiltDegAt(p) { return 12 * (seg(p, 0.25, 0.40) - seg(p, 0.55, 0.65)); }
+window.__auroraDebug = {
+  tiltAt: tiltDegAt,
+  state: () => ({ p: smoothed, tiltDeg: tiltDegAt(smoothed) })
+};
+
+/* Beat sheet (progress 0->1 across the 150vh track):
+   0: first sight (6.4, orbit 0) · 1: pour / dolly in (5.0, +18 deg) ·
+   2: label reveal (5.2, -10 deg, camY 0.45) · 3: settle (5.6, 0 deg). */
+function applyScene(p, t, scrolling) {
+  /* camera path — one continuous movement, one move per beat */
+  let dist = LAYOUT.baseDist, az = 0, camY = 0.35, lookY = 0.35;
+  if (p < 0.25) { dist = LAYOUT.baseDist; az = 0; }
+  else if (p < 0.55) { const u = seg(p, 0.25, 0.55); dist = lerp(LAYOUT.baseDist, LAYOUT.d1, u); az = lerp(0, 18, u) * Math.PI / 180; }
+  else if (p < 0.80) { const u = seg(p, 0.55, 0.80); dist = lerp(LAYOUT.d1, LAYOUT.d2, u); az = lerp(18, -10, u) * Math.PI / 180; camY = lerp(0.35, 0.45, u); lookY = lerp(0.35, 0.40, u); }
+  else { const u = seg(p, 0.80, 1); dist = lerp(LAYOUT.d2, LAYOUT.d3, u); az = lerp(-10, 0, u) * Math.PI / 180; camY = lerp(0.45, 0.35, u); lookY = lerp(0.40, 0.35, u); }
+  camera.position.set(Math.sin(az) * dist, camY, Math.cos(az) * dist);
+  camera.lookAt(0, lookY, 0);
+
+  /* idle turntable +/-8 deg on a 12s sine — pauses while scrolling, resumes 1.5s after;
+     half amplitude once settled */
+  const idle = (reducedMotion || stillMode) ? 0 : (scrolling ? 0 : Math.sin(t * Math.PI * 2 / 12) * 8 * Math.PI / 180);
+  product.rotation.y = idle * (1 - seg(p, 0.8, 1) * 0.5);
+  const breathe = 1 + (reducedMotion || stillMode ? 0 : Math.sin(t * Math.PI * 2 / 12) * 0.02);
+  product.scale.setScalar(breathe);
+
+  /* Beat 1: bag tilts and pours (closed loop — back to exactly 0 by p=0.65) */
+  const tilt = tiltDegAt(p) * Math.PI / 180;
+  bag.rotation.z = -tilt;
+  bag.position.y = BAG_POS.y + (seg(p, 0.25, 0.40) - seg(p, 0.55, 0.65)) * 0.10;
+  const pour = seg(p, 0.25, 0.55);
+  pourBeans.forEach((b, i) => {
+    const u = clamp01((pour - i * 0.040) / 0.55);
+    if (u <= 0) { b.visible = false; return; }
+    b.visible = true;
+    const [lx, lz] = LANDINGS[i];
+    /* quadratic arc: bag mouth -> above the cup (behind the rim) -> fenced landing zone */
+    const a = (1 - u) * (1 - u), c = 2 * (1 - u) * u, d = u * u;
+    b.position.set(
+      a * bagMouth.x + c * cupMouth.x + d * lx,
+      a * bagMouth.y + c * cupMouth.y + d * (FLOOR_Y + 0.07),
+      a * bagMouth.z + c * cupMouth.z + d * lz
+    );
+    b.rotation.set(u * 6, u * 4, 0);
+  });
+  /* tiny product recoil + shadow tighten as the beans land */
+  const land = seg(p, 0.48, 0.58);
+  product.position.y = -land * 0.04 + (pour > 0 && pour < 1 ? Math.sin(pour * Math.PI) * 0.02 : 0);
+  const shadowTight = 1 - land * 0.22;
+  contactShadow.scale.set(shadowTight, shadowTight, 1);
+  contactShadow.material.opacity = 0.7 + land * 0.25;
+
+  /* steam: full loop from the first frame, parented to the cup, drifting slightly left */
+  steam.forEach((s, i) => {
+    if (reducedMotion || stillMode) {
+      s.position.set(-0.04, 1.95, 0); s.scale.set(0.28, 0.53, 1); s.material.opacity = 0.3; return;
+    }
+    const cyc = ((t * 0.33 + i / 14) % 1);
+    s.position.set(-cyc * 0.30 + s.userData.jx, 1.60 + cyc * 0.65, 0);
+    const sw = 0.15 + cyc * 0.20;                 /* tall wisp sprites, not round balls */
+    s.scale.set(sw, sw * 1.9, 1);
+    s.material.opacity = 0.32 * (1 - cyc) * (cyc < 0.12 ? cyc / 0.12 : 1);
+  });
+
+  /* foreground beans drift slowly side to side, staying on the floor */
+  fgBeans.forEach((b, i) => {
+    if (reducedMotion || stillMode) return;
+    b.position.x = b.userData.baseX + Math.sin(t * 0.08 + i * 2.1) * 0.12;
+    b.rotation.y += 0.0015;
+  });
+
+  /* hero copy: fades out over p 0.15-0.30 before the camera moves, returns in Beat 3.
+     The display line crossfades to the origin line during the fade; the Beat 2
+     spec line sits in a paper scrim pill only — no bare text ever crosses the canvas. */
+  const fadeOut = seg(p, 0.15, 0.30);
+  const fadeIn = seg(p, 0.80, 0.95);
+  const copyOpacity = p < 0.80 ? (1 - fadeOut) : fadeIn;
+  heroLine.style.opacity = copyOpacity;
+  heroEyebrow.style.opacity = copyOpacity;
+  heroSpec.style.opacity = copyOpacity;
+  heroCtaWrap.style.opacity = copyOpacity;
+  heroLine.innerHTML = (p < 0.22 || p >= 0.80) ? LINE_BEAT0 : LINE_BEAT1;
+  scrollCue.style.opacity = p < 0.25 ? 1 : 0;
+  const pillIn = seg(p, 0.55, 0.62), pillOut = seg(p, 0.74, 0.80);
+  specPill.style.opacity = pillIn * (1 - pillOut);
+
+  if (tiltLog && Math.abs(p * 20 - Math.round(p * 20)) < 0.02) {
+    console.log('[v15 tilt] p=' + p.toFixed(2) + ' tilt=' + tiltDegAt(p).toFixed(1) + 'deg dist=' + dist.toFixed(2));
+  }
+}
+
+/* ---------- render loop ---------- */
+let firstFrame = false;
+function resize() {
+  const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight;
+  if (renderer) renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.fov = isMobile() ? 42 : 35;
+  camera.updateProjectionMatrix();
+}
+function render(now) {
+  const t = (now || 0) / 1000;
+  target = trackProgress();
+  const scrolling = Math.abs(scrollY - lastScrollY) > 0.5;
+  if (scrolling) { lastScrollY = scrollY; lastScrollT = t; }
+  const idlePaused = (t - lastScrollT) < 1.5;
+  smoothed += (target - smoothed) * 0.18;              /* THE only smoothing layer */
+  applyScene(smoothed, t, scrolling || idlePaused);
+  if (renderer) renderer.render(scene, camera);
+  if (!firstFrame) {
+    firstFrame = true;
+    window.__auroraSceneReady = true;
+    document.body.classList.add('ready');
+    hideLoader();
+  }
+  if (!stillMode) requestAnimationFrame(render);
+}
+if (renderer) {
+  resize();
+  addEventListener('resize', resize);
+  /* ?p= jumps to a scroll progress state; ?still=1 renders one static frame */
+  if (pParam !== null) {
+    const y = track.offsetTop + pParam * (track.offsetHeight - innerHeight);
+    scrollTo(0, y);
+    target = smoothed = pParam;
+    requestAnimationFrame(() => { render(performance.now()); });
+  } else if (reducedMotion) {
+    target = smoothed = 1;                               /* settled Beat 3 frame, static */
+    render(performance.now());
+  } else {
+    requestAnimationFrame(render);
+  }
+  /* WebGL failsafe: if the first frame never lands in 4s, show the DOM fallback */
+  setTimeout(() => { if (!window.__auroraSceneReady) showFallback(); }, 4000);
+}
+
+/* ---------- order form: local only, nothing sent anywhere ---------- */
+document.getElementById('orderSubmit').addEventListener('click', () => {
+  const name = document.getElementById('fName').value.trim() || 'Friend';
+  const box = document.getElementById('orderResult');
+  box.innerHTML = '<p class="big">Thanks, ' + name.replace(/</g, '&lt;') + ' — noted locally.</p>'
+    + '<p>1 × Single Origin Yirgacheffe 250g bag — $18.<br><br>DEMO ONLY — NO ORDER HAS BEEN SENT.</p>';
+  box.style.display = 'block';
+  document.getElementById('orderForm').style.display = 'none';
+  box.scrollIntoView({ block: 'nearest' });
+});
+
+/* ---------- inspect section: finished product, drag-to-rotate, MOUSE ONLY ---------- */
+(function inspect() {
+  if (!renderer) return;
+  const wrap = document.getElementById('inspectCanvasWrap');
+  const c2 = document.getElementById('inspectCanvas');
+  const cue = document.getElementById('dragCue');
+  const finePointer = matchMedia('(pointer: fine)').matches;
+  if (!finePointer) { if (cue) cue.style.display = 'none'; }
+  let r2;
+  try { r2 = new THREE.WebGLRenderer({ canvas: c2, antialias: true, alpha: false }); }
+  catch (e) { return; }
+  r2.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  r2.toneMapping = THREE.ACESFilmicToneMapping; r2.toneMappingExposure = 1.1;
+  r2.outputColorSpace = THREE.SRGBColorSpace;
+  r2.shadowMap.enabled = true; r2.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const s2 = new THREE.Scene();
+  s2.background = new THREE.Color(PAPER);
+  const pm2 = new THREE.PMREMGenerator(r2);
+  s2.environment = pm2.fromScene(new RoomEnvironment(), 0.04).texture;
+  const cam2 = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
+  cam2.position.set(0, 0.4, isMobile() ? 6.2 : 6.6); cam2.lookAt(0, 0.35, 0);
+  const k2 = new THREE.DirectionalLight(0xFFF2DF, 2.9);
+  k2.position.set(-4, 6, 4); k2.castShadow = true;
+  k2.shadow.mapSize.set(2048, 2048); k2.shadow.radius = 8;
+  s2.add(k2);
+  const rim2 = new THREE.DirectionalLight(0xDCE8F0, 0.8); rim2.position.set(3, 4, -4); s2.add(rim2);
+  s2.add(new THREE.HemisphereLight(0xEAF0F5, CREAM_TINT, 0.6));
+  const bnc2 = new THREE.PointLight(0xF5E6CC, 0.4, 12); bnc2.position.set(0, 0.3, 3); s2.add(bnc2);
+  const prod2 = new THREE.Group();
+  const bag2 = makeBag(); bag2.position.copy(BAG_POS);
+  const cup2 = makeCup(); cup2.position.copy(CUP_POS);
+  prod2.add(bag2, cup2); s2.add(prod2);
+  const fl2 = new THREE.Mesh(
+    new THREE.PlaneGeometry(60, 60),
+    new THREE.MeshBasicMaterial({ map: floorTex, toneMapped: false })
+  );
+  fl2.rotation.x = -Math.PI / 2; fl2.position.y = FLOOR_Y; s2.add(fl2);
+  const cat2 = new THREE.Mesh(
+    new THREE.PlaneGeometry(60, 60),
+    new THREE.ShadowMaterial({ opacity: 0.30 })
+  );
+  cat2.rotation.x = -Math.PI / 2; cat2.position.y = FLOOR_Y + 0.005; cat2.receiveShadow = true; s2.add(cat2);
+  const sh2 = contactShadow.clone();
+  sh2.material = contactShadow.material.clone(); sh2.position.set(0.35, FLOOR_Y + 0.01, 0.15); s2.add(sh2);
+  /* settled pose: a few beans rest on the floor, steam rises from the cup */
+  LANDINGS.slice(0, 5).forEach(([x, z], i) => {
+    const b = makeBean(0.85); b.position.set(x, FLOOR_Y + 0.07, z); b.rotation.set(i, i * 2, 0.4); s2.add(b);
+  });
+  const stm2 = [];
+  for (let i = 0; i < 8; i++) {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: steamTex, color: STEAM_GREY, transparent: true, opacity: 0.35, depthWrite: false }));
+    s.position.set(CUP_POS.x - 0.05, CUP_POS.y + 1.60 + i * 0.09, CUP_POS.z);
+    s.scale.setScalar(0.3 + i * 0.04); s2.add(s); stm2.push(s);
+  }
+
+  let az = 0, vel = 0, dragging = false, lastX = 0, raf = null, visible = false;
+  function size2() {
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    r2.setSize(w, h, false); cam2.aspect = w / h; cam2.updateProjectionMatrix();
+  }
+  function draw2(now) {
+    const t = (now || 0) / 1000;
+    if (!dragging) { vel *= 0.92; az += vel; az += (0 - az) * 0.06; }  /* snap-back to frontal */
+    prod2.rotation.y = az + Math.sin(t * Math.PI * 2 / 12) * 4 * Math.PI / 180;
+    stm2.forEach((s, i) => {
+      const cyc = ((t * 0.33 + i / 8) % 1);
+      s.position.set(CUP_POS.x - cyc * 0.30, CUP_POS.y + 1.60 + cyc * 0.65, CUP_POS.z);
+      const sw = 0.15 + cyc * 0.20;
+      s.scale.set(sw, sw * 1.9, 1);
+      s.material.opacity = 0.32 * (1 - cyc) * (cyc < 0.12 ? cyc / 0.12 : 1);
+    });
+    r2.render(s2, cam2);
+    if (Math.abs(vel) > 0.0005 || Math.abs(az) > 0.001 || dragging) raf = requestAnimationFrame(draw2);
+    else raf = null;
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(draw2); }
+  size2(); addEventListener('resize', size2);
+  new IntersectionObserver(en => {
+    en.forEach(e => { if (e.isIntersecting && !visible) { visible = true; kick(); } });
+  }, { threshold: 0.1 }).observe(wrap);
+
+  if (finePointer) {
+    c2.style.cursor = 'grab';
+    c2.addEventListener('pointerdown', e => {
+      dragging = true; lastX = e.clientX; vel = 0; c2.style.cursor = 'grabbing'; kick();
+    });
+    addEventListener('pointermove', e => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX; lastX = e.clientX;
+      az += dx * 0.008; vel = dx * 0.008;
+    });
+    addEventListener('pointerup', () => { dragging = false; c2.style.cursor = 'grab'; kick(); });
+  }
 })();
 </script>
 </body>
