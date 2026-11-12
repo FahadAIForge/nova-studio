@@ -8,127 +8,190 @@
 <meta name="description" content="NJ Coffee — Single Origin Yirgacheffe, 250g whole bean, $18. Good coffee, no shortcuts.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@500;600;700&family=Playfair+Display:ital,wght@1,500;1,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+  /* NJ Coffee v16 — "Highland Reserve"
+     Forest Green #1E3D2F / Warm Cream #F4EFE4 / Highland Gold #E9B44C (60/30/10)
+     Tints: Deep Canopy #122A1F, Moss Panel #2A4A38, Muted Sage #8FA98F,
+     Brass Deep #C08A2E (glow only), Kraft #C9A876 (sleeve only). */
   :root{
-    --paper:#FBF7F0; --ink:#221A14; --red:#C22A1B;
-    --cream-tint:#EFE5D2; --panel:#2E241C; --kraft:#C9A876; --steam:#CFC8BC;
-    --hairline:rgba(34,26,20,.2);
+    --forest:#1E3D2F; --cream:#F4EFE4; --gold:#E9B44C;
+    --canopy:#122A1F; --moss:#2A4A38; --sage:#8FA98F; --brass:#C08A2E; --kraft:#C9A876;
+    --ease:cubic-bezier(0.22,1,0.36,1);
+    --hairline-green:rgba(244,239,228,.22);
+    --hairline-cream:rgba(30,61,47,.22);
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
   body{
-    background:var(--paper); color:var(--ink);
-    font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
-    font-size:17px; line-height:1.55; overflow-x:hidden;
-    opacity:0; transition:opacity .8s ease;
+    background:var(--forest); color:var(--cream);
+    font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:17px; line-height:1.7; overflow-x:hidden;
+    opacity:0; transition:opacity .8s var(--ease);
   }
   body.ready{opacity:1}
   img{max-width:100%; display:block}
   a{color:inherit}
-  .mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace; text-transform:uppercase; letter-spacing:.14em}
-  .display{font-family:Fraunces,Georgia,"Times New Roman",serif; font-weight:600; line-height:1.08; letter-spacing:-.01em}
-  .red-word{color:var(--red)}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,monospace; text-transform:uppercase; letter-spacing:.22em}
+  .display{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-weight:600; line-height:.92; letter-spacing:.01em; text-transform:uppercase}
+  .display em{font-family:"Playfair Display",Georgia,serif; font-style:italic; font-weight:500; text-transform:none; letter-spacing:0}
+  .gold-word{color:var(--gold)}
   .wrap{max-width:1120px; margin:0 auto; padding:0 20px; min-width:0}
   section{position:relative}
 
-  /* ---------- header: 56px, logo + ONE compact CTA ---------- */
+  /* ---------- header: 56px, logo left + ONE compact CTA right ---------- */
   header{
     position:fixed; inset:0 0 auto 0; height:56px; z-index:50;
     display:flex; align-items:center; justify-content:space-between;
-    padding:0 16px; background:var(--paper);
-    border-bottom:1px solid var(--hairline);
+    padding:0 16px; background:var(--forest);
+    border-bottom:1px solid var(--hairline-green);
   }
-  .logo{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:13px; letter-spacing:.22em; color:var(--ink); text-decoration:none}
-  @property --beam-a{syntax:'<angle>'; initial-value:0deg; inherits:false}
-  @keyframes beam-spin{to{--beam-a:360deg}}
+  .logo{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:13px; letter-spacing:.22em; color:var(--cream); text-decoration:none}
+  .nav-links{display:none; gap:28px; align-items:center}
+  .nav-links a{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; text-decoration:none; color:rgba(244,239,228,.72)}
+  .nav-links a:hover{color:var(--gold)}
   .cta{
-    position:relative;
-    display:inline-flex; align-items:center; justify-content:center;
-    background:var(--red); color:var(--paper); border:0; cursor:pointer;
-    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:12px; font-weight:500;
-    letter-spacing:.12em; text-transform:uppercase; text-decoration:none;
+    position:relative; display:inline-flex; align-items:center; justify-content:center;
+    background:var(--gold); color:var(--forest); border:0; cursor:pointer;
+    font-family:"DM Sans",system-ui,sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.18em; text-transform:uppercase; text-decoration:none;
     height:36px; padding:0 16px; border-radius:999px; white-space:nowrap;
+    transition:transform .18s var(--ease), filter .18s var(--ease);
   }
-  /* Border Beam: a paper-white beam travels the CTA border on a 2.4s loop */
-  .cta::before{
-    content:""; position:absolute; inset:0; border-radius:inherit; padding:2px; pointer-events:none;
-    background:conic-gradient(from var(--beam-a,0deg), transparent 0deg, rgba(251,247,240,.95) 70deg, transparent 140deg, transparent 360deg);
-    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite:xor; mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite:exclude;
-    animation:beam-spin 2.4s linear infinite;
+  /* Border Beam — technique ported to vanilla CSS from Magic UI's BorderBeam (MIT, magicui.design):
+     a masked 2px border ring + a gradient square that rides offset-path: rect(). Not a verbatim package import. */
+  .cta{--beam-from:#F4EFE4; --beam-to:#C08A2E}
+  .cta .bb{
+    position:absolute; inset:0; border-radius:inherit; pointer-events:none; border:2px solid transparent;
+    -webkit-mask-clip:padding-box,border-box; mask-clip:padding-box,border-box;
+    -webkit-mask-composite:source-in; mask-composite:intersect;
+    -webkit-mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000);
+    mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000);
   }
+  .cta .bb::after{
+    content:""; position:absolute; aspect-ratio:1; width:46px;
+    offset-path:rect(0 auto auto 0 round 999px); offset-anchor:90% 50%;
+    background:linear-gradient(to left,var(--beam-from),var(--beam-to),transparent);
+    animation:bb-run 3.2s linear infinite;
+  }
+  @keyframes bb-run{to{offset-distance:100%}}
   .cta:hover{filter:brightness(1.07)}
   .cta:active{transform:translateY(1px)}
-  .cta-inverse{background:var(--paper); color:var(--red)}
-  .cta-inverse::before{display:none}
+  @media (hover:hover) and (pointer:fine){
+    .cta:hover{transform:scale(1.05) translateY(-2px)}
+  }
+  .cta-green{background:var(--forest); color:var(--cream)}
+  .cta-green{--beam-from:#E9B44C; --beam-to:#F4EFE4}
+  #heroCtaWrap{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; width:100%}
 
-  /* ---------- hero: 150vh sticky track, 100svh daylight studio ---------- */
-  #track{height:150vh; background:var(--paper)}
+  /* ---------- hero: 150vh sticky track, deep-green roastery stage ---------- */
+  #track{height:150vh; background:var(--forest)}
   .sticky{position:sticky; top:0; height:100svh; height:100dvh; overflow:hidden; padding-top:56px}
   .hero-grid{
     display:grid; height:100%;
     grid-template-rows:minmax(0,2.6fr) minmax(0,1fr);
     grid-template-columns:minmax(0,1fr);
   }
-  .canvas-cell{position:relative; min-width:0; min-height:0}
-  #scene{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y; opacity:0; transition:opacity .8s ease}
+  .canvas-cell{position:relative; min-width:0; min-height:0; background:var(--forest)}
+  #scene{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y; opacity:0; transition:opacity .8s var(--ease)}
   body.ready #scene{opacity:1}
+  /* Atmosphere over the canvas (v10's trick, re-tinted green/gold):
+     Deep Canopy vignette + film grain + three blurred glows, above canvas, below copy. */
+  .stage-vignette{position:absolute; inset:0; z-index:3; pointer-events:none; background:radial-gradient(ellipse at 50% 42%, transparent 40%, rgba(18,42,31,.65) 100%)}
+  .stage-grain{position:absolute; inset:-40px; z-index:3; pointer-events:none; opacity:.05; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); animation:grain .9s steps(4) infinite}
+  @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-2%,1%)}50%{transform:translate(1%,-2%)}75%{transform:translate(-1%,2%)}100%{transform:translate(0,0)}}
+  .glow{position:absolute; z-index:2; pointer-events:none; border-radius:50%; filter:blur(70px)}
+  .glow-gold{width:340px; height:340px; left:-60px; top:-40px; background:rgba(233,180,76,.045)}
+  .glow-green{width:300px; height:300px; left:-40px; bottom:-80px; background:rgba(42,74,56,.55)}
+  .glow-cream{width:260px; height:260px; right:-30px; top:6%; background:rgba(244,239,228,.05)}
   .hero-copy{
     min-width:0; padding:8px 20px calc(16px + env(safe-area-inset-bottom,0px));
     text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    background:var(--forest);
   }
-  .hero-copy .eyebrow{font-size:11px; letter-spacing:.24em; color:var(--ink); text-transform:uppercase; margin-bottom:10px}
-  .hero-copy .display{font-size:clamp(28px,8vw,40px); color:var(--ink); max-width:640px}
-  #heroLine{transition:opacity .25s ease}
-  #heroSpec{margin-top:10px; font-size:12px; letter-spacing:.16em; color:var(--ink); text-transform:uppercase; transition:opacity .25s ease}
+  .hero-copy .eyebrow{font-size:11px; letter-spacing:.24em; color:var(--gold); text-transform:uppercase; margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:12px}
+  .hero-copy .eyebrow::before,.hero-copy .eyebrow::after{content:""; width:34px; height:1px; background:var(--gold)}
+  .hero-copy .display{font-size:clamp(28px,9vw,40px); color:var(--cream); max-width:640px}
+  .hero-copy .display em{color:var(--gold)}
+  #heroLine{transition:opacity .25s var(--ease)}
+  #heroLine .mask-line{display:block; overflow:hidden}
+  #heroSpec{margin-top:10px; font-size:12px; letter-spacing:.16em; color:rgba(244,239,228,.70); text-transform:uppercase; transition:opacity .25s var(--ease)}
   .hero-cta{margin-top:16px; height:48px; padding:0 26px; font-size:13px; width:min(100%,340px)}
-  .scroll-cue{margin-top:14px; font-size:11px; letter-spacing:.22em; color:rgba(34,26,20,.6); text-transform:uppercase; transition:opacity .25s ease}
-  /* Beat 2 spec line: paper scrim pill, pinned to the bottom of the viewport */
+  .scroll-cue{margin-top:14px; font-size:11px; letter-spacing:.22em; color:var(--sage); text-transform:uppercase; transition:opacity .25s var(--ease)}
+  /* Tasting notes + roast level + est. badge — fills the right-column void. */
+  .hero-meta{margin-top:26px; padding-top:18px; border-top:1px solid rgba(233,180,76,.35); width:100%; max-width:420px; display:flex; flex-direction:column; gap:10px; transition:opacity .25s var(--ease)}
+  .hero-meta-row{display:flex; align-items:baseline; gap:12px; font-size:11px; letter-spacing:.18em; color:rgba(244,239,228,.85); text-transform:uppercase}
+  .hero-meta-label{color:var(--gold); font-size:10px; letter-spacing:.22em; min-width:64px}
+  .hero-meta{position:relative}
+  .hero-meta-badge{align-self:flex-start; margin-top:4px; color:var(--gold); font-size:10px; letter-spacing:.24em; text-transform:uppercase; display:flex; align-items:center; gap:10px}
+  .hero-meta-badge::before{content:""; width:6px; height:6px; background:var(--gold); transform:rotate(45deg)}
+  .roast-meter{display:inline-flex; gap:5px; margin-left:6px; vertical-align:middle}
+  .roast-meter i{width:16px; height:6px; background:rgba(244,239,228,.22); display:block}
+  .roast-meter i.on{background:var(--gold)}
+  .est-seal{display:none; color:var(--gold)}
+  .est-seal .ring{transform-origin:60px 60px; animation:seal-spin 48s linear infinite}
+  @keyframes seal-spin{to{transform:rotate(360deg)}}
   #specPill{
     position:absolute; left:50%; bottom:18px; transform:translateX(-50%); z-index:6;
-    background:var(--paper); color:var(--ink); border-radius:8px; padding:12px 16px;
+    background:var(--cream); color:var(--forest); border-radius:8px; padding:12px 16px;
     font-size:12px; letter-spacing:.16em; text-transform:uppercase; white-space:nowrap;
-    opacity:0; transition:opacity .25s ease; pointer-events:none;
+    opacity:0; transition:opacity .25s var(--ease); pointer-events:none;
+  }
+  #heroDragCue{
+    position:absolute; left:20px; bottom:16px; z-index:6;
+    background:transparent; color:rgba(244,239,228,.62);
+    border-radius:0; padding:0; font-size:11px; letter-spacing:.2em;
+    text-transform:uppercase; pointer-events:none; white-space:nowrap;
   }
 
   /* ---------- kinetic text loader (max 800ms, then gone) ---------- */
-  #loader{position:fixed; inset:0; z-index:200; display:flex; align-items:center; justify-content:center; background:var(--paper); transition:opacity .35s ease}
+  #loader{position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; background:var(--canopy); transition:opacity .35s var(--ease)}
   #loader.hide{opacity:0; pointer-events:none}
-  #loader .kl-word{font-family:Fraunces,Georgia,"Times New Roman",serif; font-weight:600; font-size:clamp(34px,9vw,54px); color:var(--ink); letter-spacing:.02em; white-space:nowrap}
-  #loader .kl-word span{display:inline-block; animation:kl .8s ease both; animation-delay:calc(var(--i)*60ms)}
-  #loader .kl-word span:nth-child(n+4){color:var(--red)}
+  #loader .kl-dot{width:12px; height:12px; border-radius:50%; background:var(--cream); animation:kl-dot 1s var(--ease) infinite}
+  @keyframes kl-dot{0%,100%{transform:scale(1); opacity:1}50%{transform:scale(1.6); opacity:.5}}
+  #loader .kl-word{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-weight:600; font-size:clamp(34px,9vw,54px); color:var(--cream); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap}
+  #loader .kl-word span{display:inline-block; animation:kl .8s var(--ease) both; animation-delay:calc(var(--i)*60ms)}
   @keyframes kl{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:translateY(0)}}
+  #loader .kl-sub{font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:rgba(244,239,228,.65)}
+  #loader .kl-count{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; letter-spacing:.22em; color:var(--gold)}
 
   /* ---------- WebGL fallback (designed state, never blank) ---------- */
-  #webgl-fallback{display:none; position:absolute; inset:0; z-index:4; background:var(--paper); overflow:auto; padding:76px 20px 24px; text-align:center}
+  #webgl-fallback{display:none; position:absolute; inset:0; z-index:4; background:var(--forest); overflow:auto; padding:76px 20px 24px; text-align:center}
   #webgl-fallback.show{display:block}
-  #webgl-fallback img{max-width:300px; margin:0 auto 18px}
+  #webgl-fallback img{max-width:300px; margin:0 auto 18px; border:12px solid var(--cream)}
   #webgl-fallback .display{font-size:clamp(28px,8vw,40px); margin-bottom:10px}
+  #webgl-fallback .display em{color:var(--gold)}
 
   /* ---------- generic sections ---------- */
   .section-pad{padding:84px 0}
-  .section-pad h2{font-size:clamp(30px,7vw,52px); margin-bottom:16px}
+  .section-pad h2{font-size:clamp(2.4rem,5.6vw,4.6rem); margin-bottom:16px}
   .section-pad p.lede{max-width:560px; font-size:17px}
   .eyebrow{font-size:11px; letter-spacing:.24em; text-transform:uppercase; margin-bottom:14px}
+  .eyebrow::before{content:""; display:inline-block; width:34px; height:1px; background:currentColor; vertical-align:middle; margin-right:12px}
   .caption{font-size:11px; letter-spacing:.16em; text-transform:uppercase; margin-top:10px}
-  .hairline{border:0; border-top:1px solid var(--hairline)}
-  .on-paper{background:var(--paper); color:var(--ink)}
-  .on-cream{background:var(--cream-tint); color:var(--ink)}
+  .on-cream{background:var(--cream); color:var(--forest)}
+  .on-cream .lede{color:rgba(30,61,47,.68)}
+  .on-cream .eyebrow{color:var(--forest)}
+  .on-green{background:var(--forest); color:var(--cream)}
+  .on-green .lede{color:rgba(244,239,228,.70)}
+  .on-green .eyebrow{color:var(--gold)}
+  .on-green .caption{color:var(--sage)}
+  .chip{display:inline-block; background:var(--forest); color:var(--gold); padding:.02em .18em; font-style:italic}
+  .giant-numeral{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-weight:700; font-size:clamp(4rem,12vw,9rem); line-height:1; color:transparent; -webkit-text-stroke:1.5px rgba(30,61,47,.55); text-stroke:1.5px rgba(30,61,47,.55); margin-top:28px}
 
-  /* CSS Scroll-Driven reveals: fade + 12px rise, once, no JS smoothing */
+  /* Scroll Dissolve + rise reveals: fade + scale 0.94, once, no JS */
   @supports (animation-timeline: view()){
-    .reveal-view{animation:fade-up .4s ease-out both; animation-timeline:view(); animation-range:entry 0% entry 60%}
-    .reveal-view-d1{animation:fade-up .4s ease-out .05s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
-    .reveal-view-d2{animation:fade-up .4s ease-out .1s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
-    .reveal-view-d3{animation:fade-up .4s ease-out .15s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
-    .reveal-view-d4{animation:fade-up .4s ease-out .2s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+    .reveal-view{animation:fade-up .6s var(--ease) both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+    .reveal-view-d1{animation:fade-up .6s var(--ease) .06s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+    .reveal-view-d2{animation:fade-up .6s var(--ease) .12s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+    .reveal-view-d3{animation:fade-up .6s var(--ease) .18s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+    .reveal-view-d4{animation:fade-up .6s var(--ease) .24s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
   }
-  @keyframes fade-up{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:translateY(0)}}
+  @keyframes fade-up{from{opacity:0; transform:translateY(12px) scale(.94)}to{opacity:1; transform:translateY(0) scale(1)}}
 
-  /* ---------- origin: full-bleed photo band, no overlay ---------- */
-  .origin-band{overflow:hidden; max-width:100%}
-  .origin-band img{width:100%; height:auto; min-height:320px; object-fit:cover}
+  /* ---------- origin ---------- */
+  .origin-band{overflow:hidden; max-width:100%; height:min(78vh,720px)}
+  .origin-band img{width:100%; height:100%; min-height:0; object-fit:cover; object-position:center 85%; transform:scale(2); transform-origin:50% 85%}
   .origin-body{padding:56px 0 84px}
   .spec-row{display:flex; flex-wrap:wrap; gap:10px 28px; font-size:12px; letter-spacing:.16em; text-transform:uppercase}
 
@@ -136,89 +199,103 @@
   .roast-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:36px; align-items:start}
   .roast-grid img.roast-img{width:100%; max-width:480px}
   .process-cards{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin-top:36px}
-  .process-card{background:var(--paper); border:1px solid var(--hairline); padding:24px; min-width:0}
-  .process-card h3{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:13px; letter-spacing:.2em; text-transform:uppercase; margin-bottom:10px}
+  .process-card{background:var(--moss); color:var(--cream); padding:24px; min-width:0}
+  .process-card .num{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-size:30px; font-weight:700; color:var(--gold)}
+  .process-card h3{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:13px; letter-spacing:.2em; text-transform:uppercase; margin:8px 0 10px}
+  .process-card p{color:rgba(244,239,228,.85)}
   .process-card img{width:100%; max-width:480px; margin-top:14px}
-  .marquee{overflow:hidden; max-width:100%; border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline); padding:14px 0; margin:40px 0 0}
+  .marquee{overflow:hidden; max-width:100%; border-top:1px solid var(--hairline-green); border-bottom:1px solid var(--hairline-green); padding:14px 0; margin:40px 0 0}
   .marquee-track{display:flex; width:max-content; animation:marquee 24s linear infinite}
-  .marquee-track span{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:13px; letter-spacing:.2em; text-transform:uppercase; white-space:nowrap; padding-right:16px}
+  .marquee-track span{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:13px; letter-spacing:.2em; text-transform:uppercase; white-space:nowrap; padding-right:16px; color:var(--gold)}
   @keyframes marquee{to{transform:translateX(-50%)}}
 
-  /* ---------- menu: full red band ---------- */
-  .menu-band{background:var(--red); color:var(--paper)}
-  .menu-band h2{color:var(--paper)}
-  .menu-band .lede{color:var(--paper)}
-  .menu-band .eyebrow{color:var(--paper)}
-  .menu-photo{max-width:720px; margin:0 auto 32px; border:12px solid var(--paper); background:var(--paper)}
+  /* ---------- menu: FULL GOLD band ---------- */
+  .menu-band{background:var(--gold); color:var(--forest)}
+  .menu-band h2{color:var(--forest)}
+  .menu-band .lede{color:rgba(30,61,47,.85)}
+  .menu-band .eyebrow{color:var(--forest)}
+  .menu-photo{max-width:720px; margin:0 auto 32px; border:12px solid var(--cream); background:var(--cream)}
   .menu-photo img{width:100%}
-  .menu-photo figcaption{color:var(--paper); margin-top:12px; text-align:center}
+  .menu-photo figcaption{color:var(--forest); margin-top:12px; text-align:center; background:var(--cream); padding-bottom:4px}
   .swiper{display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding:4px 2px 18px; -webkit-overflow-scrolling:touch}
   .menu-card{
     flex:0 0 min(78%,300px); scroll-snap-align:center; min-width:0;
-    background:var(--paper); color:var(--ink); padding:26px 22px; border-radius:4px;
-    box-shadow:0 2px 12px rgba(34,26,20,.15);
+    background:var(--cream); color:var(--forest); padding:26px 22px; border-radius:4px;
+    border-top:4px solid var(--gold);
+    box-shadow:0 2px 12px rgba(18,42,31,.25);
+    transition:transform .3s var(--ease), opacity .3s var(--ease);
+    will-change:transform, opacity;
   }
-  .menu-card h3{font-family:Fraunces,Georgia,serif; font-size:26px; font-weight:600; margin-bottom:6px}
-  .menu-card p{font-size:15px}
-  .menu-card .price{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:15px; color:var(--red); margin-top:14px; letter-spacing:.08em}
+  .menu-card h3{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-size:26px; font-weight:600; margin-bottom:6px; text-transform:uppercase}
+  .menu-card p{font-size:15px; color:rgba(30,61,47,.68)}
+  .menu-card .price{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-size:22px; font-weight:700; color:var(--forest); margin-top:14px; letter-spacing:.04em}
   .menu-cta-wrap{text-align:center; margin-top:28px}
   .menu-cta-wrap .cta{height:48px; padding:0 28px; font-size:13px}
 
   /* ---------- inspect ---------- */
-  #inspectCanvasWrap{position:relative; height:min(72vh,620px); background:var(--paper); border:1px solid var(--hairline); overflow:hidden}
+  #inspectCanvasWrap{position:relative; height:min(72vh,620px); background:var(--forest); overflow:hidden}
   #inspectCanvas{width:100%; height:100%; display:block; touch-action:pan-y}
   #dragCue{
     position:absolute; left:50%; bottom:16px; transform:translateX(-50%);
-    background:var(--paper); color:var(--ink); border:1px solid var(--hairline);
+    background:var(--cream); color:var(--forest);
     border-radius:999px; padding:8px 16px; font-size:11px; letter-spacing:.2em;
     text-transform:uppercase; pointer-events:none; white-space:nowrap;
   }
+  #inspectFallback{display:none; text-align:center; padding:24px}
+  #inspectFallback img{max-width:320px; margin:0 auto 14px}
 
   /* ---------- order ---------- */
   .order-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:36px; align-items:start}
   .order-photo img{width:100%; max-width:520px}
-  form label{display:block; font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; margin:18px 0 8px}
+  form label{display:block; font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; margin:18px 0 8px}
   form input{
     width:100%; max-width:420px; padding:12px 14px; font:inherit; font-size:16px;
-    background:var(--paper); color:var(--ink); border:1px solid rgba(34,26,20,.4); border-radius:4px;
+    background:var(--cream); color:var(--forest); border:1px solid rgba(30,61,47,.4); border-radius:4px;
   }
-  form input:focus{outline:2px solid var(--red); outline-offset:1px}
-  .qty-fixed{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:14px; letter-spacing:.1em; text-transform:uppercase; padding:12px 14px; border:1px solid var(--hairline); max-width:420px; background:var(--cream-tint)}
+  form input:focus{outline:2px solid var(--gold); outline-offset:1px}
+  .qty-fixed{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:14px; letter-spacing:.1em; text-transform:uppercase; padding:12px 14px; border:1px solid var(--hairline-cream); max-width:420px; background:var(--cream)}
   .order-submit{margin-top:24px; height:48px; padding:0 28px; font-size:13px; width:min(100%,420px)}
-  .demo-note{margin-top:16px; font-size:12px; letter-spacing:.14em; text-transform:uppercase}
-  #orderResult{display:none; margin-top:24px; padding:22px; border:1px solid var(--hairline); background:var(--cream-tint); max-width:520px}
-  #orderResult .big{font-family:Fraunces,Georgia,serif; font-size:24px; font-weight:600; margin-bottom:8px}
+  .demo-note{margin-top:16px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:rgba(30,61,47,.68)}
+  #orderResult{display:none; margin-top:24px; padding:22px; border:1px solid var(--hairline-cream); background:var(--cream); max-width:520px}
+  #orderResult .big{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-size:26px; font-weight:600; text-transform:uppercase; letter-spacing:.02em}
 
   /* ---------- footer ---------- */
-  footer{background:var(--ink); color:var(--paper); border-top:4px solid var(--red); padding:56px 0 40px}
+  footer{background:var(--canopy); color:var(--cream); border-top:4px solid var(--gold); padding:56px 0 40px}
   footer .display{font-size:30px; margin-bottom:12px}
-  footer p{color:var(--paper); max-width:560px}
-  footer .credits{margin-top:28px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--paper)}
+  footer p{color:rgba(244,239,228,.70); max-width:560px}
+  footer .credits{margin-top:28px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--sage)}
 
   @media (max-width:767px){
-    /* Taller canvas cell on phones (2.6fr above) leaves a shorter copy row —
-       tighten the copy stack so the CTA + scroll cue stay in the viewport. */
     .hero-copy{padding:4px 20px calc(12px + env(safe-area-inset-bottom,0px))}
     .hero-copy .eyebrow{margin-bottom:6px}
     .hero-cta{margin-top:10px}
     .scroll-cue{margin-top:8px}
   }
   @media (min-width:768px){
+    .nav-links{display:flex}
     .process-cards{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}
     .roast-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
     .order-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   }
   @media (min-width:1024px){
-    .hero-grid{grid-template-rows:minmax(0,1fr); grid-template-columns:minmax(0,1.55fr) minmax(0,1fr)}
-    .hero-copy{text-align:left; align-items:flex-start; justify-content:center; padding:24px 32px 24px 8px}
+    .hero-grid{grid-template-rows:minmax(0,1fr); grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+    .hero-copy{text-align:left; align-items:flex-start; justify-content:center; padding:24px 40px 24px 8px}
+    .hero-copy .display{font-size:clamp(2.2rem,min(4.3vw,8.2vh),4.9rem); overflow-wrap:break-word; max-width:100%}
+    .hero-copy{position:relative}
+    .hero-meta{max-width:500px}
+    .hero-meta-row{padding-right:104px}
+    .est-seal{display:block; position:absolute; right:0; top:14px; width:92px; height:92px}
+    .hero-copy .eyebrow{justify-content:flex-start}
+    #heroCtaWrap{justify-content:flex-start}
     .hero-cta{width:auto}
     .swiper{overflow-x:visible}
     .menu-card{flex:1 1 0; scroll-snap-align:none}
   }
   @media (prefers-reduced-motion: reduce){
     .marquee-track{animation:none}
-    .cta::before{animation:none}
-    .scroll-cue{animation:none}
+    .stage-grain{animation:none}
+    .cta .bb::after{animation:none}
+    .est-seal .ring{animation:none}
     .reveal-view,.reveal-view-d1,.reveal-view-d2,.reveal-view-d3,.reveal-view-d4{animation:none}
   }
 </style>
@@ -226,11 +303,17 @@
 <body>
 <header>
   <a class="logo" href="#top">NJ COFFEE</a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#origin">Origin</a><a href="#roast">Roast</a><a href="#menu">Menu</a><a href="#order">Order</a>
+  </nav>
   <a class="cta" href="#order">Order — $18</a>
 </header>
 
 <div id="loader" aria-hidden="true">
+  <div class="kl-dot" aria-hidden="true"></div>
   <div class="kl-word" aria-hidden="true"><span style="--i:0">N</span><span style="--i:1">J</span><span style="--i:2">&nbsp;</span><span style="--i:3">C</span><span style="--i:4">o</span><span style="--i:5">f</span><span style="--i:6">f</span><span style="--i:7">e</span><span style="--i:8">e</span></div>
+  <div class="kl-sub">Preparing your experience&hellip;</div>
+  <div class="kl-count" id="loaderCount">0%</div>
 </div>
 
 <main id="top">
@@ -239,21 +322,40 @@
     <div class="sticky">
       <div class="hero-grid">
         <div class="canvas-cell">
-          <canvas id="scene" aria-label="NJ Coffee bag and takeaway cup in a daylight studio"></canvas>
+          <canvas id="scene" aria-label="NJ Coffee bag and takeaway cup in a highland roastery at golden hour"></canvas>
+          <div class="glow glow-gold" aria-hidden="true"></div>
+          <div class="glow glow-green" aria-hidden="true"></div>
+          <div class="glow glow-cream" aria-hidden="true"></div>
+          <div class="stage-vignette" aria-hidden="true"></div>
+          <div class="stage-grain" aria-hidden="true"></div>
           <div id="webgl-fallback" aria-hidden="true">
             <img src="v14-assets/takeaway-cup-unbranded.jpg" alt="Plain takeaway coffee cup">
-            <h2 class="display">Good <span class="red-word">coffee</span>, no shortcuts.</h2>
-            <p class="mono" style="font-size:12px; margin-top:10px">Single Origin Yirgacheffe · 250g · $18</p>
+            <h2 class="display">Good <em>coffee</em>, no shortcuts.</h2>
+            <p class="mono" style="font-size:12px; margin-top:10px; color:rgba(244,239,228,.70)">Single Origin Yirgacheffe &middot; 250g &middot; $18</p>
             <p style="margin-top:18px"><a class="cta" href="#order" style="height:48px; padding:0 26px; font-size:13px">Order the bag — $18</a></p>
           </div>
-          <div id="specPill" class="mono">250G · Whole Bean · $18</div>
+          <div id="specPill" class="mono">250G &middot; Whole Bean &middot; $18</div>
+          <div id="heroDragCue" class="mono">Drag to rotate</div>
         </div>
         <div class="hero-copy" id="heroCopy">
           <p class="eyebrow mono" id="heroEyebrow">NJ Coffee — Single Origin</p>
-          <h1 class="display" id="heroLine">Good <span class="red-word">coffee</span>, no shortcuts.</h1>
-          <p class="mono" id="heroSpec">Single Origin Yirgacheffe · 250g · $18</p>
+          <h1 class="display" id="heroLine">Good <em>coffee</em>, no shortcuts.</h1>
+          <p class="mono" id="heroSpec">Single Origin Yirgacheffe &middot; 250g &middot; $18</p>
           <p id="heroCtaWrap"><a class="cta hero-cta" id="heroCta" href="#order">Order the bag — $18</a></p>
-          <p class="scroll-cue mono" id="scrollCue">Scroll ↓</p>
+          <p class="scroll-cue mono" id="scrollCue">Scroll &#8595;</p>
+          <div class="hero-meta mono" id="heroMeta">
+            <span class="hero-meta-row"><span class="hero-meta-label">Tasting</span> Bergamot &middot; Apricot &middot; Honey</span>
+            <span class="hero-meta-row"><span class="hero-meta-label">Roast</span> Medium <span class="roast-meter" aria-label="Roast level 3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></span>
+            <span class="hero-meta-badge">Est. 2019 &middot; Yirgacheffe, Ethiopia</span>
+            <svg class="est-seal" viewBox="0 0 120 120" aria-hidden="true">
+              <defs><path id="sealPath" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0"/></defs>
+              <circle cx="60" cy="60" r="57" fill="none" stroke="currentColor" stroke-opacity=".55" stroke-width="1"/>
+              <circle cx="60" cy="60" r="33" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1"/>
+              <g class="ring"><text font-family="ui-monospace,Menlo,monospace" font-size="9.5" letter-spacing="3.2" fill="currentColor"><textPath href="#sealPath">EST. 2019 &#183; SINGLE ORIGIN &#183; YIRGACHEFFE &#183;</textPath></text></g>
+              <text x="60" y="58" text-anchor="middle" font-family="Antonio,Arial Narrow,sans-serif" font-size="13" letter-spacing="1.5" fill="currentColor">EST.</text>
+              <text x="60" y="76" text-anchor="middle" font-family="Antonio,Arial Narrow,sans-serif" font-size="19" fill="currentColor">2019</text>
+            </svg>
+          </div>
         </div>
       </div>
     </div>
@@ -265,16 +367,17 @@
       <img src="v14-assets/beans-macro.jpg" alt="Roasted coffee beans, close up" width="1600" height="900">
     </div>
     <div class="wrap origin-body">
-      <p class="caption mono reveal-view">Roasted beans — Single Origin · Photo: Tima Miroshnichenko / Pexels</p>
+      <p class="caption mono reveal-view">Roasted beans — Single Origin &middot; Photo: Tima Miroshnichenko / Pexels</p>
       <p class="eyebrow mono reveal-view" style="margin-top:36px">The Origin</p>
-      <h2 class="display reveal-view">One farm high in <span class="red-word">Yirgacheffe</span>.</h2>
+      <h2 class="display reveal-view">One farm high in <span class="chip">Yirgacheffe</span>.</h2>
       <p class="lede reveal-view">Single origin, roasted light. The bag in the hero is the bag you get — 250g, whole bean, $18.</p>
-      <p class="spec-row mono reveal-view" style="margin-top:22px"><span>Yirgacheffe · Ethiopia · 250g · $18</span></p>
+      <p class="spec-row mono reveal-view" style="margin-top:22px"><span>Yirgacheffe &middot; Ethiopia &middot; 250g &middot; $18</span></p>
+      <p class="giant-numeral reveal-view" aria-label="Altitude 2,200 metres">2,200 m</p>
     </div>
   </section>
 
   <!-- S3 — Roast & Process -->
-  <section class="on-paper section-pad" id="roast">
+  <section class="on-green section-pad" id="roast">
     <div class="wrap">
       <div class="roast-grid">
         <div style="min-width:0">
@@ -283,16 +386,19 @@
           <p class="lede reveal-view">Three steps. Zero shortcuts.</p>
           <div class="process-cards">
             <div class="process-card reveal-view">
+              <p class="num">01</p>
               <h3>Roast</h3>
               <p>Roasted light, in small batches, so the origin stays in the cup.</p>
             </div>
             <div class="process-card reveal-view-d1">
+              <p class="num">02</p>
               <h3>Grind</h3>
               <p>Ground fresh for the brew you choose — never ground days ahead.</p>
               <img src="v14-assets/beans-pour.jpg" alt="Coffee beans being poured" width="736" height="1103">
               <p class="caption mono">Beans, poured</p>
             </div>
             <div class="process-card reveal-view-d2">
+              <p class="num">03</p>
               <h3>Brew</h3>
               <p>Poured slow, served hot. One origin, five ways to drink it.</p>
             </div>
@@ -305,13 +411,13 @@
       </div>
       <div class="marquee" aria-hidden="true">
         <div class="marquee-track">
-          <span>Roast ✦ Grind ✦ Brew ✦ Pour ✦&nbsp;</span><span>Roast ✦ Grind ✦ Brew ✦ Pour ✦&nbsp;</span><span>Roast ✦ Grind ✦ Brew ✦ Pour ✦&nbsp;</span><span>Roast ✦ Grind ✦ Brew ✦ Pour ✦&nbsp;</span>
+          <span>Roast &#10022; Grind &#10022; Brew &#10022; Pour &#10022;&nbsp;</span><span>Roast &#10022; Grind &#10022; Brew &#10022; Pour &#10022;&nbsp;</span><span>Roast &#10022; Grind &#10022; Brew &#10022; Pour &#10022;&nbsp;</span><span>Roast &#10022; Grind &#10022; Brew &#10022; Pour &#10022;&nbsp;</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- S4 — Menu: full red band -->
+  <!-- S4 — Menu: FULL GOLD band -->
   <section class="menu-band section-pad" id="menu">
     <div class="wrap">
       <p class="eyebrow mono reveal-view">The Menu</p>
@@ -319,9 +425,9 @@
       <p class="lede reveal-view">Five drinks. One origin.</p>
       <figure class="menu-photo reveal-view" style="margin-top:36px">
         <img src="v14-assets/pour-over.jpg" alt="Barista pouring hot water over coffee grounds" width="1600" height="1067">
-        <figcaption class="caption mono">Pour over — brewed to order · Photo: Michael Burrows / Pexels</figcaption>
+        <figcaption class="caption mono">Pour over — brewed to order &middot; Photo: Michael Burrows / Pexels</figcaption>
       </figure>
-      <div class="swiper" role="list" aria-label="Drinks menu">
+      <div class="swiper" role="list" aria-label="Drinks menu" id="brewSwiper">
         <article class="menu-card reveal-view" role="listitem">
           <h3>Espresso</h3><p>Short, strong, straight up.</p><p class="price">$3.50</p>
         </article>
@@ -339,13 +445,13 @@
         </article>
       </div>
       <div class="menu-cta-wrap">
-        <a class="cta cta-inverse" href="#order">Order the bag — $18</a>
+        <a class="cta cta-green" href="#order">Order the bag — $18</a>
       </div>
     </div>
   </section>
 
   <!-- S5 — Brew & Inspect -->
-  <section class="on-paper section-pad" id="inspect">
+  <section class="on-cream section-pad" id="inspect">
     <div class="wrap">
       <p class="eyebrow mono reveal-view">Inspect the bag</p>
       <h2 class="display reveal-view">Turn it around.</h2>
@@ -353,35 +459,40 @@
       <div id="inspectCanvasWrap" class="reveal-view" style="margin-top:32px">
         <canvas id="inspectCanvas" aria-label="Finished NJ Coffee bag and cup — drag to rotate on desktop"></canvas>
         <div id="dragCue" class="mono">Drag to rotate</div>
+        <div id="inspectFallback" aria-hidden="true">
+          <img src="v14-assets/takeaway-cup-unbranded.jpg" alt="Plain takeaway coffee cup">
+          <p class="mono" style="font-size:12px; color:rgba(30,61,47,.68)">Single Origin Yirgacheffe &middot; 250g &middot; $18</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- S6 — Order -->
-  <section class="on-paper section-pad" id="order" style="padding-top:24px">
+  <section class="on-cream section-pad" id="order" style="padding-top:24px">
     <div class="wrap">
-      <hr class="hairline" style="margin-bottom:56px">
+      <hr style="border:0; border-top:1px solid rgba(30,61,47,.22); margin-bottom:56px">
       <div class="order-grid">
         <div style="min-width:0">
           <p class="eyebrow mono reveal-view">Order</p>
-          <h2 class="display reveal-view">Take it <span class="red-word">home</span>.</h2>
+          <h2 class="display reveal-view">Take it <span class="chip">home</span>.</h2>
           <p class="lede reveal-view">One bag — Single Origin Yirgacheffe, 250g — $18.</p>
           <form id="orderForm" class="reveal-view" novalidate onsubmit="return false;">
             <label for="fName">Your name</label>
             <input id="fName" name="name" type="text" autocomplete="name" placeholder="Your name">
+            <label for="fEmail">Your email</label>
+            <input id="fEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com">
             <label>Quantity</label>
-            <div class="qty-fixed">1 bag · Single Origin Yirgacheffe 250g · $18</div>
+            <div class="qty-fixed">1 bag &middot; Single Origin Yirgacheffe 250g &middot; $18</div>
             <button class="cta order-submit" type="button" id="orderSubmit">Order — $18</button>
-            <p class="demo-note mono">Demo only — no order has been sent</p>
+            <p class="demo-note mono">DEMO ONLY — NO ORDER HAS BEEN SENT</p>
           </form>
           <div id="orderResult" role="status">
-            <p class="big">Demo only — no order has been sent.</p>
-            <p>Nothing was sent anywhere. This is a demo site.</p>
+            <p class="big">DEMO ONLY — NO ORDER HAS BEEN SENT</p>
           </div>
         </div>
         <div class="order-photo" style="min-width:0">
           <img class="reveal-view" src="v14-assets/takeaway-cup-unbranded.jpg" alt="Plain takeaway coffee cup" width="840" height="1134">
-          <p class="caption mono reveal-view">Takeaway — your cup, your ritual. · Photo: Cup of Couple / Pexels</p>
+          <p class="caption mono reveal-view">Takeaway — your cup, your ritual. &middot; Photo: Cup of Couple / Pexels</p>
         </div>
       </div>
     </div>
@@ -391,8 +502,8 @@
   <footer>
     <div class="wrap">
       <p class="display">NJ COFFEE</p>
-      <p>Single Origin Yirgacheffe · 250g · $18 · Demo site — no orders are sent.</p>
-      <p class="credits mono">Photos — Pexels: Tima Miroshnichenko, Michael Burrows, Cup of Couple · Pinterest pins: “Freshly roasted coffee beans” (Sadafsadiq / Nature Canvas), “Coffee beans being poured into grinder” (Alaamalsharaya, Caffè Toscano)</p>
+      <p>Single Origin Yirgacheffe &middot; 250g &middot; $18 &middot; Demo site — no orders are sent.</p>
+      <p class="credits mono">Photos — Pexels: Tima Miroshnichenko, Michael Burrows, Cup of Couple &middot; Pinterest pins: &ldquo;Freshly roasted coffee beans&rdquo; (Sadafsadiq / Nature Canvas), &ldquo;Coffee beans being poured into grinder&rdquo; (Alaamalsharaya, Caff&egrave; Toscano)</p>
     </div>
   </footer>
 </main>
@@ -407,41 +518,67 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-/* ============================================================
-   NJ Coffee v15 — "Alpine Light"
-   Native scroll + ONE lerp. Palette: Warm Paper / Espresso Ink /
-   Cherry Red (60/30/10). Daylight studio, dark bag on white.
-   ============================================================ */
+document.querySelectorAll('.cta').forEach(el => { const w = document.createElement('span'); w.className = 'bb'; w.setAttribute('aria-hidden', 'true'); el.appendChild(w); });
 
-const PAPER = 0xFBF7F0, INK = 0x221A14, RED = 0xC22A1B, CREAM_TINT = 0xEFE5D2;
-const KRAFT = 0xC9A876, STEAM_GREY = 0xCFC8BC, BEAN = 0x4A2E1B, CUP_CREAM = 0xEFE5D2;
-const BAG_LIT = 0x3A2C20;   /* lit-face shading variation inside the 3D bag material only */
+/* NJ Coffee v16 — "Highland Reserve"
+   Deep-green roastery at golden hour. One lerp x0.18 is the only
+   smoothing layer. Real Three.js product: cream bag + takeaway cup. */
+
+const FOREST = 0x1E3D2F, CREAM = 0xF4EFE4, GOLD = 0xE9B44C;
+const CANOPY = 0x122A1F, MOSS = 0x2A4A38, SAGE = 0x8FA98F, BRASS = 0xC08A2E, KRAFT = 0xC9A876;
+const BEAN = 0x4A2E1B;
 
 const params = new URLSearchParams(location.search);
 const pParam = params.has('p') ? Math.min(1, Math.max(0, parseFloat(params.get('p')) || 0)) : null;
 const stillMode = params.get('still') === '1';
-const tiltLog = params.get('tiltlog') === '1';
+const noLoader = params.get('noloader') === '1';
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isMobile = () => innerWidth < 768;
 const lowMem = (navigator.deviceMemory || 8) <= 4;
 
-/* Camera distances: desktop base 6.4, closest 5.0; mobile base 5.6, closest 5.2
-   (mobile pulled closer + taller canvas cell so the product fills ~half the
-   phone viewport; 5.2 keeps the full bag + cup width in frame at FOV 42 and
-   the steam top >=80px below the viewport top at every beat). */
+/* Camera distances — beat sheet: 6.4 -> 5.0 -> 5.6 -> 6.4 desktop;
+   mobile pulled back (7.0 base) so bag + cup + steam fit. */
 const LAYOUT = isMobile()
-  ? { baseDist: 5.6, d1: 5.2, d2: 5.4, d3: 5.8 }
-  : { baseDist: 6.4, d1: 5.0, d2: 5.2, d3: 5.6 };
+  ? { baseDist: 7.8, d1: 6.2, d2: 6.9, d3: 7.8 }
+  : { baseDist: 6.4, d1: 5.0, d2: 5.6, d3: 6.4 };
 
-const FLOOR_Y = -0.70;          /* stage floor */
-const BAG_POS = new THREE.Vector3(-0.45, 0.35, 0);
-const CUP_POS = new THREE.Vector3(0.75, FLOOR_Y, 0.45);
+const FLOOR_Y = -0.70;
+const CAM_Y = isMobile() ? 3.5 : 3.6, LOOK0 = 1.3, FOV0 = isMobile() ? 52 : 48;   /* raised camera: sees the bag's crimped top + the lid ellipse */
+const SCALE = isMobile() ? 1.45 : 1.6;                 /* product scale: bag fills 60-70% viewport height at 6.4 / FOV 48 */
+const PROD_Y = FLOOR_Y + 0.715 * SCALE;   /* bag base AND cup base both rest exactly on FLOOR_Y */
+const BAG_POS = new THREE.Vector3(-0.55, 0.31, 0);   /* bag bottom sits on the floor (was 0.35 — floated 0.07) */
+const CUP_POS = new THREE.Vector3(0.95, -0.715, 0.15);
+/* World-space mouths (scaled product): bag top seal, cup rim. */
+const bagMouth = new THREE.Vector3(BAG_POS.x * SCALE, PROD_Y + (BAG_POS.y + 1.15) * SCALE, 0);
+const cupMouth = new THREE.Vector3(CUP_POS.x * SCALE, PROD_Y + (CUP_POS.y + 1.55) * SCALE, CUP_POS.z * SCALE);
 
-/* Kinetic text loader: max 800ms, then gone (never delays first sight). */
+/* Floor/wall junction = the horizon line. Solved so that in the first frame it projects
+   exactly 1/3 up from the bottom of the canvas (camera pitch + fov), on desktop and mobile. */
+const WALL_Z0 = (() => {
+  const pitch = Math.atan((CAM_Y - LOOK0) / LAYOUT.baseDist);
+  const below = Math.atan(Math.tan(FOV0 * Math.PI / 360) / 3);
+  return Math.min(-1.15, LAYOUT.baseDist - (CAM_Y - FLOOR_Y) / Math.tan(pitch + below));
+})();
+const WALL_Z1 = -4.4;   /* wall retreats once the camera orbits so the product never clips it */
+
+/* Kinetic text loader: max 800ms, then gone. 9s absolute safety timeout. */
 const loaderEl = document.getElementById('loader');
+const loaderCount = document.getElementById('loaderCount');
 let loaderHidden = false;
-function hideLoader(){ if (loaderHidden) return; loaderHidden = true; if (loaderEl) { loaderEl.classList.add('hide'); setTimeout(() => loaderEl.remove(), 450); } }
-setTimeout(hideLoader, 800);
+function hideLoader(){ if (loaderHidden) return; loaderHidden = true; if (loaderEl) { loaderEl.classList.add('hide'); setTimeout(() => { if (loaderEl) loaderEl.remove(); }, 450); } }
+if (noLoader) { hideLoader(); }
+else {
+  const t0 = performance.now();
+  const tick = () => {
+    if (loaderHidden) return;
+    const u = Math.min(1, (performance.now() - t0) / 800);
+    if (loaderCount) loaderCount.textContent = Math.round(u * 100) + '%';
+    if (u < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+  setTimeout(hideLoader, 800);
+}
+setTimeout(hideLoader, 9000);
 
 window.__auroraSceneReady = false;
 
@@ -452,73 +589,154 @@ const canvas = document.getElementById('scene');
 const clamp01 = v => Math.min(1, Math.max(0, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const smooth = t => { t = clamp01(t); return t * t * (3 - 2 * t); };
-function seg(p, a, b) { return smooth((p - a) / (b - a)); } /* 0..1 across [a,b] */
+function seg(p, a, b) { return smooth((p - a) / (b - a)); }
 
 function canvasTexture(w, h, draw) {
   const c = document.createElement('canvas'); c.width = w; c.height = h;
   draw(c.getContext('2d'), w, h);
   const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
   return t;
 }
 
-/* ---------- label + sleeve artwork (drawn, original) ---------- */
+/* ---------- label + sleeve artwork (drawn, original) ----------
+   Label: Forest Green block on the cream bag, cream text, $18 in gold.
+   Label zone (bag-local): x [-0.55, 0.55], y [0.10, 0.95]. */
 const labelTex = canvasTexture(512, 384, (g, w, h) => {
-  g.fillStyle = '#FBF7F0'; g.fillRect(0, 0, w, h);
-  g.fillStyle = '#C22A1B'; g.fillRect(0, 0, w, 18);            /* red seal echo */
-  g.fillStyle = '#221A14'; g.textAlign = 'center';
+  g.fillStyle = '#1E3D2F'; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#E9B44C'; g.fillRect(0, 0, w, 14);            /* gold seal echo */
+  g.fillStyle = '#F4EFE4'; g.textAlign = 'center';
   g.font = '600 84px Georgia, serif'; g.fillText('NJ', w / 2, 128);
   g.font = '600 58px Georgia, serif'; g.fillText('COFFEE', w / 2, 196);
-  g.fillStyle = '#C22A1B'; g.fillRect(w / 2 - 80, 224, 160, 4);
-  g.fillStyle = '#221A14'; g.font = '500 28px monospace';
+  g.fillStyle = '#E9B44C'; g.fillRect(w / 2 - 80, 224, 160, 4);
+  g.fillStyle = '#F4EFE4'; g.font = '500 28px monospace';
   g.fillText('SINGLE ORIGIN', w / 2, 272);
   g.fillText('YIRGACHEFFE · 250G', w / 2, 312);
-  g.fillStyle = '#C22A1B'; g.font = '600 40px monospace';
-  g.fillText('$18', w / 2, 362);
+  g.fillStyle = '#E9B44C'; g.font = '600 40px monospace';
+  g.fillText('$18', w / 2, 352);
+  /* Degassing valve: small gold-ringed vent, top-right of the label. */
+  g.strokeStyle = '#E9B44C'; g.lineWidth = 3;
+  g.beginPath(); g.arc(w - 52, 52, 15, 0, Math.PI * 2); g.stroke();
+  g.fillStyle = '#122A1F';
+  g.beginPath(); g.arc(w - 52, 52, 10, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#F4EFE4'; g.font = '500 13px monospace';
+  g.fillText('ROASTED ON · NOV 2026', w / 2, 378);
 });
-const sleeveTex = canvasTexture(1024, 256, (g, w, h) => {
+/* Sleeve art, 2048x512 for crispness. The whole print block is smaller and sits in the
+   upper-middle of the UV space (rows ~120-300 of 512) so BOTH lines clear the sleeve edges. */
+const sleeveTex = canvasTexture(2048, 512, (g, w, h) => {
   g.fillStyle = '#C9A876'; g.fillRect(0, 0, w, h);
-  g.fillStyle = 'rgba(34,26,20,.10)';
-  for (let i = 0; i < 40; i++) g.fillRect(Math.random() * w, Math.random() * h, 60, 2);
-  g.fillStyle = '#221A14'; g.textAlign = 'center';
-  g.font = '600 60px Georgia, serif'; g.fillText('NJ COFFEE', w / 2, 92);
-  g.font = '500 26px monospace'; g.fillText('S I N G L E   O R I G I N', w / 2, 138);
-  g.fillStyle = '#221A14'; g.fillRect(w - 26, 0, 8, h);        /* overlap seam */
+  g.fillStyle = 'rgba(90,62,32,.22)';
+  for (let i = 0; i < 90; i++) g.fillRect(Math.random() * w, Math.random() * h, 40 + Math.random() * 120, 1.5);
+  g.fillStyle = 'rgba(244,239,228,.14)';
+  for (let i = 0; i < 60; i++) g.fillRect(Math.random() * w, Math.random() * h, 30 + Math.random() * 80, 1.5);
+  g.fillStyle = '#1E3D2F'; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  g.font = '700 76px Georgia, serif'; g.fillText('NJ COFFEE', w / 2, 205);
+  g.fillRect(w / 2 - 110, 232, 220, 4);
+  g.font = '700 40px ui-monospace, Menlo, monospace'; g.fillText('SINGLE ORIGIN', w / 2, 296);
+  g.fillRect(w - 52, 0, 16, h);        /* overlap seam, at the back */
 });
-/* Bag body: dark ink paper with a soft lighter lit-face patch (left side, window light) + paper grain */
+/* Bag body: MATTE paper, not stucco — a very subtle vertical gradient
+   (lighter at the top, faintly deeper at the bottom) + a faint horizontal
+   sheen. Flat cream is banned; popcorn bump is banned. */
 const bagTex = canvasTexture(512, 512, (g, w, h) => {
-  g.fillStyle = '#221A14'; g.fillRect(0, 0, w, h);
-  const grad = g.createLinearGradient(0, 0, w * 0.55, 0);
-  grad.addColorStop(0, 'rgba(58,44,32,.55)'); grad.addColorStop(1, 'rgba(58,44,32,0)');
-  g.fillStyle = grad; g.fillRect(0, 0, w, h);
-  g.fillStyle = 'rgba(251,247,240,.03)';
-  for (let i = 0; i < 900; i++) g.fillRect(Math.random() * w, Math.random() * h, 2, 2);
-});
-const bagBump = canvasTexture(256, 256, (g, w, h) => {
-  g.fillStyle = '#808080'; g.fillRect(0, 0, w, h);
-  for (let i = 0; i < 1600; i++) {
-    const v = 110 + Math.floor(Math.random() * 40);
-    g.fillStyle = 'rgb(' + v + ',' + v + ',' + v + ')';
-    g.fillRect(Math.random() * w, Math.random() * h, 2, 2);
-  }
+  g.fillStyle = '#F4EFE4'; g.fillRect(0, 0, w, h);
+  const vgrad = g.createLinearGradient(0, 0, 0, h);
+  vgrad.addColorStop(0, 'rgba(255,255,255,.10)'); vgrad.addColorStop(0.55, 'rgba(255,255,255,0)'); vgrad.addColorStop(1, 'rgba(30,61,47,.07)');
+  g.fillStyle = vgrad; g.fillRect(0, 0, w, h);
+  /* faint horizontal sheen band, like a satin-matte paper stock */
+  const sheen = g.createLinearGradient(0, 0, w, 0);
+  sheen.addColorStop(0, 'rgba(255,255,255,0)'); sheen.addColorStop(0.30, 'rgba(255,255,255,.07)'); sheen.addColorStop(0.55, 'rgba(255,255,255,0)'); sheen.addColorStop(1, 'rgba(30,61,47,.05)');
+  g.fillStyle = sheen; g.fillRect(0, 0, w, h);
+  /* crimped-top artwork: corner gusset shading, two crease lines, fold shadow */
+  const sh = (x0, dir) => { const t = g.createLinearGradient(x0, 0, x0 + dir * 120, 0); t.addColorStop(0, 'rgba(60,50,30,.16)'); t.addColorStop(1, 'rgba(60,50,30,0)');
+    g.fillStyle = t; g.beginPath(); g.moveTo(x0, 0); g.lineTo(x0 + dir * 120, 118); g.lineTo(x0, 118); g.closePath(); g.fill(); };
+  sh(0, 1); sh(w, -1);
+  [[44, .20], [84, .26]].forEach(([y, a]) => {
+    g.fillStyle = 'rgba(70,56,32,' + a + ')'; g.fillRect(0, y, w, 2);
+    g.fillStyle = 'rgba(255,255,255,.45)'; g.fillRect(0, y + 2, w, 1.5);
+  });
+  const fs = g.createLinearGradient(0, 86, 0, 150);
+  fs.addColorStop(0, 'rgba(40,40,25,.14)'); fs.addColorStop(1, 'rgba(40,40,25,0)');
+  g.fillStyle = fs; g.fillRect(0, 86, w, 64);
 });
 const shadowTex = canvasTexture(256, 256, (g, w, h) => {
   const r = g.createRadialGradient(w/2, h/2, 8, w/2, h/2, w/2);
-  r.addColorStop(0, 'rgba(34,26,20,.50)'); r.addColorStop(.55, 'rgba(34,26,20,.25)'); r.addColorStop(1, 'rgba(34,26,20,0)');
+  r.addColorStop(0, 'rgba(3,10,6,.85)'); r.addColorStop(.5, 'rgba(3,10,6,.42)'); r.addColorStop(1, 'rgba(3,10,6,0)');
   g.fillStyle = r; g.fillRect(0, 0, w, h);
 });
-const steamTex = canvasTexture(128, 128, (g, w, h) => {
-  const r = g.createRadialGradient(w/2, h/2, 4, w/2, h/2, w/2);
-  r.addColorStop(0, 'rgba(207,200,188,.55)'); r.addColorStop(1, 'rgba(207,200,188,0)');
-  g.fillStyle = r; g.fillRect(0, 0, w, h);
+/* Steam wisp: a soft S-curved tendril (stacked radial puffs along a sine path), white. */
+const steamTex = canvasTexture(128, 256, (g, w, h) => {
+  for (let i = 0; i < 46; i++) {
+    const t = i / 45, x = w / 2 + Math.sin(t * 5.2) * w * 0.20 * (0.25 + t), y = h * (0.94 - t * 0.88), r = 9 + t * 22;
+    const gr = g.createRadialGradient(x, y, 0, x, y, r);
+    gr.addColorStop(0, 'rgba(255,255,255,' + (0.30 * (1 - t * 0.55)).toFixed(3) + ')'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
+  }
 });
-/* Stage floor: vertical falloff — paper at the far edge (blends into the
-   paper backdrop, so no horizon line) to cream tint at the near edge.
-   Canvas top (v=1) maps to the far edge of the floor plane. */
+/* Stage floor: Deep Canopy at the edges, Forest at the centre, only a faint
+   warm pool under the product — never a muddy mustard wash. Matte, not glossy. */
 const floorTex = canvasTexture(512, 512, (g, w, h) => {
-  const grad = g.createLinearGradient(0, 0, 0, h);
-  grad.addColorStop(0, '#FBF7F0'); grad.addColorStop(1, '#EFE5D2');
+  const grad = g.createRadialGradient(w/2, h/2, 10, w/2, h/2, w * 0.5);
+  grad.addColorStop(0, '#2B4C39'); grad.addColorStop(.5, '#1F402F'); grad.addColorStop(1, '#122A1F');
   g.fillStyle = grad; g.fillRect(0, 0, w, h);
+});
+/* Back wall (cyclorama): Canopy at the top, lifting to Moss at the floor junction so the
+   horizon line READS; a warm gold glow sits behind-right of the bag (the rim light's halo). */
+const wallTex = canvasTexture(1024, 512, (g, w, h) => {
+  const grad = g.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#122A1F'); grad.addColorStop(.62, '#1B382A'); grad.addColorStop(1, '#2F5A43');
+  g.fillStyle = grad; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 40; i++) { g.fillStyle = i % 2 ? 'rgba(18,42,31,.10)' : 'rgba(42,74,56,.10)'; g.fillRect(Math.random() * w, 0, 10 + Math.random() * 34, h); }
+  const gl = g.createRadialGradient(w * 0.545, h * 0.62, 6, w * 0.545, h * 0.62, 150);
+  gl.addColorStop(0, 'rgba(255,214,150,.30)'); gl.addColorStop(.5, 'rgba(233,180,76,.11)'); gl.addColorStop(1, 'rgba(233,180,76,0)');
+  g.fillStyle = gl; g.fillRect(0, 0, w, h);
+  const hl = g.createLinearGradient(0, 0, w, 0);
+  hl.addColorStop(0, 'rgba(233,180,76,0)'); hl.addColorStop(.5, 'rgba(233,180,76,.55)'); hl.addColorStop(1, 'rgba(233,180,76,0)');
+  g.fillStyle = hl; g.fillRect(0, h - 3, w, 3);   /* thin warm horizon line at the junction */
+});
+/* Warm gold glow behind the product (in-scene, reads as light) — kept soft. */
+const glowTex = canvasTexture(512, 512, (g, w, h) => {
+  const r = g.createRadialGradient(w / 2, h * 0.55, 10, w / 2, h * 0.55, w * 0.62);
+  r.addColorStop(0, 'rgba(233,180,76,.55)'); r.addColorStop(.55, 'rgba(233,180,76,.20)'); r.addColorStop(1, 'rgba(233,180,76,0)');
+  g.fillStyle = r; g.fillRect(0, 0, w, h);
+});
+/* Treeline horizon backdrop: Deep Canopy sky, Forest mid-band, a dark
+   canopy silhouette along the horizon, gold sun-glow through the trees. */
+const treelineTex = canvasTexture(1024, 512, (g, w, h) => {
+  const grad = g.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, '#122A1F'); grad.addColorStop(.55, '#1E3D2F'); grad.addColorStop(1, '#2A4A38');
+  g.fillStyle = grad; g.fillRect(0, 0, w, h);
+  const sun = g.createRadialGradient(w * 0.42, h * 0.52, 6, w * 0.42, h * 0.52, w * 0.30);
+  sun.addColorStop(0, 'rgba(233,180,76,.50)'); sun.addColorStop(1, 'rgba(233,180,76,0)');
+  g.fillStyle = sun; g.fillRect(0, 0, w, h);
+  /* canopy silhouette: overlapping dark crowns along the horizon */
+  g.fillStyle = '#122A1F';
+  let x = -20;
+  while (x < w + 40) {
+    const rw = 90 + Math.random() * 130, rh = 60 + Math.random() * 90;
+    g.beginPath(); g.ellipse(x + rw / 2, h * 0.62, rw / 2, rh / 2, 0, Math.PI, 0); g.fill();
+    g.fillRect(x, h * 0.62 - rh * 0.12, rw * 0.5, rh * 0.3);
+    x += rw * 0.55;
+  }
+  /* second, nearer treeline row, slightly lighter moss */
+  g.fillStyle = '#1E3D2F';
+  x = -40;
+  while (x < w + 40) {
+    const rw = 70 + Math.random() * 100, rh = 40 + Math.random() * 60;
+    g.beginPath(); g.ellipse(x + rw / 2, h * 0.78, rw / 2, rh / 2, 0, Math.PI, 0); g.fill();
+    x += rw * 0.6;
+  }
+});
+/* Moss roastery-wall panels: vertical streaks, Forest / Moss. */
+const mossTex = canvasTexture(256, 512, (g, w, h) => {
+  g.fillStyle = '#2A4A38'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 60; i++) {
+    g.fillStyle = i % 2 ? 'rgba(18,42,31,.35)' : 'rgba(30,61,47,.35)';
+    g.fillRect(Math.random() * w, 0, 6 + Math.random() * 18, h);
+  }
+  g.fillStyle = 'rgba(233,180,76,.06)';
+  g.fillRect(0, 0, 10, h);
 });
 
 /* ---------- renderer ---------- */
@@ -529,7 +747,7 @@ try {
 if (renderer) {
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, lowMem ? 1.75 : 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 1.0;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -539,57 +757,138 @@ function showFallback() {
   document.getElementById('webgl-fallback').classList.add('show');
   document.getElementById('webgl-fallback').setAttribute('aria-hidden', 'false');
   canvas.style.display = 'none';
-  /* The fallback carries its own Beat 0 copy + CTA — hide the hero copy
-     column so the headline / CTA are not shown twice. */
   const hc = document.getElementById('heroCopy'); if (hc) hc.style.display = 'none';
   const wrap = document.getElementById('inspectCanvasWrap');
-  if (wrap) wrap.style.display = 'none';
-  const cue = document.getElementById('dragCue'); if (cue) cue.style.display = 'none';
+  if (wrap) {
+    const c2 = document.getElementById('inspectCanvas'); if (c2) c2.style.display = 'none';
+    const cue = document.getElementById('dragCue'); if (cue) cue.style.display = 'none';
+    const fb = document.getElementById('inspectFallback');
+    if (fb) { fb.style.display = 'block'; fb.setAttribute('aria-hidden', 'false'); }
+  }
 }
 if (!renderer) { document.body.classList.add('ready'); hideLoader(); showFallback(); }
 
 /* ---------- scene, camera, lights ---------- */
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(PAPER);
-const camera = new THREE.PerspectiveCamera(isMobile() ? 42 : 35, 1, 0.1, 60);
+scene.background = new THREE.Color(FOREST);
+scene.fog = new THREE.FogExp2(FOREST, 0.025);   /* crisper horizon — floor meets backdrop cleanly */
+const camera = new THREE.PerspectiveCamera(isMobile() ? 52 : 48, 1, 0.1, 60);
 const pmrem = renderer ? new THREE.PMREMGenerator(renderer) : null;
-if (pmrem) scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+if (pmrem) { scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; }
 
-const key = new THREE.DirectionalLight(0xFFF2DF, 2.9);          /* warm window daylight, upper-left */
-key.position.set(-4, 6, 4); key.castShadow = true;
+/* Dramatic, directional golden-hour light: warm gold key upper-left,
+   cool green fill, gold rim back-right, warm ember low behind. */
+const key = new THREE.DirectionalLight(0xFFE9C4, 2.5);
+key.position.set(-6, 5, 3); key.castShadow = true;
 key.shadow.mapSize.set(2048, 2048);
-key.shadow.camera.left = -4; key.shadow.camera.right = 4;
-key.shadow.camera.top = 4; key.shadow.camera.bottom = -4;
+key.shadow.camera.left = -5; key.shadow.camera.right = 5;
+key.shadow.camera.top = 5; key.shadow.camera.bottom = -5;
 key.shadow.camera.far = 20; key.shadow.bias = -0.0005;
 key.shadow.radius = 8;
 scene.add(key);
-const rim = new THREE.DirectionalLight(0xDCE8F0, 0.8);           /* cool daylight edge, back-right */
-rim.position.set(3, 4, -4); scene.add(rim);
-const fill = new THREE.HemisphereLight(0xEAF0F5, CREAM_TINT, 0.6); /* cool sky fill */
+const rig = new THREE.Group(); scene.add(rig);                    /* wall + rim light orbit with the camera so they stay behind the product */
+const rim = new THREE.SpotLight(GOLD, 60, 18, 0.5, 0.9, 2);     /* warm gold, behind-right: separates the bag from the dark-green field */
+rim.position.set(3.6, 2.9, -2.4);
+const rimTarget = new THREE.Object3D(); rimTarget.position.set(-0.2, 1.3, 0);
+rig.add(rim, rimTarget); rim.target = rimTarget;
+const fill = new THREE.HemisphereLight(CREAM, FOREST, 0.5);      /* cool green fill */
 scene.add(fill);
-const bounce = new THREE.PointLight(0xF5E6CC, 0.4, 12);          /* warm floor bounce, low front */
-bounce.position.set(0, 0.3, 3); scene.add(bounce);
+const ember = new THREE.PointLight(GOLD, 1.2, 10, 2);              /* warm ember, low behind — kept faint */
+ember.position.set(0, -0.2, -1.5); scene.add(ember);
+const cursorLight = new THREE.PointLight(0xFFE9C4, 0, 8, 2);      /* mouse-follow light, fine-pointer only */
+cursorLight.position.set(0, 1, 3); scene.add(cursorLight);
 
-/* ---------- materials ---------- */
-const bagMat   = new THREE.MeshPhysicalMaterial({ map: bagTex, bumpMap: bagBump, bumpScale: 0.6, roughness: 0.85, metalness: 0 });
-const labelMat = new THREE.MeshStandardMaterial({ map: labelTex, roughness: 0.8, metalness: 0 });
-const sealMat  = new THREE.MeshStandardMaterial({ color: RED, roughness: 0.6, metalness: 0 });
-const kraftMat = new THREE.MeshStandardMaterial({ map: sleeveTex, roughness: 0.9, metalness: 0 });
-const lidMat   = new THREE.MeshPhysicalMaterial({ color: 0x000000, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.12 });
-const cupMat   = new THREE.MeshStandardMaterial({ color: CUP_CREAM, roughness: 0.7, metalness: 0 });
-const beanMat  = new THREE.MeshPhysicalMaterial({ color: BEAN, roughness: 0.25, clearcoat: 0.6, clearcoatRoughness: 0.3 });
+/* ---------- materials (per-material envMapIntensity; r160) ---------- */
+const bagMat   = new THREE.MeshPhysicalMaterial({ map: bagTex, roughness: 0.86, metalness: 0, sheen: 0.35, sheenRoughness: 0.7, sheenColor: new THREE.Color(0xFFF3DC), envMapIntensity: 0.4 });   /* matte paper, no bump */
+const finMat   = new THREE.MeshStandardMaterial({ color: 0xEBE3D0, roughness: 0.9, metalness: 0, side: THREE.DoubleSide, envMapIntensity: 0.35 });
+const labelMat = new THREE.MeshStandardMaterial({ map: labelTex, roughness: 0.8, metalness: 0, envMapIntensity: 0.5 });
+const sealMat  = new THREE.MeshStandardMaterial({ color: GOLD, roughness: 0.25, metalness: 0.9, envMapIntensity: 1.2 });
+const kraftMat = new THREE.MeshStandardMaterial({ map: sleeveTex, roughness: 0.85, metalness: 0, envMapIntensity: 0.5 });
+const lidMat   = new THREE.MeshPhysicalMaterial({ color: 0x111111, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 1.0 });
+const cupMat   = new THREE.MeshPhysicalMaterial({ color: CREAM, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.25, envMapIntensity: 0.8 });
+const leafDarkMat = new THREE.MeshStandardMaterial({ color: 0x4F8A5C });
+const leafMossMat = new THREE.MeshStandardMaterial({ color: 0x78AE68 });
 
 /* ---------- product builders (original procedural geometry) ---------- */
+/* Roasted bean: matte mottled surface; the centre crease is real geometry (an S-curved groove
+   pressed into the flat side), so it reads as a coffee bean, not a smooth chocolate egg. */
+const beanTex = canvasTexture(128, 128, (g, w, h) => {
+  g.fillStyle = '#4A2E1B'; g.fillRect(0, 0, w, h);
+  for (let i = 0; i < 300; i++) {
+    const v = 48 + Math.floor(Math.random() * 40);
+    g.fillStyle = 'rgba(' + v + ',' + Math.floor(v * 0.62) + ',' + Math.floor(v * 0.38) + ',.55)';
+    g.fillRect(Math.random() * w, Math.random() * h, 2 + Math.random() * 6, 2 + Math.random() * 6);
+  }
+});
+const beanMats = [0x4A2E1B, 0x3C2515, 0x573720].map(c => new THREE.MeshStandardMaterial({ color: c, map: beanTex, roughness: 0.92, metalness: 0, envMapIntensity: 0.2 }));
+const beanGeo = (() => {
+  const g = new THREE.SphereGeometry(0.075, 30, 22), P = g.attributes.position;
+  for (let i = 0; i < P.count; i++) {
+    let x = P.getX(i) * 1.25, y = P.getY(i) * 0.62, z = P.getZ(i) * 0.82;
+    if (y > 0) {
+      const xn = x / (0.075 * 1.25), dz = z - Math.sin(xn * 2.6) * 0.010;
+      y -= Math.exp(-(dz * dz) / (0.012 * 0.012)) * 0.015 * (1 - xn * xn) ;
+    }
+    P.setXYZ(i, x, y, z);
+  }
+  g.computeVertexNormals();
+  return g;
+})();
 function makeBean(scale = 1) {
-  const g = new THREE.SphereGeometry(0.12, 20, 14);
-  g.scale(1, 0.62, 0.8);
-  const m = new THREE.Mesh(g, beanMat);
+  const m = new THREE.Mesh(beanGeo, beanMats[Math.floor(Math.random() * beanMats.length)]);
+  m.scale.set(scale * (0.86 + Math.random() * 0.28), scale * (0.86 + Math.random() * 0.28), scale * (0.86 + Math.random() * 0.28));
+  m.castShadow = true; m.receiveShadow = true;
+  return m;
+}
+function beanShadow(x, z, s) {
+  const d = new THREE.Mesh(new THREE.PlaneGeometry(0.40 * s, 0.26 * s), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: 0.8, depthWrite: false }));
+  d.rotation.x = -Math.PI / 2; d.position.set(x + 0.03, FLOOR_Y + 0.008, z + 0.025);
+  return d;
+}
+function leafTex(hex) {
+  /* Backlit foliage: light mid-green to pale sage, strong cream midrib, curved side veins,
+     secondary veins, edge shading and mottling — reads as a real leaf, not a silhouette. */
+  const base = new THREE.Color(hex), c1 = '#' + base.clone().multiplyScalar(0.55).getHexString(), c2 = '#' + base.clone().lerp(new THREE.Color(0xD2E0B4), 0.45).getHexString();
+  return canvasTexture(256, 512, (g, w, h) => {
+    const gr = g.createLinearGradient(0, h, 0, 0); gr.addColorStop(0, c1); gr.addColorStop(0.5, '#' + base.getHexString()); gr.addColorStop(1, c2);
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 70; i++) { g.fillStyle = Math.random() > .5 ? 'rgba(210,235,160,.07)' : 'rgba(10,40,20,.08)'; g.beginPath(); g.arc(Math.random() * w, Math.random() * h, 8 + Math.random() * 26, 0, 6.3); g.fill(); }
+    g.lineCap = 'round';
+    for (let i = 1; i < 15; i++) {
+      const y0 = h - i * (h / 15.6), L = 150 - i * 4;
+      [-1, 1].forEach(sd => {
+        g.strokeStyle = 'rgba(244,239,228,.42)'; g.lineWidth = 2.6; g.beginPath(); g.moveTo(w / 2, y0); g.quadraticCurveTo(w / 2 + sd * L * 0.55, y0 - 8, w / 2 + sd * L, y0 - 62 - i * 1.5); g.stroke();
+        g.strokeStyle = 'rgba(244,239,228,.17)'; g.lineWidth = 1;
+        for (let k = 1; k < 4; k++) { const tx = w / 2 + sd * L * (0.25 + k * 0.2), ty = y0 - 8 - k * 12; g.beginPath(); g.moveTo(tx, ty); g.lineTo(tx + sd * 16, ty - 26); g.stroke(); }
+      });
+    }
+    g.strokeStyle = 'rgba(244,239,228,.72)'; g.lineWidth = 6; g.beginPath(); g.moveTo(w / 2, h); g.quadraticCurveTo(w / 2 + 6, h * 0.5, w / 2, 8); g.stroke();
+    const eg = g.createLinearGradient(0, 0, w, 0);
+    eg.addColorStop(0, 'rgba(8,30,16,.34)'); eg.addColorStop(0.22, 'rgba(8,30,16,0)'); eg.addColorStop(0.78, 'rgba(8,30,16,0)'); eg.addColorStop(1, 'rgba(8,30,16,.34)');
+    g.fillStyle = eg; g.fillRect(0, 0, w, h);
+  });
+}
+function makeLeaf(scale = 1, mat = leafMossMat) {
+  const geo = new THREE.PlaneGeometry(1, 1, 10, 22), P = geo.attributes.position;
+  for (let i = 0; i < P.count; i++) {
+    const u = P.getX(i) + 0.5, v = P.getY(i) + 0.5, e = (u - 0.5) * 2;
+    const hw = Math.pow(Math.sin(Math.PI * Math.pow(v, 0.7)), 0.8) * 0.21;      /* lanceolate outline */
+    const fold = Math.abs(e) * hw * 1.1;                                          /* V-fold along the midrib */
+    const roll = Math.pow(Math.abs(e), 3) * 0.07 * Math.sin(Math.PI * Math.min(1, v * 1.1)); /* curled-up margins */
+    const wav = Math.sin(v * 13 + e * 2) * 0.016 * Math.abs(e);                  /* wavy edge */
+    P.setXYZ(i, e * hw, v * 0.78 - 0.3 - Math.pow(v, 3) * 0.10, fold + roll + wav + v * v * 0.30);   /* tip curls over */
+  }
+  geo.computeVertexNormals();
+  const tex = leafTex(mat.color.getHex());
+  const lm = new THREE.MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: new THREE.Color(0x9FD08A), emissiveIntensity: 0.22, roughness: 0.55, metalness: 0, side: THREE.DoubleSide, envMapIntensity: 0.6 });  /* emissive = back-lit translucency */
+  const m = new THREE.Mesh(geo, lm);
   m.scale.setScalar(scale); m.castShadow = true;
   return m;
 }
 
-/* Pillow-pouch bag: subdivided box, vertex bulge + tapered seals — real volume, never a flat box.
-   Label zone (bag-local): x [-0.55, 0.55], y [0.10, 0.90] — the label plane sits inside it. */
+/* Pillow-pouch bag: subdivided box, vertex bulge + real side gussets (V-tucks pressed into
+   the side walls), a gathered/crimped fin at the top held by a gold tin-tie, and a rounded
+   base that sits flat on the floor — no flat slab on top, no plinth underneath. */
 function makeBag() {
   const group = new THREE.Group();
   const geo = new THREE.BoxGeometry(1.5, 2.05, 0.55, 14, 18, 6);
@@ -597,52 +896,67 @@ function makeBag() {
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
     const nx = x / 0.75, ny = y / 1.025;
-    const bulge = (1 - nx * nx) * (1 - ny * ny);                 /* pillow bulge, max at centre */
-    const pinch = 1 - 0.2 * Math.pow(Math.abs(ny), 3);            /* crimped toward seals */
-    pos.setX(i, x * pinch);
-    pos.setZ(i, z + Math.sign(z || 1) * bulge * 0.16);
+    const bulge = (1 - nx * nx) * (1 - ny * ny);
+    const pinch = 1 - 0.2 * Math.pow(Math.abs(ny), 3);
+    const topPinch = ny > 0.55 ? (ny - 0.55) / 0.45 : 0;
+    const pinchX = 1 - topPinch * 0.38, pinchZ = 1 - topPinch * 0.72;
+    let gx = x;
+    if (Math.abs(nx) > 0.98 && ny > 0.05) {                       /* side gusset: V-tuck, deepest at the top */
+      gx = x - Math.sign(x) * smooth((ny - 0.05) / 0.95) * 0.11 * Math.max(0, 1 - Math.abs(z) / 0.22);
+    }
+    let bz = 1; if (ny < -0.82) { const k = (-0.82 - ny) / 0.18; bz = 1 - 0.14 * k * k; }   /* softly rounded base edge */
+    pos.setX(i, gx * pinch * pinchX);
+    pos.setZ(i, (z + Math.sign(z || 1) * bulge * 0.16) * pinchZ * bz);
   }
   geo.computeVertexNormals();
-  const body = new THREE.Mesh(geo, bagMat);
+  /* faces: +x, -x, +y(top), -y(bottom), +z, -z — top/bottom get plain paper, not the printed texture */
+  const body = new THREE.Mesh(geo, [bagMat, bagMat, finMat, finMat, bagMat, bagMat]);
   body.castShadow = true; body.receiveShadow = true;
   group.add(body);
-  const topSeal = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.14, 0.62), bagMat);
-  topSeal.position.y = 1.08; topSeal.castShadow = true; group.add(topSeal);
-  const stripe = new THREE.Mesh(new THREE.BoxGeometry(1.54, 0.07, 0.64), sealMat);
-  stripe.position.y = 1.16; group.add(stripe);                    /* red seal stripe */
-  const botSeal = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.10, 0.62), bagMat);
-  botSeal.position.y = -1.02; botSeal.castShadow = true; group.add(botSeal);
+  /* Crimped top: a gathered fin with pleat ribs, flared at the lip, wavy edge, leaning back a touch. */
+  const finGeo = new THREE.PlaneGeometry(0.78, 0.36, 40, 8), FP = finGeo.attributes.position;
+  for (let i = 0; i < FP.count; i++) {
+    const u = FP.getX(i) / 0.39, v = (FP.getY(i) + 0.18) / 0.36, fx = u * 0.39 * (1 + v * 0.10);
+    FP.setXYZ(i, fx, FP.getY(i) + Math.sin(u * 9 + 1) * 0.012 * v, Math.sin(fx * 58 + v * 1.2) * (0.010 + 0.016 * v) - v * v * 0.02);
+  }
+  finGeo.computeVertexNormals();
+  const fin = new THREE.Mesh(finGeo, finMat);
+  fin.position.set(0, 1.205, 0); fin.rotation.x = -0.10; fin.castShadow = true; fin.receiveShadow = true;
+  group.add(fin);
+  /* Gold tin-tie: a flattened rounded wire across the gather, its ends poking past the fin. */
+  const tie = new THREE.Mesh(new THREE.CapsuleGeometry(0.02, 0.86, 4, 10), sealMat);
+  tie.rotation.z = Math.PI / 2; tie.scale.set(1, 1, 0.5); tie.position.set(0, 1.07, 0.035); tie.castShadow = true;
+  group.add(tie);
   const label = new THREE.Mesh(new THREE.PlaneGeometry(1.10, 0.80), labelMat);
-  label.position.set(0, 0.50, 0.46); group.add(label);            /* paper label block */
+  label.position.set(0, 0.50, 0.46); group.add(label);            /* green label block */
   return group;
 }
 
-/* Takeaway cup: lathe with real wall thickness + kraft sleeve + glossy black lid.
-   Cup height 1.66; rim at local y 1.44, lid top 1.66. */
+/* Takeaway cup: lathe with real wall thickness + kraft sleeve + glossy black lid. */
 function makeCup() {
   const group = new THREE.Group();
   const pts = [];
   pts.push(new THREE.Vector2(0.001, 0));
   pts.push(new THREE.Vector2(0.30, 0));
   pts.push(new THREE.Vector2(0.34, 0.08));
-  pts.push(new THREE.Vector2(0.47, 1.38));                        /* outer wall, tapered */
-  pts.push(new THREE.Vector2(0.49, 1.44));                        /* rim */
-  pts.push(new THREE.Vector2(0.44, 1.44));                        /* over the rim */
-  pts.push(new THREE.Vector2(0.42, 1.30));                        /* inner wall down */
+  pts.push(new THREE.Vector2(0.47, 1.38));
+  pts.push(new THREE.Vector2(0.49, 1.44));
+  pts.push(new THREE.Vector2(0.44, 1.44));
+  pts.push(new THREE.Vector2(0.42, 1.30));
   pts.push(new THREE.Vector2(0.40, 1.28));
   const cup = new THREE.Mesh(new THREE.LatheGeometry(pts, 40), cupMat);
   cup.castShadow = true; cup.receiveShadow = true; group.add(cup);
-  /* kraft sleeve, wrapped tight, visible overlap seam (in the texture) */
   const sleevePts = [];
-  for (let i = 0; i <= 10; i++) {
-    const t = i / 10, y = 0.42 + t * 0.62;
-    sleevePts.push(new THREE.Vector2(0.365 + t * 0.085, y));
+  /* Sleeve radius follows the cup wall + 0.016, so it can never sink inside the cup
+     (it used to, which hid the lower half of every printed letter). */
+  for (let i = 0; i <= 12; i++) {
+    const t = i / 12, y = 0.42 + t * 0.62;
+    sleevePts.push(new THREE.Vector2(0.34 + (y - 0.08) * (0.13 / 1.30) + 0.016, y));
   }
   const sleeve = new THREE.Mesh(new THREE.LatheGeometry(sleevePts, 40, 0, Math.PI * 2), kraftMat);
   sleeve.castShadow = true;
-  sleeve.rotation.y = Math.PI; /* lathe UV: the printed mark sits at u~0.5 (the back); rotate so it faces the camera */
+  sleeve.rotation.y = Math.PI;                                    /* print faces the Beat-0 camera */
   group.add(sleeve);
-  /* glossy black lid — domed, reads as a separate object against the cream cup */
   const lidPts = [
     new THREE.Vector2(0.001, 1.66), new THREE.Vector2(0.16, 1.66), new THREE.Vector2(0.34, 1.62),
     new THREE.Vector2(0.47, 1.56), new THREE.Vector2(0.50, 1.50), new THREE.Vector2(0.50, 1.44),
@@ -660,75 +974,117 @@ bag.position.copy(BAG_POS);
 const cup = makeCup();
 cup.position.copy(CUP_POS);
 product.add(bag, cup);
+product.scale.setScalar(SCALE);
+product.position.set(isMobile() ? -0.1 : 0, PROD_Y, 0);
 scene.add(product);
 
-/* stage floor: paper falloff plane, unlit so its far edge matches the paper
-   backdrop exactly (no horizon line); the shadow catcher below carries the
-   live directional shadow */
-const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(60, 60),
-  new THREE.MeshBasicMaterial({ map: floorTex, toneMapped: false })
+/* Backdrop: treeline horizon plane + moss roastery-wall panels at the sides
+   + dark canopy crowns overhead — layered depth, never a flat field. */
+const backdrop = new THREE.Mesh(
+  new THREE.PlaneGeometry(34, 17),
+  new THREE.MeshBasicMaterial({ map: treelineTex, toneMapped: false, fog: false })
 );
-floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR_Y;
-scene.add(floor);
-const catcher = new THREE.Mesh(
-  new THREE.PlaneGeometry(60, 60),
-  new THREE.ShadowMaterial({ opacity: 0.30 })
-);
-catcher.rotation.x = -Math.PI / 2; catcher.position.y = FLOOR_Y + 0.005; catcher.receiveShadow = true;
-scene.add(catcher);
-
-/* live contact shadow: radial plane that tightens/darkens as the product lands */
-const contactShadow = new THREE.Mesh(
-  new THREE.PlaneGeometry(4.4, 2.2),
-  new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: 0.85, depthWrite: false })
-);
-contactShadow.rotation.x = -Math.PI / 2; contactShadow.position.set(0.35, FLOOR_Y + 0.01, 0.15);
-scene.add(contactShadow);
-
-/* scattered beans on the stage floor (foreground, sharp, close) */
-[[-1.15, 0.85, 0.4], [-0.95, 1.0, 1.2], [1.25, 0.9, 2.0], [1.55, 0.75, 0.7], [0.05, 1.05, 1.6]].forEach(([x, z, r]) => {
-  const b = makeBean(0.85); b.position.set(x, FLOOR_Y + 0.07, z); b.rotation.set(r, r * 2, r); scene.add(b);
+backdrop.position.set(0, 3.2, -7);
+scene.add(backdrop);
+const panelL = new THREE.Mesh(new THREE.PlaneGeometry(5, 12), new THREE.MeshBasicMaterial({ map: mossTex, toneMapped: false }));
+panelL.position.set(-6.2, 2.2, -4); panelL.rotation.y = 0.35; scene.add(panelL);
+const panelR = new THREE.Mesh(new THREE.PlaneGeometry(5, 12), new THREE.MeshBasicMaterial({ map: mossTex, toneMapped: false }));
+panelR.position.set(6.2, 2.2, -4); panelR.rotation.y = -0.35; scene.add(panelR);
+[[-4.5, 5.4, -5, 2.6], [0.5, 6.0, -6, 3.4], [4.8, 5.2, -5, 2.4], [-1.8, 6.4, -6.5, 2.0]].forEach(([x, y, z, s]) => {
+  const crown = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 12), new THREE.MeshStandardMaterial({ color: CANOPY, roughness: 1, envMapIntensity: 0.2 }));
+  crown.scale.set(s, s * 0.45, 1); crown.position.set(x, y, z); scene.add(crown);
 });
 
-/* foreground beans — low in the frame, drifting slowly; they stay on the floor
-   (y = floor) and never rise toward the label */
+/* Real floor: a large matte ground plane (radial pool of light, no gloss) + a back wall that
+   meets it on a horizon line 1/3 up from the bottom (WALL_Z0), + a live shadow catcher. */
+const floorGeo = new THREE.PlaneGeometry(80, 80, 1, 1);
+{ const UV = floorGeo.attributes.uv, FP2 = floorGeo.attributes.position; for (let i = 0; i < UV.count; i++) UV.setXY(i, FP2.getX(i) / 26 + 0.5, FP2.getY(i) / 26 + 0.5); }
+const floor = new THREE.Mesh(floorGeo, new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.92, metalness: 0, envMapIntensity: 0.15 }));
+floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR_Y; floor.receiveShadow = true;
+scene.add(floor);
+const catcher = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ opacity: 0.5 }));
+catcher.rotation.x = -Math.PI / 2; catcher.position.y = FLOOR_Y + 0.005; catcher.receiveShadow = true;
+scene.add(catcher);
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(36, 7.2), new THREE.MeshBasicMaterial({ map: wallTex, toneMapped: false, fog: false }));
+wall.position.set(0, FLOOR_Y + 3.6, WALL_Z0);
+rig.add(wall);
+const glow = new THREE.Mesh(
+  new THREE.PlaneGeometry(26, 14),
+  new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, opacity: 0.22, toneMapped: false, depthWrite: false })
+);
+glow.position.set(0, 1.6, -4.5);
+scene.add(glow);
+
+/* Soft ambient pool under the pair + tight contact/cast decals that ride WITH the product
+   (children of it), so the shadows follow the turntable instead of drifting off. */
+const contactShadow = new THREE.Mesh(
+  new THREE.PlaneGeometry(6.5, 3.2),
+  new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: 0.3, depthWrite: false })
+);
+contactShadow.rotation.x = -Math.PI / 2; contactShadow.position.set(0.5, FLOOR_Y + 0.01, 0.2);
+scene.add(contactShadow);
+function addContactDecals(group) {
+  const yL = BAG_POS.y - 1.025 + 0.012;
+  const mk = (w, d, op, x, z) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: op, depthWrite: false }));
+    m.rotation.x = -Math.PI / 2; m.position.set(x, yL, z); group.add(m);
+  };
+  mk(1.9, 0.95, 0.85, BAG_POS.x, 0.02);              /* contact under the bag */
+  mk(2.7, 1.1, 0.36, BAG_POS.x + 0.8, -0.30);        /* soft cast, falling back-right */
+  mk(1.35, 1.1, 0.85, CUP_POS.x, CUP_POS.z);         /* contact under the cup */
+  mk(2.1, 0.9, 0.34, CUP_POS.x + 0.6, CUP_POS.z - 0.25);
+}
+addContactDecals(product);
+
+/* Scattered roasted beans on the floor: 20-30% smaller, varied size + yaw, lying flat
+   crease-up, each with a cast shadow. */
+[[-1.9, 1.3, .85], [-1.5, 1.6, .7], [2.0, 1.4, .9], [2.4, 1.1, .75], [0.1, 1.7, .8], [-2.3, .9, .95], [-1.2, 1.9, .7], [1.2, 1.7, .85], [0.8, 2.0, .7], [-0.5, 1.8, .9]].forEach(([x, z, s], i) => {
+  const b = makeBean(s); b.position.set(x, FLOOR_Y + 0.05 * s, z); b.rotation.set((i % 3) * 0.05, i * 2.17, (i % 2) * 0.06); scene.add(b); scene.add(beanShadow(x, z, s));
+});
+
+/* Foreground beans + leaves — low in the frame, drifting slowly. */
 const fgBeans = [];
-[[-1.15, 0.8, 1.0], [1.3, 0.95, 1.1], [0.1, 1.05, 1.2]].forEach(([x, z, s], i) => {
+[[-1.7, 1.5, .95], [2.1, 1.4, .85], [0.3, 1.8, 1.0]].forEach(([x, z, s], i) => {
   const b = makeBean(s);
-  b.position.set(x, FLOOR_Y + 0.07, z);
-  b.rotation.set(0.6, i, 0.4);
+  b.position.set(x, FLOOR_Y + 0.05 * s, z);
+  b.rotation.set(0.05, i * 2.4, 0.04);
   b.userData.baseX = x;
   scene.add(b); fgBeans.push(b);
 });
+const fgLeaves = [];
+const leafA = makeLeaf(1.35, leafDarkMat); leafA.position.set(-2.0, -0.245, 1.0); leafA.rotation.set(0.55, 0.5, 0.45); leafA.userData.baseX = -2.0; scene.add(leafA); fgLeaves.push(leafA);
+const leafB = makeLeaf(1.1, leafMossMat); leafB.position.set(2.1, -0.32, 0.95); leafB.rotation.set(0.45, -0.6, -0.4); leafB.userData.baseX = 2.1; scene.add(leafB); fgLeaves.push(leafB);
+const leafC = makeLeaf(0.9, leafMossMat); leafC.position.set(-2.6, -0.38, -0.4); leafC.rotation.set(0.2, 0.9, 0.3); scene.add(leafC);
+const leafD = makeLeaf(0.85, leafMossMat); leafD.position.set(2.7, -0.39, -0.3); leafD.rotation.set(0.25, -0.9, 0.35); scene.add(leafD);
+const leafE = makeLeaf(1.0, leafDarkMat); leafE.position.set(-2.5, -0.35, -0.7); leafE.rotation.set(0.3, 0.6, -0.3); scene.add(leafE);
 
-/* 12 beans that pour from the bag in Beat 1: arc over the cup, pass behind the
-   rim, land in the fenced floor zone and stay there.
-   Landing zone (floor): x in [-1.4,-0.7] U [0.7,1.4], z in [0.8,1.4] — outside the
-   bag footprint, below the label's vertical span, never on the label. */
+/* 16 beans that pour from the bag in Beat 1: arc over the cup, pass behind
+   the rim, land in the fenced floor zone and stay there.
+   Landing zone (floor): x in [-2.2,-1.1] U [1.1,2.2], z in [1.1,1.9]. */
 const LANDINGS = [
-  [-1.10, 0.85], [-0.85, 1.05], [0.95, 0.95], [1.18, 0.75], [-1.05, 0.70],
-  [1.10, 1.10], [-1.15, 1.00], [0.80, 0.75], [1.15, 0.95], [-0.75, 0.90],
-  [1.12, 0.70], [-1.05, 1.15]
+  [-1.7, 1.3], [-1.35, 1.6], [1.5, 1.5], [1.85, 1.2], [-1.65, 1.1],
+  [1.75, 1.7], [-1.8, 1.55], [1.25, 1.2], [1.8, 1.5], [-1.2, 1.4],
+  [1.75, 1.1], [-1.65, 1.8], [-1.9, 1.4], [1.4, 1.85], [-1.4, 1.95], [1.95, 1.65]
 ];
 const pourBeans = [];
-const bagMouth = new THREE.Vector3(BAG_POS.x, BAG_POS.y + 1.15, BAG_POS.z);
-const cupMouth = new THREE.Vector3(CUP_POS.x, CUP_POS.y + 1.55, CUP_POS.z);
-for (let i = 0; i < 12; i++) {
-  const b = makeBean(0.85); b.visible = false; scene.add(b); pourBeans.push(b);
+for (let i = 0; i < 16; i++) {
+  const b = makeBean(0.95); b.visible = false; scene.add(b); pourBeans.push(b);
 }
 
-/* steam — 14 soft sprites rising from the cup, parented to the cup so the column
-   moves with it through every beat. Grey tint reads on the white stage.
-   Column (cup-local): y 1.65 -> 2.25, i.e. world 0.95 -> 1.55. Full loop at p=0. */
+/* Steam — 14 soft sprites rising from the cup, parented to the cup so the
+   column moves with it through every beat. Warm cream, low opacity. */
 const steam = [];
-for (let i = 0; i < 14; i++) {
-  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: steamTex, color: STEAM_GREY, transparent: true, opacity: 0, depthWrite: false }));
-  s.position.set(0, 1.65, 0); s.scale.setScalar(0.4); s.userData.jx = (i % 5 - 2) * 0.03; cup.add(s); steam.push(s);
+for (let i = 0; i < 16; i++) {
+  const sm = new THREE.SpriteMaterial({ map: steamTex, color: 0xFFFFFF, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, fog: false });
+  sm.rotation = (Math.random() - 0.5) * 0.8;
+  const s = new THREE.Sprite(sm);
+  s.position.set(0, 1.74, 0); s.scale.set(0.3, 0.55, 1); s.userData.jx = (Math.random() - 0.5) * 0.12; s.userData.jz = (Math.random() - 0.5) * 0.10;
+  cup.add(s); steam.push(s);
 }
 
 /* ---------- scroll mapping: native scroll + ONE lerp ---------- */
 let target = 0, smoothed = 0, lastScrollY = -1, lastScrollT = 0;
+let heroDragAz = 0, heroDragVel = 0, heroDragging = false;
 function trackProgress() {
   const rect = track.getBoundingClientRect();
   const travel = track.offsetHeight - innerHeight;
@@ -740,9 +1096,12 @@ const heroEyebrow = document.getElementById('heroEyebrow');
 const heroSpec = document.getElementById('heroSpec');
 const heroCtaWrap = document.getElementById('heroCtaWrap');
 const scrollCue = document.getElementById('scrollCue');
+const heroMeta = document.getElementById('heroMeta');
 const specPill = document.getElementById('specPill');
-const LINE_BEAT0 = 'Good <span class="red-word">coffee</span>, no shortcuts.';
-const LINE_BEAT1 = 'Grown high, roasted light.';
+const LINE_BEAT0 = 'Good <em>coffee</em>, no shortcuts.';
+const LINE_BEAT1 = 'Grown high, roasted <em>gold</em>.';
+const LINE_BEAT2 = 'Turn it <em>around</em>.';
+const LINE_BEAT3 = 'Take it <em>home</em>.';
 
 /* Tilt is a closed loop: 0 -> 12 deg over p 0.25-0.40, hold to 0.55,
    ease 12 -> 0 over p 0.55-0.65, exactly 0 from 0.65 to 1.0. */
@@ -752,74 +1111,103 @@ window.__auroraDebug = {
   state: () => ({ p: smoothed, tiltDeg: tiltDegAt(smoothed) })
 };
 
-/* Beat sheet (progress 0->1 across the 150vh track):
-   0: first sight (6.4, orbit 0) · 1: pour / dolly in (5.0, +18 deg) ·
-   2: label reveal (5.2, -10 deg, camY 0.45) · 3: settle (5.6, 0 deg). */
+/* Beat sheet (progress 0->1 across the 150vh track) — camera flights:
+   0: first sight, 6.4, orbit 0 deg · 1: dolly to 5.0, orbit to +35 deg
+   (pour lean 12 deg, beans arc behind the cup rim) · 2: orbit to +90 deg,
+   dolly 5.0 -> 5.6, lookAt drifts to the cup · 3: settle back to +35 deg,
+   dolly to 6.4, tilt exactly 0 at p=1.0.
+   The turntable biases the product back toward the camera as the orbit
+   grows, so the combined angle never passes ~62 deg and the label stays
+   readable (foreshortened, never hidden) at every p. */
 function applyScene(p, t, scrolling) {
-  /* camera path — one continuous movement, one move per beat */
-  let dist = LAYOUT.baseDist, az = 0, camY = 0.35, lookY = 0.35;
-  if (p < 0.25) { dist = LAYOUT.baseDist; az = 0; }
-  else if (p < 0.55) { const u = seg(p, 0.25, 0.55); dist = lerp(LAYOUT.baseDist, LAYOUT.d1, u); az = lerp(0, 18, u) * Math.PI / 180; }
-  else if (p < 0.80) { const u = seg(p, 0.55, 0.80); dist = lerp(LAYOUT.d1, LAYOUT.d2, u); az = lerp(18, -10, u) * Math.PI / 180; camY = lerp(0.35, 0.45, u); lookY = lerp(0.35, 0.40, u); }
-  else { const u = seg(p, 0.80, 1); dist = lerp(LAYOUT.d2, LAYOUT.d3, u); az = lerp(-10, 0, u) * Math.PI / 180; camY = lerp(0.45, 0.35, u); lookY = lerp(0.40, 0.35, u); }
-  camera.position.set(Math.sin(az) * dist, camY, Math.cos(az) * dist);
-  camera.lookAt(0, lookY, 0);
+  let dist = LAYOUT.baseDist, azDeg = 0, lookX = 0, lookY = LOOK0;
+  if (p < 0.25) { dist = LAYOUT.baseDist; azDeg = 0; }
+  else if (p < 0.55) { const u = seg(p, 0.25, 0.55); dist = lerp(LAYOUT.baseDist, LAYOUT.d1, u); azDeg = lerp(0, 35, u); }
+  else if (p < 0.80) { const u = seg(p, 0.55, 0.80); dist = lerp(LAYOUT.d1, LAYOUT.d2, u); azDeg = lerp(35, 90, u); lookX = lerp(0, 0.6, u); lookY = lerp(LOOK0, LOOK0 - 0.1, u); }
+  else { const u = seg(p, 0.80, 1); dist = lerp(LAYOUT.d2, LAYOUT.d3, u); azDeg = lerp(90, 35, u); lookX = lerp(0.6, 0, u); lookY = lerp(LOOK0 - 0.1, LOOK0, u); }
+  const az = azDeg * Math.PI / 180;
+  /* Camera sits higher (y 1.5) and looks slightly down, so the first frame
+     already shows the bag's folded top and the lid ellipse — never a flat
+     straight-on elevation. */
+  camera.position.set(Math.sin(az) * dist, CAM_Y, Math.cos(az) * dist);
+  camera.lookAt(lookX, lookY, 0);
+  /* wall + rim light stay behind the product from the camera's point of view; the wall
+     retreats once the orbit starts so the cup/bag never clip into it. */
+  rig.rotation.y = az;
+  wall.position.z = lerp(WALL_Z0, WALL_Z1, seg(p, 0.18, 0.45));
 
-  /* idle turntable +/-8 deg on a 12s sine — pauses while scrolling, resumes 1.5s after;
-     half amplitude once settled */
-  const idle = (reducedMotion || stillMode) ? 0 : (scrolling ? 0 : Math.sin(t * Math.PI * 2 / 12) * 8 * Math.PI / 180);
-  product.rotation.y = idle * (1 - seg(p, 0.8, 1) * 0.5);
-  const breathe = 1 + (reducedMotion || stillMode ? 0 : Math.sin(t * Math.PI * 2 / 12) * 0.02);
-  product.scale.setScalar(breathe);
+  /* Continuous turntable at rest: +/-35 deg on a 12s sine, never paused
+     by scrolling. Amplitude tapers and the product biases toward the camera
+     as the orbit grows, keeping the label readable at every beat.
+     BASE_AZ keeps the product 12 deg off straight-on even at the sine's
+     zero crossing, so the first frame is already a 3/4 view. */
+  const BASE_AZ = 11.5;
+  const ampDeg = (reducedMotion || stillMode) ? 0 : Math.max(0, 3.5 - 0.03 * Math.abs(azDeg));   /* idle sway stays inside 8-15 deg off straight-on */
+  const biasDeg = 0.4 * azDeg;
+  if (!heroDragging) { heroDragVel *= 0.92; heroDragAz += heroDragVel; heroDragAz += (0 - heroDragAz) * 0.06; }
+  cup.rotation.y = 0;
+  product.rotation.y = (BASE_AZ + biasDeg + Math.sin(t * Math.PI * 2 / 12) * ampDeg) * Math.PI / 180 + heroDragAz;
+  cup.rotation.y = -product.rotation.y * 0.7;                    /* cup turns to keep the sleeve print facing camera */
+  const breathe = 1 + (reducedMotion || stillMode ? 0 : Math.sin(t * Math.PI * 2 / 12) * 0.006);
+  product.scale.setScalar(SCALE * breathe);
 
-  /* Beat 1: bag tilts and pours (closed loop — back to exactly 0 by p=0.65) */
+  /* Beat 1: bag tilts and pours (closed loop — back to exactly 0 by p=0.65). */
   const tilt = tiltDegAt(p) * Math.PI / 180;
   bag.rotation.z = -tilt;
   bag.position.y = BAG_POS.y + (seg(p, 0.25, 0.40) - seg(p, 0.55, 0.65)) * 0.10;
   const pour = seg(p, 0.25, 0.55);
   pourBeans.forEach((b, i) => {
-    const u = clamp01((pour - i * 0.040) / 0.55);
+    const u = clamp01((pour - i * 0.030) / 0.55);
     if (u <= 0) { b.visible = false; return; }
     b.visible = true;
     const [lx, lz] = LANDINGS[i];
-    /* quadratic arc: bag mouth -> above the cup (behind the rim) -> fenced landing zone */
     const a = (1 - u) * (1 - u), c = 2 * (1 - u) * u, d = u * u;
     b.position.set(
       a * bagMouth.x + c * cupMouth.x + d * lx,
-      a * bagMouth.y + c * cupMouth.y + d * (FLOOR_Y + 0.07),
+      a * bagMouth.y + c * cupMouth.y + d * (FLOOR_Y + 0.045) + Math.sin(u * Math.PI) * 0.35,
       a * bagMouth.z + c * cupMouth.z + d * lz
     );
-    b.rotation.set(u * 6, u * 4, 0);
+    b.rotation.set((1 - u) * 6, u * 4, 0);
   });
-  /* tiny product recoil + shadow tighten as the beans land */
   const land = seg(p, 0.48, 0.58);
-  product.position.y = -land * 0.04 + (pour > 0 && pour < 1 ? Math.sin(pour * Math.PI) * 0.02 : 0);
+  product.position.y = PROD_Y - land * 0.04 + (pour > 0 && pour < 1 ? Math.sin(pour * Math.PI) * 0.02 : 0);
   const shadowTight = 1 - land * 0.22;
   contactShadow.scale.set(shadowTight, shadowTight, 1);
-  contactShadow.material.opacity = 0.7 + land * 0.25;
+  contactShadow.material.opacity = 0.3 + land * 0.1;
 
-  /* steam: full loop from the first frame, parented to the cup, drifting slightly left */
+  /* Steam: a white wisp loop from the first frame, parented to the cup; swaying S-curve
+     tendrils that widen and fade as they rise. */
   steam.forEach((s, i) => {
+    const ph = i / steam.length;
     if (reducedMotion || stillMode) {
-      s.position.set(-0.04, 1.95, 0); s.scale.set(0.28, 0.53, 1); s.material.opacity = 0.3; return;
+      const c = ph;
+      s.position.set(s.userData.jx + Math.sin(c * 6 + i) * 0.07 * c - 0.02, 1.78 + c * 1.0, s.userData.jz);
+      s.scale.set(0.30 + c * 0.25, 0.55 + c * 0.5, 1); s.material.opacity = 0.5 * (1 - c) * Math.min(1, c / 0.1 + 0.15); return;
     }
-    const cyc = ((t * 0.33 + i / 14) % 1);
-    s.position.set(-cyc * 0.30 + s.userData.jx, 1.60 + cyc * 0.65, 0);
-    const sw = 0.15 + cyc * 0.20;                 /* tall wisp sprites, not round balls */
-    s.scale.set(sw, sw * 1.9, 1);
-    s.material.opacity = 0.32 * (1 - cyc) * (cyc < 0.12 ? cyc / 0.12 : 1);
+    const cyc = ((t * 0.22 + ph) % 1);
+    s.position.set(s.userData.jx + Math.sin(cyc * 7 + i * 1.7) * 0.09 * cyc - cyc * 0.10, 1.74 + cyc * 1.15, s.userData.jz);
+    const sw = 0.30 + cyc * 0.42;
+    s.scale.set(sw, sw * 1.8, 1);
+    s.material.opacity = 0.62 * (1 - cyc) * (1 - cyc * 0.3) * Math.min(1, cyc / 0.10);
   });
 
-  /* foreground beans drift slowly side to side, staying on the floor */
+  /* Parallax: foreground beans/leaves slide with scroll while the backdrop
+     glow drifts the other way, slower — depth reads at different speeds. */
   fgBeans.forEach((b, i) => {
     if (reducedMotion || stillMode) return;
-    b.position.x = b.userData.baseX + Math.sin(t * 0.08 + i * 2.1) * 0.12;
+    b.position.x = b.userData.baseX + Math.sin(t * 0.08 + i * 2.1) * 0.12 + (p - 0.5) * 1.2;
     b.rotation.y += 0.0015;
   });
+  fgLeaves.forEach((l, i) => {
+    if (reducedMotion || stillMode) return;
+    l.position.x = l.userData.baseX + Math.sin(t * 0.06 + i * 1.7) * 0.15 + (p - 0.5) * 0.9;
+    l.rotation.z += 0.0006;
+  });
+  glow.position.x = (p - 0.5) * -0.6;
 
-  /* hero copy: fades out over p 0.15-0.30 before the camera moves, returns in Beat 3.
-     The display line crossfades to the origin line during the fade; the Beat 2
-     spec line sits in a paper scrim pill only — no bare text ever crosses the canvas. */
+  /* Hero copy: fades out over p 0.15-0.30 before the camera moves, returns
+     in Beat 3. The display line changes per beat; the spec line sits in a
+     cream scrim pill only — no bare text ever crosses the canvas. */
   const fadeOut = seg(p, 0.15, 0.30);
   const fadeIn = seg(p, 0.80, 0.95);
   const copyOpacity = p < 0.80 ? (1 - fadeOut) : fadeIn;
@@ -827,14 +1215,11 @@ function applyScene(p, t, scrolling) {
   heroEyebrow.style.opacity = copyOpacity;
   heroSpec.style.opacity = copyOpacity;
   heroCtaWrap.style.opacity = copyOpacity;
-  heroLine.innerHTML = (p < 0.22 || p >= 0.80) ? LINE_BEAT0 : LINE_BEAT1;
+  if (heroMeta) heroMeta.style.opacity = copyOpacity;
+  heroLine.innerHTML = p < 0.22 ? LINE_BEAT0 : p < 0.55 ? LINE_BEAT1 : p < 0.80 ? LINE_BEAT2 : LINE_BEAT3;
   scrollCue.style.opacity = p < 0.25 ? 1 : 0;
   const pillIn = seg(p, 0.55, 0.62), pillOut = seg(p, 0.74, 0.80);
   specPill.style.opacity = pillIn * (1 - pillOut);
-
-  if (tiltLog && Math.abs(p * 20 - Math.round(p * 20)) < 0.02) {
-    console.log('[v15 tilt] p=' + p.toFixed(2) + ' tilt=' + tiltDegAt(p).toFixed(1) + 'deg dist=' + dist.toFixed(2));
-  }
 }
 
 /* ---------- render loop ---------- */
@@ -843,7 +1228,7 @@ function resize() {
   const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight;
   if (renderer) renderer.setSize(w, h, false);
   camera.aspect = w / h;
-  camera.fov = isMobile() ? 42 : 35;
+  camera.fov = isMobile() ? 52 : 48;
   camera.updateProjectionMatrix();
 }
 function render(now) {
@@ -873,7 +1258,7 @@ if (renderer) {
     target = smoothed = pParam;
     requestAnimationFrame(() => { render(performance.now()); });
   } else if (reducedMotion) {
-    target = smoothed = 1;                               /* settled Beat 3 frame, static */
+    target = smoothed = 1;
     render(performance.now());
   } else {
     requestAnimationFrame(render);
@@ -882,15 +1267,65 @@ if (renderer) {
   setTimeout(() => { if (!window.__auroraSceneReady) showFallback(); }, 4000);
 }
 
+/* ---------- cursor light: warm, follows the mouse, fine-pointer only ---------- */
+if (matchMedia('(pointer: fine)').matches && !reducedMotion) {
+  canvas.addEventListener('pointermove', e => {
+    const r = canvas.getBoundingClientRect();
+    cursorLight.position.set(((e.clientX - r.left) / r.width - 0.5) * 6, 1.2, 3);
+    cursorLight.intensity = 1.5;
+  });
+  canvas.addEventListener('pointerleave', () => { cursorLight.intensity = 0; });
+}
+
+/* ---------- hero drag-to-rotate: MOUSE ONLY ----------
+   Fine-pointer devices only; touch pointers are ignored and the canvas keeps
+   touch-action:pan-y, so a touch swipe always scrolls the page. No
+   preventDefault anywhere — nothing here can block scrolling. Drag rotates
+   the PRODUCT; the camera orbit and turntable are independent. */
+(function heroDrag() {
+  const cue = document.getElementById('heroDragCue');
+  const enabled = !!renderer && matchMedia('(pointer: fine)').matches && !reducedMotion && !stillMode;
+  if (!enabled) { if (cue) cue.style.display = 'none'; return; }
+  canvas.style.cursor = 'grab';
+  let lastX = 0;
+  canvas.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse') return;
+    heroDragging = true; lastX = e.clientX; heroDragVel = 0;
+    canvas.style.cursor = 'grabbing';
+  });
+  addEventListener('pointermove', e => {
+    if (!heroDragging || e.pointerType !== 'mouse') return;
+    const dx = e.clientX - lastX; lastX = e.clientX;
+    heroDragAz += dx * 0.008; heroDragVel = dx * 0.008;
+  });
+  addEventListener('pointerup', () => { heroDragging = false; canvas.style.cursor = 'grab'; });
+})();
+
+/* ---------- brew swiper ripple: centre card full size, neighbours smaller ---------- */
+(function ripple() {
+  const sw = document.getElementById('brewSwiper');
+  if (!sw) return;
+  const cards = Array.from(sw.querySelectorAll('.menu-card'));
+  function update() {
+    const mid = sw.scrollLeft + sw.clientWidth / 2;
+    cards.forEach(c => {
+      const cc = c.offsetLeft + c.offsetWidth / 2;
+      const d = Math.min(1, Math.abs(mid - cc) / Math.max(1, sw.clientWidth * 0.6));
+      const s = 1 - 0.22 * d;
+      c.style.transform = 'scale(' + s.toFixed(3) + ')';
+      c.style.opacity = (1 - 0.6 * d).toFixed(2);
+    });
+  }
+  sw.addEventListener('scroll', update, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
+
 /* ---------- order form: local only, nothing sent anywhere ---------- */
 document.getElementById('orderSubmit').addEventListener('click', () => {
-  const name = document.getElementById('fName').value.trim() || 'Friend';
-  const box = document.getElementById('orderResult');
-  box.innerHTML = '<p class="big">Thanks, ' + name.replace(/</g, '&lt;') + ' — noted locally.</p>'
-    + '<p>1 × Single Origin Yirgacheffe 250g bag — $18.<br><br>DEMO ONLY — NO ORDER HAS BEEN SENT.</p>';
-  box.style.display = 'block';
+  document.getElementById('orderResult').style.display = 'block';
   document.getElementById('orderForm').style.display = 'none';
-  box.scrollIntoView({ block: 'nearest' });
+  document.getElementById('orderResult').scrollIntoView({ block: 'nearest' });
 });
 
 /* ---------- inspect section: finished product, drag-to-rotate, MOUSE ONLY ---------- */
@@ -905,48 +1340,58 @@ document.getElementById('orderSubmit').addEventListener('click', () => {
   try { r2 = new THREE.WebGLRenderer({ canvas: c2, antialias: true, alpha: false }); }
   catch (e) { return; }
   r2.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-  r2.toneMapping = THREE.ACESFilmicToneMapping; r2.toneMappingExposure = 1.1;
+  r2.toneMapping = THREE.ACESFilmicToneMapping; r2.toneMappingExposure = 1.0;
   r2.outputColorSpace = THREE.SRGBColorSpace;
   r2.shadowMap.enabled = true; r2.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const s2 = new THREE.Scene();
-  s2.background = new THREE.Color(PAPER);
+  s2.background = new THREE.Color(FOREST);
+  s2.fog = new THREE.FogExp2(FOREST, 0.04);
   const pm2 = new THREE.PMREMGenerator(r2);
   s2.environment = pm2.fromScene(new RoomEnvironment(), 0.04).texture;
-  const cam2 = new THREE.PerspectiveCamera(38, 1, 0.1, 60);
-  cam2.position.set(0, 0.4, isMobile() ? 6.2 : 6.6); cam2.lookAt(0, 0.35, 0);
-  const k2 = new THREE.DirectionalLight(0xFFF2DF, 2.9);
-  k2.position.set(-4, 6, 4); k2.castShadow = true;
+  const cam2 = new THREE.PerspectiveCamera(45, 1, 0.1, 60);
+  cam2.position.set(0, 2.3, isMobile() ? 5.6 : 5.8); cam2.lookAt(0, 0.55, 0);   /* raised: top of bag + lid ellipse visible */
+  const k2 = new THREE.DirectionalLight(0xFFE9C4, 2.8);
+  k2.position.set(-6, 5, 3); k2.castShadow = true;
   k2.shadow.mapSize.set(2048, 2048); k2.shadow.radius = 8;
   s2.add(k2);
-  const rim2 = new THREE.DirectionalLight(0xDCE8F0, 0.8); rim2.position.set(3, 4, -4); s2.add(rim2);
-  s2.add(new THREE.HemisphereLight(0xEAF0F5, CREAM_TINT, 0.6));
-  const bnc2 = new THREE.PointLight(0xF5E6CC, 0.4, 12); bnc2.position.set(0, 0.3, 3); s2.add(bnc2);
+  const rim2 = new THREE.SpotLight(GOLD, 50, 18, 0.5, 0.9, 2); rim2.position.set(3.5, 2.6, -2.2); rim2.target.position.set(-0.2, 0.9, 0); s2.add(rim2, rim2.target);
+  s2.add(new THREE.HemisphereLight(CREAM, FOREST, 0.5));
+  const emb2 = new THREE.PointLight(GOLD, 1.5, 10, 2); emb2.position.set(0, -0.2, -1.5); s2.add(emb2);
   const prod2 = new THREE.Group();
   const bag2 = makeBag(); bag2.position.copy(BAG_POS);
   const cup2 = makeCup(); cup2.position.copy(CUP_POS);
-  prod2.add(bag2, cup2); s2.add(prod2);
+  prod2.add(bag2, cup2);
+  prod2.scale.setScalar(1.3);
+  const P2Y = FLOOR_Y + 0.715 * 1.3;
+  prod2.position.y = P2Y;
+  addContactDecals(prod2);
+  s2.add(prod2);
+  const back2 = new THREE.Mesh(
+    new THREE.PlaneGeometry(34, 17),
+    new THREE.MeshBasicMaterial({ map: treelineTex, toneMapped: false, fog: false })
+  );
+  back2.position.set(0, 3.2, -7); s2.add(back2);
   const fl2 = new THREE.Mesh(
     new THREE.PlaneGeometry(60, 60),
-    new THREE.MeshBasicMaterial({ map: floorTex, toneMapped: false })
+    new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.92, metalness: 0, envMapIntensity: 0.15 })
   );
-  fl2.rotation.x = -Math.PI / 2; fl2.position.y = FLOOR_Y; s2.add(fl2);
+  fl2.rotation.x = -Math.PI / 2; fl2.position.y = FLOOR_Y; fl2.receiveShadow = true; s2.add(fl2);
   const cat2 = new THREE.Mesh(
     new THREE.PlaneGeometry(60, 60),
-    new THREE.ShadowMaterial({ opacity: 0.30 })
+    new THREE.ShadowMaterial({ opacity: 0.5 })
   );
   cat2.rotation.x = -Math.PI / 2; cat2.position.y = FLOOR_Y + 0.005; cat2.receiveShadow = true; s2.add(cat2);
-  const sh2 = contactShadow.clone();
-  sh2.material = contactShadow.material.clone(); sh2.position.set(0.35, FLOOR_Y + 0.01, 0.15); s2.add(sh2);
-  /* settled pose: a few beans rest on the floor, steam rises from the cup */
   LANDINGS.slice(0, 5).forEach(([x, z], i) => {
-    const b = makeBean(0.85); b.position.set(x, FLOOR_Y + 0.07, z); b.rotation.set(i, i * 2, 0.4); s2.add(b);
+    const b = makeBean(1.0); b.position.set(x, FLOOR_Y + 0.05, z); b.rotation.set(0.05, i * 2.3, 0.04); s2.add(b);
   });
+  /* settled pose: steam rises from the cup (cup world pos in inspect scene) */
+  const cup2World = new THREE.Vector3(CUP_POS.x * 1.3, P2Y + CUP_POS.y * 1.3, CUP_POS.z * 1.3);
   const stm2 = [];
   for (let i = 0; i < 8; i++) {
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: steamTex, color: STEAM_GREY, transparent: true, opacity: 0.35, depthWrite: false }));
-    s.position.set(CUP_POS.x - 0.05, CUP_POS.y + 1.60 + i * 0.09, CUP_POS.z);
-    s.scale.setScalar(0.3 + i * 0.04); s2.add(s); stm2.push(s);
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: steamTex, color: 0xFFFFFF, transparent: true, opacity: 0.35, depthWrite: false, toneMapped: false, fog: false }));
+    s.position.set(cup2World.x - 0.05, cup2World.y + 1.60 + i * 0.09, cup2World.z);
+    s.scale.set(0.3 + i * 0.03, 0.55 + i * 0.05, 1); s2.add(s); stm2.push(s);
   }
 
   let az = 0, vel = 0, dragging = false, lastX = 0, raf = null, visible = false;
@@ -956,14 +1401,14 @@ document.getElementById('orderSubmit').addEventListener('click', () => {
   }
   function draw2(now) {
     const t = (now || 0) / 1000;
-    if (!dragging) { vel *= 0.92; az += vel; az += (0 - az) * 0.06; }  /* snap-back to frontal */
-    prod2.rotation.y = az + Math.sin(t * Math.PI * 2 / 12) * 4 * Math.PI / 180;
+    if (!dragging) { vel *= 0.92; az += vel; az += (0 - az) * 0.06; }  /* snap-back to the 3/4 rest pose */
+    prod2.rotation.y = az + (30 + Math.sin(t * Math.PI * 2 / 12) * 10) * Math.PI / 180;
     stm2.forEach((s, i) => {
       const cyc = ((t * 0.33 + i / 8) % 1);
-      s.position.set(CUP_POS.x - cyc * 0.30, CUP_POS.y + 1.60 + cyc * 0.65, CUP_POS.z);
-      const sw = 0.15 + cyc * 0.20;
-      s.scale.set(sw, sw * 1.9, 1);
-      s.material.opacity = 0.32 * (1 - cyc) * (cyc < 0.12 ? cyc / 0.12 : 1);
+      s.position.set(cup2World.x - cyc * 0.30, cup2World.y + 1.60 + cyc * 0.65, cup2World.z);
+      const sw2 = 0.18 + cyc * 0.24;
+      s.scale.set(sw2, sw2 * 1.9, 1);
+      s.material.opacity = 0.6 * (1 - cyc) * (cyc < 0.12 ? cyc / 0.12 : 1);
     });
     r2.render(s2, cam2);
     if (Math.abs(vel) > 0.0005 || Math.abs(az) > 0.001 || dragging) raf = requestAnimationFrame(draw2);
