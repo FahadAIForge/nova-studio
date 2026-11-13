@@ -3,28 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>NJ Coffee — Single Origin Yirgacheffe</title>
+<title>NJ Coffee — Single Origin Yirgacheffe | Terracotta Roast</title>
 <link rel="icon" href="favicon.ico" type="image/x-icon">
-<meta name="description" content="NJ Coffee — Single Origin Yirgacheffe, 250g whole bean, $18. Good coffee, no shortcuts.">
+<meta name="description" content="NJ Coffee — Single Origin Yirgacheffe. Slow roast, golden pour.">
+<link rel="preload" as="image" href="v18-assets/takeaway-cup.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@500;600;700&family=Playfair+Display:ital,wght@1,500;1,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  /* NJ Coffee v16 — "Highland Reserve"
-     Forest Green #1E3D2F / Warm Cream #F4EFE4 / Highland Gold #E9B44C (60/30/10)
-     Tints: Deep Canopy #122A1F, Moss Panel #2A4A38, Muted Sage #8FA98F,
-     Brass Deep #C08A2E (glow only), Kraft #C9A876 (sleeve only). */
+  /* NJ Coffee v18 — "Terracotta Roast" PHOTO HERO rebuild (built from scratch)
+     Warm Cream #F6EDE0 (60%) / Terracotta #C0562F (30%) / Deep Espresso #2A170E (10%)
+     Metallic accent (CTA + foil only): Honey Gold #E9A94B
+     Mood: a warm roastery at golden hour. Bright cream hero -> warm terracotta roastery room.
+     NO 3D MODELS: the v17 WebGL models are OUT (Fahad's order, 2026-11-13 — they read
+     fake to him). v18r2: the BAG is OUT completely (Fahad's order, 2026-11-13 — it does
+     not look professional at all). The hero is the takeaway CUP (real photo); the splash,
+     cafe, latte and pour-over photos support it. Layered photo cards with parallax,
+     Ken Burns slow zoom, drag-to-pan, and scroll-driven cross-fades between photo scenes.
+     Design system first (UI UX Pro Max): tokens locked here, every section builds against them.
+     Motion budget: hovers 150-250ms, entrances <=600ms, luxury ease cubic-bezier(0.22,1,0.36,1),
+     springs bounce <=0.1, only transform/opacity animated, prefers-reduced-motion respected,
+     ONE accent per section. No fetch/XHR/WebSocket anywhere. All photos are local (v18-assets/). */
   :root{
-    --forest:#1E3D2F; --cream:#F4EFE4; --gold:#E9B44C;
-    --canopy:#122A1F; --moss:#2A4A38; --sage:#8FA98F; --brass:#C08A2E; --kraft:#C9A876;
+    --cream:#F6EDE0; --cream2:#FBF6EC; --paper:#FFF9EF;
+    --terra:#C0562F; --terra-deep:#9A4526; --terra-soft:#D97B52; --terra-pale:#E8B49A;
+    --espresso:#2A170E; --espresso2:#1D0F08; --espresso-soft:#4A2E1B;
+    --gold:#E9A94B; --gold-deep:#C08A2E;
+    --kraft:#C9A876;
     --ease:cubic-bezier(0.22,1,0.36,1);
-    --hairline-green:rgba(244,239,228,.22);
-    --hairline-cream:rgba(30,61,47,.22);
+    --hairline-cream:rgba(246,237,224,.28);
+    --hairline-espresso:rgba(42,23,14,.20);
+    --hairline-terra:rgba(192,86,47,.30);
+    --shadow-soft:0 18px 50px rgba(42,23,14,.18);
+    --shadow-lift:0 30px 70px rgba(42,23,14,.28);
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:auto}
   body{
-    background:var(--forest); color:var(--cream);
+    background:var(--cream); color:var(--espresso);
     font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
     font-size:17px; line-height:1.7; overflow-x:hidden;
     opacity:0; transition:opacity .8s var(--ease);
@@ -32,501 +48,658 @@
   body.ready{opacity:1}
   img{max-width:100%; display:block}
   a{color:inherit}
+  ::selection{background:var(--terra); color:var(--cream)}
   .mono{font-family:ui-monospace,"SF Mono",Menlo,monospace; text-transform:uppercase; letter-spacing:.22em}
   .display{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-weight:600; line-height:.92; letter-spacing:.01em; text-transform:uppercase}
-  .display em{font-family:"Playfair Display",Georgia,serif; font-style:italic; font-weight:500; text-transform:none; letter-spacing:0}
-  .gold-word{color:var(--gold)}
-  .wrap{max-width:1120px; margin:0 auto; padding:0 20px; min-width:0}
-  section{position:relative}
+  .display em{font-family:"Playfair Display",Georgia,serif; font-style:italic; font-weight:600; text-transform:none; letter-spacing:0}
+  .kicker{font-size:12px; letter-spacing:.28em; text-transform:uppercase; font-weight:700}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px}
+  .section-pad{padding:110px 0}
+  h2{font-family:Antonio,sans-serif; font-weight:600; font-size:clamp(40px,6vw,72px); line-height:.95; text-transform:uppercase; letter-spacing:.01em}
+  h2 em{font-family:"Playfair Display",Georgia,serif; font-style:italic; text-transform:none}
+  .lede{font-size:19px; line-height:1.65; max-width:560px}
+  .eyebrow{color:var(--terra); font-size:12px; letter-spacing:.28em; text-transform:uppercase; font-weight:700; margin-bottom:18px}
 
-  /* ---------- header: 56px, logo left + ONE compact CTA right ---------- */
-  header{
-    position:fixed; inset:0 0 auto 0; height:56px; z-index:50;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:0 16px; background:var(--forest);
-    border-bottom:1px solid var(--hairline-green);
-  }
-  .logo{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:13px; letter-spacing:.22em; color:var(--cream); text-decoration:none}
-  .nav-links{display:none; gap:28px; align-items:center}
-  .nav-links a{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; text-decoration:none; color:rgba(244,239,228,.72)}
-  .nav-links a:hover{color:var(--gold)}
+  /* ---------- atmosphere: vignette + film grain (fixed, over the page, below text) ---------- */
+  #vignette{position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(ellipse at 50% 42%, transparent 52%, rgba(42,23,14,.10) 82%, rgba(42,23,14,.18) 100%)}
+  #grain{position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.05; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E")}
+  #page{position:relative; z-index:2}
+
+  /* ---------- header ---------- */
+  header{position:fixed; top:0; left:0; right:0; z-index:50; pointer-events:none; transition:background .4s var(--ease), box-shadow .4s var(--ease)}
+  header.scrolled{background:rgba(246,237,224,.88); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); box-shadow:0 1px 0 var(--hairline-espresso)}
+  .nav{max-width:1180px; margin:0 auto; padding:16px 28px; display:flex; align-items:center; justify-content:space-between; pointer-events:auto}
+  .brand{font-family:Antonio,sans-serif; font-weight:700; font-size:24px; letter-spacing:.06em; text-transform:uppercase; text-decoration:none; color:var(--espresso)}
+  .brand b{color:var(--terra)}
+  .nav-links{display:flex; gap:30px; align-items:center}
+  .nav-links a{font-size:13px; letter-spacing:.18em; text-transform:uppercase; text-decoration:none; font-weight:700; color:var(--espresso); opacity:.78; transition:opacity .2s var(--ease)}
+  .nav-links a:hover{opacity:1}
+  .nav-cta{pointer-events:auto}
+  @media (max-width:760px){ .nav-links a:not(.nav-cta){display:none} .nav{padding:12px 16px} .brand{font-size:20px; white-space:nowrap} .nav-cta{padding:9px 14px !important; font-size:12px !important; white-space:nowrap} }
+
+  /* ---------- CTA: shimmer + magnetic + border beam (Magic UI / Smooth UI, vanilla) ---------- */
   .cta{
-    position:relative; display:inline-flex; align-items:center; justify-content:center;
-    background:var(--gold); color:var(--forest); border:0; cursor:pointer;
-    font-family:"DM Sans",system-ui,sans-serif; font-size:13px; font-weight:700;
-    letter-spacing:.18em; text-transform:uppercase; text-decoration:none;
-    height:36px; padding:0 16px; border-radius:999px; white-space:nowrap;
-    transition:transform .18s var(--ease), filter .18s var(--ease);
+    position:relative; display:inline-block; overflow:hidden;
+    background:var(--terra); color:var(--cream); border:none; cursor:pointer;
+    font-family:"DM Sans",sans-serif; font-weight:700; font-size:16px; letter-spacing:.04em;
+    padding:16px 30px; border-radius:999px; text-decoration:none;
+    box-shadow:0 10px 30px rgba(192,86,47,.35);
+    transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+    will-change:transform;
   }
-  /* Border Beam — technique ported to vanilla CSS from Magic UI's BorderBeam (MIT, magicui.design):
-     a masked 2px border ring + a gradient square that rides offset-path: rect(). Not a verbatim package import. */
-  .cta{--beam-from:#F4EFE4; --beam-to:#C08A2E}
-  .cta .bb{
-    position:absolute; inset:0; border-radius:inherit; pointer-events:none; border:2px solid transparent;
-    -webkit-mask-clip:padding-box,border-box; mask-clip:padding-box,border-box;
-    -webkit-mask-composite:source-in; mask-composite:intersect;
-    -webkit-mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000);
-    mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000);
+  .cta:hover{transform:translateY(-2px) scale(1.02); box-shadow:0 18px 44px rgba(192,86,47,.45)}
+  .cta:active{transform:translateY(0) scale(.98)}
+  .cta.gold{background:linear-gradient(120deg,var(--gold),#F2C063 55%,var(--gold)); color:var(--espresso); box-shadow:0 10px 30px rgba(233,169,75,.45)}
+  .cta.gold:hover{box-shadow:0 18px 44px rgba(233,169,75,.55)}
+  /* shimmer sweep across the face (Magic UI Shimmer Button, 3s) */
+  .cta::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%);
+    background-size:250% 100%; background-position:200% 0;
+    animation:shimmer 3s var(--ease) infinite;
   }
-  .cta .bb::after{
-    content:""; position:absolute; aspect-ratio:1; width:46px;
-    offset-path:rect(0 auto auto 0 round 999px); offset-anchor:90% 50%;
-    background:linear-gradient(to left,var(--beam-from),var(--beam-to),transparent);
-    animation:bb-run 3.2s linear infinite;
-  }
-  @keyframes bb-run{to{offset-distance:100%}}
-  .cta:hover{filter:brightness(1.07)}
-  .cta:active{transform:translateY(1px)}
-  @media (hover:hover) and (pointer:fine){
-    .cta:hover{transform:scale(1.05) translateY(-2px)}
-  }
-  .cta-green{background:var(--forest); color:var(--cream)}
-  .cta-green{--beam-from:#E9B44C; --beam-to:#F4EFE4}
-  #heroCtaWrap{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; width:100%}
+  @keyframes shimmer{ 0%{background-position:200% 0} 55%{background-position:-120% 0} 100%{background-position:-120% 0} }
+  /* border beam: a travelling dot of warm light around the border (Magic UI Border Beam, 6s) */
+  .cta .bb{position:absolute; inset:-1px; border-radius:999px; pointer-events:none; padding:2px;
+    background:conic-gradient(from var(--bb-angle,0deg), transparent 0deg, transparent 300deg, var(--gold) 345deg, #fff 360deg, transparent 360deg);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    animation:bb-spin 6s linear infinite; opacity:.9}
+  @property --bb-angle{ syntax:"<angle>"; initial-value:0deg; inherits:false }
+  @keyframes bb-spin{ to{ --bb-angle:360deg } }
 
-  /* ---------- hero: 150vh sticky track, deep-green roastery stage ---------- */
-  #track{height:150vh; background:var(--forest)}
-  .sticky{position:sticky; top:0; height:100svh; height:100dvh; overflow:hidden; padding-top:56px}
-  .hero-grid{
-    display:grid; height:100%;
-    grid-template-rows:minmax(0,2.6fr) minmax(0,1fr);
-    grid-template-columns:minmax(0,1fr);
-  }
-  .canvas-cell{position:relative; min-width:0; min-height:0; background:var(--forest)}
-  #scene{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y; opacity:0; transition:opacity .8s var(--ease)}
-  body.ready #scene{opacity:1}
-  /* Atmosphere over the canvas (v10's trick, re-tinted green/gold):
-     Deep Canopy vignette + film grain + three blurred glows, above canvas, below copy. */
-  .stage-vignette{position:absolute; inset:0; z-index:3; pointer-events:none; background:radial-gradient(ellipse at 50% 42%, transparent 40%, rgba(18,42,31,.65) 100%)}
-  .stage-grain{position:absolute; inset:-40px; z-index:3; pointer-events:none; opacity:.05; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); animation:grain .9s steps(4) infinite}
-  @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-2%,1%)}50%{transform:translate(1%,-2%)}75%{transform:translate(-1%,2%)}100%{transform:translate(0,0)}}
-  .glow{position:absolute; z-index:2; pointer-events:none; border-radius:50%; filter:blur(70px)}
-  .glow-gold{width:340px; height:340px; left:-60px; top:-40px; background:rgba(233,180,76,.045)}
-  .glow-green{width:300px; height:300px; left:-40px; bottom:-80px; background:rgba(42,74,56,.55)}
-  .glow-cream{width:260px; height:260px; right:-30px; top:6%; background:rgba(244,239,228,.05)}
-  .hero-copy{
-    min-width:0; padding:8px 20px calc(16px + env(safe-area-inset-bottom,0px));
-    text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-    background:var(--forest);
-  }
-  .hero-copy .eyebrow{font-size:11px; letter-spacing:.24em; color:var(--gold); text-transform:uppercase; margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:12px}
-  .hero-copy .eyebrow::before,.hero-copy .eyebrow::after{content:""; width:34px; height:1px; background:var(--gold)}
-  .hero-copy .display{font-size:clamp(28px,9vw,40px); color:var(--cream); max-width:640px}
-  .hero-copy .display em{color:var(--gold)}
-  #heroLine{transition:opacity .25s var(--ease)}
-  #heroLine .mask-line{display:block; overflow:hidden}
-  #heroSpec{margin-top:10px; font-size:12px; letter-spacing:.16em; color:rgba(244,239,228,.70); text-transform:uppercase; transition:opacity .25s var(--ease)}
-  .hero-cta{margin-top:16px; height:48px; padding:0 26px; font-size:13px; width:min(100%,340px)}
-  .scroll-cue{margin-top:14px; font-size:11px; letter-spacing:.22em; color:var(--sage); text-transform:uppercase; transition:opacity .25s var(--ease)}
-  /* Tasting notes + roast level + est. badge — fills the right-column void. */
-  .hero-meta{margin-top:26px; padding-top:18px; border-top:1px solid rgba(233,180,76,.35); width:100%; max-width:420px; display:flex; flex-direction:column; gap:10px; transition:opacity .25s var(--ease)}
-  .hero-meta-row{display:flex; align-items:baseline; gap:12px; font-size:11px; letter-spacing:.18em; color:rgba(244,239,228,.85); text-transform:uppercase}
-  .hero-meta-label{color:var(--gold); font-size:10px; letter-spacing:.22em; min-width:64px}
-  .hero-meta{position:relative}
-  .hero-meta-badge{align-self:flex-start; margin-top:4px; color:var(--gold); font-size:10px; letter-spacing:.24em; text-transform:uppercase; display:flex; align-items:center; gap:10px}
-  .hero-meta-badge::before{content:""; width:6px; height:6px; background:var(--gold); transform:rotate(45deg)}
-  .roast-meter{display:inline-flex; gap:5px; margin-left:6px; vertical-align:middle}
-  .roast-meter i{width:16px; height:6px; background:rgba(244,239,228,.22); display:block}
-  .roast-meter i.on{background:var(--gold)}
-  .est-seal{display:none; color:var(--gold)}
-  .est-seal .ring{transform-origin:60px 60px; animation:seal-spin 48s linear infinite}
-  @keyframes seal-spin{to{transform:rotate(360deg)}}
-  #specPill{
-    position:absolute; left:50%; bottom:18px; transform:translateX(-50%); z-index:6;
-    background:var(--cream); color:var(--forest); border-radius:8px; padding:12px 16px;
-    font-size:12px; letter-spacing:.16em; text-transform:uppercase; white-space:nowrap;
-    opacity:0; transition:opacity .25s var(--ease); pointer-events:none;
-  }
-  #heroDragCue{
-    position:absolute; left:20px; bottom:16px; z-index:6;
-    background:transparent; color:rgba(244,239,228,.62);
-    border-radius:0; padding:0; font-size:11px; letter-spacing:.2em;
-    text-transform:uppercase; pointer-events:none; white-space:nowrap;
-  }
-
-  /* ---------- kinetic text loader (max 800ms, then gone) ---------- */
-  #loader{position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; background:var(--canopy); transition:opacity .35s var(--ease)}
+  /* ---------- loader (kinetic text, max 800ms) ---------- */
+  #loader{position:fixed; inset:0; z-index:100; background:var(--cream); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; transition:opacity .45s var(--ease)}
   #loader.hide{opacity:0; pointer-events:none}
-  #loader .kl-dot{width:12px; height:12px; border-radius:50%; background:var(--cream); animation:kl-dot 1s var(--ease) infinite}
-  @keyframes kl-dot{0%,100%{transform:scale(1); opacity:1}50%{transform:scale(1.6); opacity:.5}}
-  #loader .kl-word{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-weight:600; font-size:clamp(34px,9vw,54px); color:var(--cream); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap}
-  #loader .kl-word span{display:inline-block; animation:kl .8s var(--ease) both; animation-delay:calc(var(--i)*60ms)}
-  @keyframes kl{from{opacity:0; transform:translateY(12px)}to{opacity:1; transform:translateY(0)}}
-  #loader .kl-sub{font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:rgba(244,239,228,.65)}
-  #loader .kl-count{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; letter-spacing:.22em; color:var(--gold)}
+  .kl-word{font-family:Antonio,sans-serif; font-size:clamp(44px,9vw,84px); font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--espresso)}
+  .kl-word b{color:var(--terra)}
+  .kl-count{font-family:ui-monospace,Menlo,monospace; font-size:13px; letter-spacing:.3em; color:var(--terra)}
 
-  /* ---------- WebGL fallback (designed state, never blank) ---------- */
-  #webgl-fallback{display:none; position:absolute; inset:0; z-index:4; background:var(--forest); overflow:auto; padding:76px 20px 24px; text-align:center}
-  #webgl-fallback.show{display:block}
-  #webgl-fallback img{max-width:300px; margin:0 auto 18px; border:12px solid var(--cream)}
-  #webgl-fallback .display{font-size:clamp(28px,8vw,40px); margin-bottom:10px}
-  #webgl-fallback .display em{color:var(--gold)}
+  /* ================= PHOTO HERO (no 3D — real photography, layered) ================= */
+  #heroTrack{height:300vh; position:relative}
+  .hero-sticky{position:sticky; top:0; height:100vh; height:100svh; overflow:hidden}
+  .hero-stage{position:absolute; inset:0; background:var(--cream)}
+  /* warm golden-hour glows on the cream stage */
+  .hero-stage::before{content:""; position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(560px 420px at 18% 12%, rgba(233,169,75,.28), transparent 70%),
+      radial-gradient(720px 520px at 88% 88%, rgba(192,86,47,.20), transparent 70%),
+      radial-gradient(420px 320px at 62% 30%, rgba(255,255,255,.55), transparent 70%)}
+  /* giant backdrop type behind the photos (DOH! layering: headline BEHIND the product) */
+  .backdrop-type{position:absolute; right:-2%; top:6%; font-family:Antonio,sans-serif; font-weight:700;
+    font-size:clamp(120px,19vw,300px); line-height:.85; letter-spacing:.01em; text-transform:uppercase;
+    color:rgba(42,23,14,.07); pointer-events:none; user-select:none; white-space:nowrap;
+    transform:translateY(var(--type-py,0px))}
+  .backdrop-type small{display:block; font-family:ui-monospace,Menlo,monospace; font-size:clamp(11px,1.2vw,15px);
+    letter-spacing:.42em; color:rgba(192,86,47,.35); margin-top:10px}
+  /* roast tint wash over the whole stage — the roast wheel re-skins the scene */
+  .stage-tint{position:absolute; inset:0; pointer-events:none; transition:background .9s var(--ease); z-index:3}
+  body[data-roast="light"] .stage-tint{background:linear-gradient(180deg, rgba(232,201,160,.22), rgba(232,201,160,.10))}
+  body[data-roast="medium"] .stage-tint{background:linear-gradient(180deg, rgba(192,86,47,.07), rgba(192,86,47,.03))}
+  body[data-roast="dark"] .stage-tint{background:linear-gradient(180deg, rgba(42,23,14,.16), rgba(42,23,14,.08))}
 
-  /* ---------- generic sections ---------- */
-  .section-pad{padding:84px 0}
-  .section-pad h2{font-size:clamp(2.4rem,5.6vw,4.6rem); margin-bottom:16px}
-  .section-pad p.lede{max-width:560px; font-size:17px}
-  .eyebrow{font-size:11px; letter-spacing:.24em; text-transform:uppercase; margin-bottom:14px}
-  .eyebrow::before{content:""; display:inline-block; width:34px; height:1px; background:currentColor; vertical-align:middle; margin-right:12px}
-  .caption{font-size:11px; letter-spacing:.16em; text-transform:uppercase; margin-top:10px}
-  .on-cream{background:var(--cream); color:var(--forest)}
-  .on-cream .lede{color:rgba(30,61,47,.68)}
-  .on-cream .eyebrow{color:var(--forest)}
-  .on-green{background:var(--forest); color:var(--cream)}
-  .on-green .lede{color:rgba(244,239,228,.70)}
-  .on-green .eyebrow{color:var(--gold)}
-  .on-green .caption{color:var(--sage)}
-  .chip{display:inline-block; background:var(--forest); color:var(--gold); padding:.02em .18em; font-style:italic}
-  .giant-numeral{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-weight:700; font-size:clamp(4rem,12vw,9rem); line-height:1; color:transparent; -webkit-text-stroke:1.5px rgba(30,61,47,.55); text-stroke:1.5px rgba(30,61,47,.55); margin-top:28px}
+  /* the photo scenes: drag-to-pan area. touch-action:pan-y so vertical swipes scroll
+     natively and horizontal swipes reach us as pointer events. */
+  .hero-scenes{position:absolute; inset:0; z-index:2; touch-action:pan-y; cursor:grab}
+  .hero-scenes.grabbing{cursor:grabbing}
+  .hero-scene{position:absolute; inset:0; opacity:0; pointer-events:none}
+  .hero-scene.on{pointer-events:auto}
+  /* photo cards: real photos, soft shadows, slight tilt, layered depth */
+  .photo-card{position:absolute; border-radius:22px; overflow:hidden; background:var(--paper);
+    box-shadow:var(--shadow-lift); border:1px solid rgba(255,255,255,.55)}
+  .photo-card .pan{position:absolute; inset:0; transform:translate(var(--pan-x,0px),var(--pan-y,0px)); will-change:transform}
+  .photo-card img{width:100%; height:100%; object-fit:cover; animation:kenburns 20s ease-in-out infinite alternate; will-change:transform}
+  @keyframes kenburns{ from{transform:scale(1.02)} to{transform:scale(1.10)} }
+  .photo-card .cap{position:absolute; left:0; right:0; bottom:0; padding:34px 18px 14px; text-align:right;
+    font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:700;
+    color:var(--cream); background:linear-gradient(180deg, transparent, rgba(42,23,14,.78)); z-index:2}
+  .photo-card .cap b{color:var(--gold)}
+  /* per-photo roast tint (warm/cool wash that follows the roast wheel) */
+  .photo-tint{position:absolute; inset:0; pointer-events:none; transition:background .9s var(--ease); z-index:1}
+  body[data-roast="light"] .photo-tint{background:linear-gradient(180deg, rgba(232,201,160,.30), rgba(232,201,160,.14))}
+  body[data-roast="medium"] .photo-tint{background:linear-gradient(180deg, rgba(192,86,47,.14), rgba(192,86,47,.06))}
+  body[data-roast="dark"] .photo-tint{background:linear-gradient(180deg, rgba(42,23,14,.32), rgba(42,23,14,.16))}
+  /* price pill sitting on the hero cup photo */
+  .price-chip{position:absolute; left:14px; top:14px; z-index:3; background:var(--gold); color:var(--espresso);
+    font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:700;
+    padding:8px 14px; border-radius:999px; box-shadow:0 8px 24px rgba(42,23,14,.35)}
 
-  /* Scroll Dissolve + rise reveals: fade + scale 0.94, once, no JS */
-  @supports (animation-timeline: view()){
-    .reveal-view{animation:fade-up .6s var(--ease) both; animation-timeline:view(); animation-range:entry 0% entry 60%}
-    .reveal-view-d1{animation:fade-up .6s var(--ease) .06s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
-    .reveal-view-d2{animation:fade-up .6s var(--ease) .12s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
-    .reveal-view-d3{animation:fade-up .6s var(--ease) .18s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
-    .reveal-view-d4{animation:fade-up .6s var(--ease) .24s both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+  /* Scene A — the takeaway cup (hero-size, right) + beans chip */
+  .cup-hero-card{right:5%; top:50%; width:min(34vw,460px); aspect-ratio:3/4;
+    transform:translateY(-50%) translateY(var(--hero-py,0px)) rotate(-2deg)}
+  .chip-card{right:5%; top:8%; width:140px; aspect-ratio:3/4;
+    transform:translateY(var(--chip-py,0px)) rotate(-5deg)}
+  /* Scenes B + C reuse the hero slot with their own photo */
+  .splash-card,.cafe-card{right:5%; top:50%; width:min(36vw,480px); aspect-ratio:2/3;
+    transform:translateY(-50%) translateY(var(--hero-py,0px)) rotate(-2deg)}
+  .side-card{right:calc(5% + min(36vw,480px)*0.60); bottom:9%; width:min(19vw,250px); aspect-ratio:3/4;
+    transform:translateY(var(--side-py,0px)) rotate(3deg)}
+  /* scene dots (right edge) */
+  .hero-dots{position:absolute; right:22px; top:50%; transform:translateY(-50%); z-index:4; display:flex; flex-direction:column; gap:10px}
+  .hero-dots i{width:9px; height:9px; border-radius:50%; background:rgba(42,23,14,.28); transition:all .4s var(--ease)}
+  .hero-dots i.on{background:var(--gold); box-shadow:0 0 0 4px rgba(233,169,75,.3); transform:scale(1.25)}
+
+  /* hero copy — bottom-left on desktop, below the photos on mobile (never overlaps a photo) */
+  .hero-copy{position:absolute; left:0; right:0; bottom:0; padding:0 28px 34px; max-width:1180px; margin:0 auto; z-index:5; pointer-events:none}
+  .hero-eyebrow{color:var(--terra); font-size:12px; letter-spacing:.3em; font-weight:700; text-transform:uppercase}
+  .hero-eyebrow-short{display:none}
+  #heroLine{font-size:clamp(42px,6.5vw,84px); color:var(--espresso); text-shadow:0 2px 30px rgba(246,237,224,.65); margin:10px 0 14px; max-width:10ch}
+  #heroLine em{color:var(--terra)}
+  .hero-sub{font-size:18px; line-height:1.6; max-width:520px; color:var(--espresso-soft); font-weight:500}
+  .hero-sub b{color:var(--espresso)}
+  .hero-ctas{display:flex; gap:14px; align-items:center; margin-top:22px; pointer-events:auto; flex-wrap:wrap}
+  .hero-ctas .ghost{background:rgba(246,237,224,.72); color:var(--espresso); border:1.5px solid var(--hairline-espresso); box-shadow:none; backdrop-filter:blur(8px)}
+  .hero-ctas .ghost:hover{box-shadow:var(--shadow-soft)}
+  .hero-meta{display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; pointer-events:auto}
+  .pill{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:999px; background:rgba(246,237,224,.78); border:1px solid var(--hairline-espresso); backdrop-filter:blur(8px); font-size:12px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--espresso)}
+  .pill i{width:8px; height:8px; border-radius:50%; background:var(--terra); display:inline-block}
+  .pill.gold-dot i{background:var(--gold)}
+  .scroll-cue{position:absolute; right:28px; bottom:36px; z-index:5; font-size:12px; letter-spacing:.3em; text-transform:uppercase; font-weight:700; color:var(--espresso); opacity:.75; animation:cue-bob 2.2s ease-in-out infinite}
+  @keyframes cue-bob{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+  .drag-cue{position:absolute; right:28px; bottom:78px; z-index:5; font-size:11px; letter-spacing:.28em; text-transform:uppercase; font-weight:700; color:var(--espresso); background:rgba(246,237,224,.7); border:1px solid var(--hairline-espresso); padding:8px 16px; border-radius:999px; backdrop-filter:blur(8px)}
+  @media (max-width:760px){
+    /* mobile hero: photos live in a fixed 320px band below the header; the copy
+       (~450px tall) owns the rest — by construction the two never overlap */
+    .hero-scenes{top:64px; height:320px; bottom:auto}
+    .backdrop-type{top:64px; font-size:clamp(80px,26vw,140px)}
+    .cup-hero-card,.splash-card,.cafe-card{left:50%; right:auto; top:50%; width:200px; transform:translate(-50%,-50%) translateY(var(--hero-py,0px)) rotate(-2deg)}
+    /* side card sits bottom-LEFT on mobile so the hero caption (right-aligned) stays readable */
+    .side-card{left:calc(50% - 72px); right:auto; top:72%; bottom:auto; width:120px; transform:translate(-50%,-50%) translateY(var(--side-py,0px)) rotate(3deg)}
+    .chip-card{display:none}
+    .hero-dots{display:none}
+    #heroLine{font-size:clamp(40px,11vw,64px)}
+    .hero-eyebrow{display:none}
+    .hero-eyebrow-short{display:block; font-size:9px; letter-spacing:.2em; white-space:nowrap}
+    .hero-sub{font-size:15px; line-height:1.5; max-width:340px}
+    .hero-copy{padding-bottom:20px}
+    .hero-ctas{margin-top:14px}
+    .hero-ctas .cta{padding:12px 18px; font-size:13px}
+    .hero-meta{margin-top:12px; gap:6px; flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; scrollbar-width:none}
+    .hero-meta::-webkit-scrollbar{display:none}
+    .pill{font-size:10px; padding:6px 10px; flex-shrink:0}
+    /* scenes B/C hero captions hide on mobile — the side card would cover their left end */
+    .splash-card .cap,.cafe-card .cap{display:none}
+    .drag-cue{display:none}
+    .scroll-cue{display:none}
+    .price-chip{font-size:10px; padding:6px 11px; top:12px}
+    .photo-card .cap{font-size:10px; padding:26px 12px 10px}
   }
-  @keyframes fade-up{from{opacity:0; transform:translateY(12px) scale(.94)}to{opacity:1; transform:translateY(0) scale(1)}}
 
-  /* ---------- origin ---------- */
-  .origin-band{overflow:hidden; max-width:100%; height:min(78vh,720px)}
-  .origin-band img{width:100%; height:100%; min-height:0; object-fit:cover; object-position:center 85%; transform:scale(2); transform-origin:50% 85%}
-  .origin-body{padding:56px 0 84px}
-  .spec-row{display:flex; flex-wrap:wrap; gap:10px 28px; font-size:12px; letter-spacing:.16em; text-transform:uppercase}
+  /* ---------- marquee (Magic UI Marquee, 40s loop, pause on hover) ---------- */
+  .marquee{position:relative; z-index:2; background:var(--terra); color:var(--cream); overflow:hidden; padding:14px 0; border-top:1px solid rgba(246,237,224,.25); border-bottom:1px solid rgba(246,237,224,.25)}
+  .marquee-track{display:flex; gap:0; width:max-content; animation:marquee 40s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  .marquee span{font-family:ui-monospace,Menlo,monospace; font-size:13px; letter-spacing:.3em; text-transform:uppercase; padding:0 26px; white-space:nowrap}
+  .marquee span b{color:var(--gold)}
+  @keyframes marquee{ to{ transform:translateX(-50%) } }
 
-  /* ---------- roast & process ---------- */
-  .roast-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:36px; align-items:start}
-  .roast-grid img.roast-img{width:100%; max-width:480px}
-  .process-cards{display:grid; grid-template-columns:minmax(0,1fr); gap:16px; margin-top:36px}
-  .process-card{background:var(--moss); color:var(--cream); padding:24px; min-width:0}
-  .process-card .num{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-size:30px; font-weight:700; color:var(--gold)}
-  .process-card h3{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:13px; letter-spacing:.2em; text-transform:uppercase; margin:8px 0 10px}
-  .process-card p{color:rgba(244,239,228,.85)}
-  .process-card img{width:100%; max-width:480px; margin-top:14px}
-  .marquee{overflow:hidden; max-width:100%; border-top:1px solid var(--hairline-green); border-bottom:1px solid var(--hairline-green); padding:14px 0; margin:40px 0 0}
-  .marquee-track{display:flex; width:max-content; animation:marquee 24s linear infinite}
-  .marquee-track span{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:13px; letter-spacing:.2em; text-transform:uppercase; white-space:nowrap; padding-right:16px; color:var(--gold)}
-  @keyframes marquee{to{transform:translateX(-50%)}}
+  /* ---------- reveal system (UI UX Pro Max Scroll Reveal Stagger; IO + CSS) ---------- */
+  .rv{opacity:0; transform:translateY(26px); transition:opacity .6s var(--ease), transform .6s var(--ease)}
+  .rv.in{opacity:1; transform:none}
+  .rv-d1{transition-delay:.07s} .rv-d2{transition-delay:.14s} .rv-d3{transition-delay:.21s} .rv-d4{transition-delay:.28s}
 
-  /* ---------- menu: FULL GOLD band ---------- */
-  .menu-band{background:var(--gold); color:var(--forest)}
-  .menu-band h2{color:var(--forest)}
-  .menu-band .lede{color:rgba(30,61,47,.85)}
-  .menu-band .eyebrow{color:var(--forest)}
-  .menu-photo{max-width:720px; margin:0 auto 32px; border:12px solid var(--cream); background:var(--cream)}
-  .menu-photo img{width:100%}
-  .menu-photo figcaption{color:var(--forest); margin-top:12px; text-align:center; background:var(--cream); padding-bottom:4px}
-  .swiper{display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding:4px 2px 18px; -webkit-overflow-scrolling:touch}
-  .menu-card{
-    flex:0 0 min(78%,300px); scroll-snap-align:center; min-width:0;
-    background:var(--cream); color:var(--forest); padding:26px 22px; border-radius:4px;
-    border-top:4px solid var(--gold);
-    box-shadow:0 2px 12px rgba(18,42,31,.25);
-    transition:transform .3s var(--ease), opacity .3s var(--ease);
-    will-change:transform, opacity;
-  }
-  .menu-card h3{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-size:26px; font-weight:600; margin-bottom:6px; text-transform:uppercase}
-  .menu-card p{font-size:15px; color:rgba(30,61,47,.68)}
-  .menu-card .price{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-size:22px; font-weight:700; color:var(--forest); margin-top:14px; letter-spacing:.04em}
-  .menu-cta-wrap{text-align:center; margin-top:28px}
-  .menu-cta-wrap .cta{height:48px; padding:0 28px; font-size:13px}
+  /* ---------- roastery (terracotta room, real cafe photo behind) ---------- */
+  #roast{background:var(--terra); color:var(--cream); position:relative; overflow:hidden}
+  .roast-photo{position:absolute; inset:0; overflow:hidden}
+  .roast-photo img{width:100%; height:100%; object-fit:cover; opacity:.32; filter:saturate(1.15) contrast(1.02); transform:scale(1.06)}
+  #roast .roast-inner{position:relative; background:linear-gradient(180deg, rgba(42,23,14,.28) 0%, rgba(42,23,14,.5) 22%, rgba(42,23,14,.5) 78%, rgba(42,23,14,.28) 100%); padding:110px 0}
+  #roast h2{color:var(--cream); text-shadow:0 4px 40px rgba(42,23,14,.5)}
+  #roast h2 em{color:var(--gold)}
+  #roast .lede{color:rgba(246,237,224,.92)}
+  #roast .eyebrow{color:var(--gold)}
+  /* text reveal: words ignite as you scroll (Magic UI Text Reveal, scroll-linked) */
+  .reveal-words span{opacity:.16; transition:opacity .35s linear}
+  .reveal-words span.lit{opacity:1}
+  /* roast wheel (DOH! 90 deg turn, 1.0s, 800ms throttle, isAnimating guard) */
+  .roast-wheel{display:flex; gap:12px; margin:34px 0 10px; flex-wrap:wrap}
+  .roast-btn{pointer-events:auto; cursor:pointer; border:1.5px solid rgba(246,237,224,.4); background:rgba(42,23,14,.35); color:var(--cream); backdrop-filter:blur(8px); border-radius:999px; padding:13px 24px; font-family:"DM Sans",sans-serif; font-weight:700; font-size:15px; letter-spacing:.05em; transition:all .3s var(--ease)}
+  .roast-btn:hover{border-color:var(--gold); transform:translateY(-2px)}
+  .roast-btn.active{background:var(--gold); border-color:var(--gold); color:var(--espresso); box-shadow:0 10px 30px rgba(233,169,75,.4)}
+  .roast-btn small{display:block; font-size:11px; letter-spacing:.18em; text-transform:uppercase; opacity:.75; font-weight:700}
+  .roast-note{font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:rgba(246,237,224,.75); margin-top:14px}
+  .roast-note b{color:var(--gold)}
+  /* hold-to-burst (Scrolltide Ephyra: hold to crack the bean — reveals the splash photo) */
+  .hold-wrap{margin-top:44px; display:flex; gap:22px; align-items:center; flex-wrap:wrap}
+  .hold-btn{pointer-events:auto; cursor:pointer; position:relative; overflow:hidden; border:1.5px solid var(--gold); background:rgba(42,23,14,.4); color:var(--cream); border-radius:999px; padding:16px 28px; font-family:"DM Sans",sans-serif; font-weight:700; font-size:15px; letter-spacing:.04em; backdrop-filter:blur(8px); user-select:none; -webkit-user-select:none; touch-action:none}
+  .hold-btn .fill{position:absolute; inset:0; background:var(--gold); width:0%; opacity:.35; pointer-events:none; transition:width .12s linear}
+  .hold-btn .lbl{position:relative; z-index:1}
+  .hold-btn.holding{border-color:#fff}
+  .taste-waypoints{display:flex; gap:10px; flex-wrap:wrap}
+  .taste{font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.2em; text-transform:uppercase; padding:9px 15px; border-radius:999px; border:1px solid rgba(246,237,224,.35); color:rgba(246,237,224,.7); transition:all .4s var(--ease)}
+  .taste.lit{background:var(--gold); border-color:var(--gold); color:var(--espresso); font-weight:700}
+  /* burst frame: beans photo, hold cracks it open to the splash photo */
+  .burst-frame{position:relative; margin-top:28px; max-width:620px; aspect-ratio:16/9; border-radius:20px; overflow:hidden; box-shadow:var(--shadow-lift); border:1px solid rgba(246,237,224,.25)}
+  .burst-frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+  .burst-frame .burst-splash{opacity:0; transition:opacity .8s var(--ease), transform .8s var(--ease); transform:scale(1.12)}
+  .burst-frame.cracked .burst-splash{opacity:1; transform:scale(1)}
+  .burst-frame .burst-cap{position:absolute; left:0; right:0; bottom:0; padding:26px 18px 12px; font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; color:var(--cream); background:linear-gradient(180deg, transparent, rgba(42,23,14,.78)); z-index:2}
+  .burst-frame .burst-cap b{color:var(--gold)}
+  /* roast meter + number tickers */
+  .roast-meter{margin-top:46px; max-width:620px}
+  .meter-track{height:10px; border-radius:999px; background:rgba(246,237,224,.22); overflow:hidden; position:relative}
+  .meter-fill{height:100%; width:52%; border-radius:999px; background:linear-gradient(90deg,var(--terra-soft),var(--gold)); transition:width .8s var(--ease)}
+  .meter-labels{display:flex; justify-content:space-between; font-family:ui-monospace,Menlo,monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:rgba(246,237,224,.75); margin-top:10px}
+  .stats-row{display:flex; gap:34px; flex-wrap:wrap; margin-top:34px}
+  .stat b{font-family:Antonio,sans-serif; font-size:44px; font-weight:600; line-height:1; color:var(--cream); display:block}
+  .stat b i{font-style:normal; color:var(--gold)}
+  .stat span{font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:rgba(246,237,224,.75); font-weight:700}
 
-  /* ---------- inspect ---------- */
-  #inspectCanvasWrap{position:relative; height:min(72vh,620px); background:var(--forest); overflow:hidden}
-  #inspectCanvas{width:100%; height:100%; display:block; touch-action:pan-y}
-  #dragCue{
-    position:absolute; left:50%; bottom:16px; transform:translateX(-50%);
-    background:var(--cream); color:var(--forest);
-    border-radius:999px; padding:8px 16px; font-size:11px; letter-spacing:.2em;
-    text-transform:uppercase; pointer-events:none; white-space:nowrap;
-  }
-  #inspectFallback{display:none; text-align:center; padding:24px}
-  #inspectFallback img{max-width:320px; margin:0 auto 14px}
+  /* ---------- menu (cream; drink selector re-skins the featured photo) ---------- */
+  #menu{background:var(--cream); position:relative}
+  #menu .menu-inner{padding:110px 0}
+  #menu h2 em{color:var(--terra)}
+  /* drink selector: expandable cards + highlight grid glide + glow hover (Smooth UI / Vengeance) */
+  .drink-tabs{display:flex; gap:10px; margin:26px 0 30px; flex-wrap:wrap}
+  .drink-tab{pointer-events:auto; cursor:pointer; border:1.5px solid var(--hairline-espresso); background:rgba(255,249,239,.7); backdrop-filter:blur(10px); color:var(--espresso); border-radius:999px; padding:12px 22px; font-family:"DM Sans",sans-serif; font-weight:700; font-size:15px; transition:all .3s var(--ease)}
+  .drink-tab:hover{transform:translateY(-2px); border-color:var(--terra)}
+  .drink-tab.active{background:var(--espresso); color:var(--cream); border-color:var(--espresso); box-shadow:var(--shadow-soft)}
+  .menu-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:16px; position:relative}
+  @media (max-width:1020px){ .menu-grid{grid-template-columns:repeat(3,1fr)} }
+  @media (max-width:640px){ .menu-grid{grid-template-columns:repeat(2,1fr)} }
+  .menu-grid::before{content:""; position:absolute; inset:-8px; border-radius:22px; background:radial-gradient(220px 160px at var(--gx,50%) var(--gy,50%), rgba(192,86,47,.16), transparent 70%); pointer-events:none; transition:opacity .3s; z-index:0}
+  .menu-card{position:relative; z-index:1; cursor:pointer; border-radius:20px; padding:22px 20px 20px; background:rgba(255,249,239,.82); backdrop-filter:blur(12px); border:1px solid var(--hairline-espresso); box-shadow:0 8px 30px rgba(42,23,14,.08); transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease); overflow:hidden}
+  .menu-card:hover{transform:translateY(-6px); box-shadow:var(--shadow-lift); border-color:var(--terra)}
+  .menu-card.active{border-color:var(--terra); box-shadow:0 0 0 2px var(--terra), var(--shadow-lift)}
+  .menu-card .glow{position:absolute; inset:0; pointer-events:none; opacity:0; transition:opacity .3s; background:radial-gradient(180px 140px at var(--mx,50%) var(--my,50%), rgba(233,169,75,.35), transparent 70%)}
+  .menu-card:hover .glow{opacity:1}
+  .menu-card img{width:100%; height:150px; object-fit:cover; border-radius:14px; margin-bottom:14px}
+  .menu-card h3{font-family:Antonio,sans-serif; font-size:24px; font-weight:600; text-transform:uppercase; letter-spacing:.02em}
+  .menu-card .notes{font-size:13.5px; color:var(--espresso-soft); line-height:1.5; margin:6px 0 12px; min-height:40px}
+  .menu-card .price{font-family:Antonio,sans-serif; font-size:26px; font-weight:700; color:var(--terra)}
+  .menu-card .tag{position:absolute; top:14px; right:14px; font-size:10px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; background:var(--terra); color:var(--cream); padding:5px 10px; border-radius:999px}
+  .menu-card .tag.cold{background:var(--espresso)}
+  .drink-detail{margin-top:26px; border-radius:20px; background:var(--espresso); color:var(--cream); padding:26px 28px; display:flex; gap:26px; align-items:center; flex-wrap:wrap; box-shadow:var(--shadow-lift); transition:opacity .18s var(--ease)}
+  .drink-detail .big{font-family:Antonio,sans-serif; font-size:clamp(30px,4vw,44px); font-weight:600; text-transform:uppercase; line-height:1}
+  .drink-detail .big em{font-family:"Playfair Display",Georgia,serif; font-style:italic; text-transform:none; color:var(--gold)}
+  .drink-detail p{color:rgba(246,237,224,.85); max-width:520px}
+  .drink-detail .dprice{margin-left:auto; font-family:Antonio,sans-serif; font-size:44px; font-weight:700; color:var(--gold)}
+  /* featured drink photo — cross-fades to the selected drink's photo */
+  .drink-photo{flex:0 0 220px; width:220px; height:170px; border-radius:14px; overflow:hidden; position:relative; box-shadow:0 12px 34px rgba(0,0,0,.35)}
+  .drink-photo img{width:100%; height:100%; object-fit:cover; transition:opacity .35s var(--ease), transform .6s var(--ease)}
+  .drink-photo .photo-tint{border-radius:14px}
+  @media (max-width:640px){ .drink-photo{flex-basis:100%; width:100%; height:200px} .drink-detail .dprice{margin-left:0} }
 
-  /* ---------- order ---------- */
-  .order-grid{display:grid; grid-template-columns:minmax(0,1fr); gap:36px; align-items:start}
-  .order-photo img{width:100%; max-width:520px}
-  form label{display:block; font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; letter-spacing:.16em; text-transform:uppercase; margin:18px 0 8px}
-  form input{
-    width:100%; max-width:420px; padding:12px 14px; font:inherit; font-size:16px;
-    background:var(--cream); color:var(--forest); border:1px solid rgba(30,61,47,.4); border-radius:4px;
-  }
-  form input:focus{outline:2px solid var(--gold); outline-offset:1px}
-  .qty-fixed{font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:14px; letter-spacing:.1em; text-transform:uppercase; padding:12px 14px; border:1px solid var(--hairline-cream); max-width:420px; background:var(--cream)}
-  .order-submit{margin-top:24px; height:48px; padding:0 28px; font-size:13px; width:min(100%,420px)}
-  .demo-note{margin-top:16px; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:rgba(30,61,47,.68)}
-  #orderResult{display:none; margin-top:24px; padding:22px; border:1px solid var(--hairline-cream); background:var(--cream); max-width:520px}
-  #orderResult .big{font-family:Antonio,"Arial Narrow",sans-serif-condensed,sans-serif; font-size:26px; font-weight:600; text-transform:uppercase; letter-spacing:.02em}
+  /* ---------- story: scatter gallery (Vengeance Image Scatter) + bento ---------- */
+  #story{background:var(--cream)}
+  .scatter{position:relative; height:560px; margin-top:44px}
+  .scatter figure{position:absolute; border-radius:18px; overflow:hidden; box-shadow:var(--shadow-lift); transition:transform .6s var(--ease)}
+  .scatter figure img{width:100%; height:100%; object-fit:cover}
+  .scatter figcaption{position:absolute; left:0; right:0; bottom:0; padding:12px 16px; font-size:11px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; color:var(--cream); background:linear-gradient(180deg, transparent, rgba(42,23,14,.75))}
+  .scatter .s1{width:300px; height:400px; left:0; top:20px; transform:rotate(-4deg)}
+  .scatter .s2{width:340px; height:260px; left:330px; top:0; transform:rotate(2deg)}
+  .scatter .s3{width:260px; height:340px; right:120px; top:90px; transform:rotate(-2deg)}
+  .scatter .s4{width:300px; height:220px; right:0; top:300px; transform:rotate(3deg)}
+  .scatter .s5{width:280px; height:200px; left:360px; top:300px; transform:rotate(-3deg)}
+  @media (max-width:900px){ .scatter{height:auto; display:grid; grid-template-columns:1fr 1fr; gap:14px} .scatter figure{position:static; width:auto !important; height:220px; transform:none !important} }
+  .bento{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:70px}
+  @media (max-width:900px){ .bento{grid-template-columns:repeat(2,1fr)} }
+  .bento-cell{border-radius:20px; padding:26px; background:var(--paper); border:1px solid var(--hairline-espresso); box-shadow:0 8px 30px rgba(42,23,14,.06); transition:transform .3s var(--ease), box-shadow .3s var(--ease)}
+  .bento-cell:hover{transform:translateY(-4px); box-shadow:var(--shadow-soft)}
+  .bento-cell.big{grid-column:span 2; grid-row:span 1; background:var(--espresso); color:var(--cream)}
+  .bento-cell.big h3{color:var(--cream)} .bento-cell.big p{color:rgba(246,237,224,.85)}
+  .bento-cell h3{font-family:Antonio,sans-serif; font-size:24px; font-weight:600; text-transform:uppercase; margin-bottom:8px}
+  .bento-cell h3 em{font-family:"Playfair Display",Georgia,serif; font-style:italic; text-transform:none; color:var(--terra)}
+  .bento-cell.big h3 em{color:var(--gold)}
+  .bento-cell p{font-size:15px; color:var(--espresso-soft); line-height:1.6}
+  .bento-cell .num{font-family:Antonio,sans-serif; font-size:40px; font-weight:700; color:var(--terra); line-height:1}
+  .bento-cell .num i{font-style:normal; color:var(--gold)}
+
+  /* ---------- roast journey: scrollable card stack (Smooth UI) ---------- */
+  #journey{background:var(--terra); color:var(--cream)}
+  #journey h2 em{color:var(--gold)}
+  #journey .lede{color:rgba(246,237,224,.92)}
+  .stack{position:relative; margin-top:50px; min-height:340px}
+  .stack-card{position:absolute; inset:0; border-radius:24px; padding:34px 36px; background:var(--cream); color:var(--espresso); box-shadow:var(--shadow-lift); display:flex; gap:28px; align-items:flex-start; transition:transform .6s var(--ease), opacity .6s var(--ease)}
+  .stack-card .step{font-family:Antonio,sans-serif; font-size:64px; font-weight:700; color:var(--terra); line-height:.9; min-width:90px}
+  .stack-card h3{font-family:Antonio,sans-serif; font-size:30px; font-weight:600; text-transform:uppercase}
+  .stack-card p{color:var(--espresso-soft); max-width:520px; margin-top:8px}
+  .stack-card .mono{font-size:11px; color:var(--terra); font-weight:700; letter-spacing:.24em}
+  @media (max-width:640px){ .stack-card{flex-direction:column; gap:10px; padding:26px} .stack-card .step{font-size:44px} }
+
+  /* ---------- order (cream, border-beam card) ---------- */
+  #order{background:var(--cream)}
+  .order-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:start}
+  @media (max-width:900px){ .order-grid{grid-template-columns:1fr} }
+  .order-card{position:relative; border-radius:24px; background:var(--paper); border:1px solid var(--hairline-espresso); box-shadow:var(--shadow-soft); padding:32px; overflow:hidden}
+  .order-card .bb{position:absolute; inset:-1px; border-radius:24px; pointer-events:none; padding:2px;
+    background:conic-gradient(from var(--bb-angle,0deg), transparent 0deg, transparent 300deg, var(--gold) 340deg, #fff 360deg, transparent 360deg);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude; animation:bb-spin 6s linear infinite}
+  .order-card label{display:block; font-size:12px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; margin:18px 0 8px; color:var(--espresso)}
+  .order-card input, .order-card select{width:100%; padding:14px 16px; border:1.5px solid var(--hairline-espresso); border-radius:12px; background:#fff; font-family:"DM Sans",sans-serif; font-size:16px; color:var(--espresso); transition:border-color .2s var(--ease), box-shadow .2s var(--ease)}
+  .order-card input:focus, .order-card select:focus{outline:none; border-color:var(--terra); box-shadow:0 0 0 3px rgba(192,86,47,.15)}
+  .order-card .row{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .order-card .row .full{grid-column:1 / -1}
+  #orderResult{display:none; border-radius:24px; background:var(--espresso); color:var(--cream); padding:32px; box-shadow:var(--shadow-lift)}
+  #orderResult h3{font-family:Antonio,sans-serif; font-size:30px; text-transform:uppercase; margin-bottom:10px}
+  #orderResult h3 em{font-family:"Playfair Display",Georgia,serif; font-style:italic; text-transform:none; color:var(--gold)}
+  #orderResult p{color:rgba(246,237,224,.88)}
+  #orderResult .demo-flag{display:inline-block; margin-top:16px; background:var(--gold); color:var(--espresso); font-weight:700; font-size:12px; letter-spacing:.2em; text-transform:uppercase; padding:8px 14px; border-radius:999px}
+  .order-side img{width:100%; height:340px; object-fit:cover; border-radius:24px; box-shadow:var(--shadow-lift)}
+  .order-side .spec{margin-top:18px; font-family:ui-monospace,Menlo,monospace; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--espresso-soft); line-height:2}
+  .order-side .spec b{color:var(--terra)}
 
   /* ---------- footer ---------- */
-  footer{background:var(--canopy); color:var(--cream); border-top:4px solid var(--gold); padding:56px 0 40px}
-  footer .display{font-size:30px; margin-bottom:12px}
-  footer p{color:rgba(244,239,228,.70); max-width:560px}
-  footer .credits{margin-top:28px; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--sage)}
+  footer{background:var(--espresso2); color:var(--cream); padding:80px 0 40px; position:relative; z-index:2}
+  footer .display{font-size:clamp(48px,9vw,110px); color:var(--cream); line-height:.9}
+  footer .display b{color:var(--terra)}
+  footer p{color:rgba(246,237,224,.75); margin-top:14px}
+  footer .credits{font-size:11px; letter-spacing:.14em; color:rgba(246,237,224,.45); margin-top:34px; line-height:1.9}
+  footer a{color:var(--gold)}
 
-  @media (max-width:767px){
-    .hero-copy{padding:4px 20px calc(12px + env(safe-area-inset-bottom,0px))}
-    .hero-copy .eyebrow{margin-bottom:6px}
-    .hero-cta{margin-top:10px}
-    .scroll-cue{margin-top:8px}
-  }
-  @media (min-width:768px){
-    .nav-links{display:flex}
-    .process-cards{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}
-    .roast-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-    .order-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-  }
-  @media (min-width:1024px){
-    .hero-grid{grid-template-rows:minmax(0,1fr); grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
-    .hero-copy{text-align:left; align-items:flex-start; justify-content:center; padding:24px 40px 24px 8px}
-    .hero-copy .display{font-size:clamp(2.2rem,min(4.3vw,8.2vh),4.9rem); overflow-wrap:break-word; max-width:100%}
-    .hero-copy{position:relative}
-    .hero-meta{max-width:500px}
-    .hero-meta-row{padding-right:104px}
-    .est-seal{display:block; position:absolute; right:0; top:14px; width:92px; height:92px}
-    .hero-copy .eyebrow{justify-content:flex-start}
-    #heroCtaWrap{justify-content:flex-start}
-    .hero-cta{width:auto}
-    .swiper{overflow-x:visible}
-    .menu-card{flex:1 1 0; scroll-snap-align:none}
-  }
   @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
     .marquee-track{animation:none}
-    .stage-grain{animation:none}
-    .cta .bb::after{animation:none}
-    .est-seal .ring{animation:none}
-    .reveal-view,.reveal-view-d1,.reveal-view-d2,.reveal-view-d3,.reveal-view-d4{animation:none}
+    .photo-card img{animation:none}
   }
 </style>
 </head>
-<body>
-<header>
-  <a class="logo" href="#top">NJ COFFEE</a>
-  <nav class="nav-links" aria-label="Sections">
-    <a href="#origin">Origin</a><a href="#roast">Roast</a><a href="#menu">Menu</a><a href="#order">Order</a>
-  </nav>
-  <a class="cta" href="#order">Order — $18</a>
-</header>
+
+<body data-roast="medium">
+<div id="vignette" aria-hidden="true"></div>
+<div id="grain" aria-hidden="true"></div>
 
 <div id="loader" aria-hidden="true">
-  <div class="kl-dot" aria-hidden="true"></div>
-  <div class="kl-word" aria-hidden="true"><span style="--i:0">N</span><span style="--i:1">J</span><span style="--i:2">&nbsp;</span><span style="--i:3">C</span><span style="--i:4">o</span><span style="--i:5">f</span><span style="--i:6">f</span><span style="--i:7">e</span><span style="--i:8">e</span></div>
-  <div class="kl-sub">Preparing your experience&hellip;</div>
+  <div class="kl-word">NJ <b>COFFEE</b></div>
   <div class="kl-count" id="loaderCount">0%</div>
 </div>
 
-<main id="top">
-  <!-- S1 — Hero: sticky 3D track, 150vh -->
-  <div id="track">
-    <div class="sticky">
-      <div class="hero-grid">
-        <div class="canvas-cell">
-          <canvas id="scene" aria-label="NJ Coffee bag and takeaway cup in a highland roastery at golden hour"></canvas>
-          <div class="glow glow-gold" aria-hidden="true"></div>
-          <div class="glow glow-green" aria-hidden="true"></div>
-          <div class="glow glow-cream" aria-hidden="true"></div>
-          <div class="stage-vignette" aria-hidden="true"></div>
-          <div class="stage-grain" aria-hidden="true"></div>
-          <div id="webgl-fallback" aria-hidden="true">
-            <img src="v14-assets/takeaway-cup-unbranded.jpg" alt="Plain takeaway coffee cup">
-            <h2 class="display">Good <em>coffee</em>, no shortcuts.</h2>
-            <p class="mono" style="font-size:12px; margin-top:10px; color:rgba(244,239,228,.70)">Single Origin Yirgacheffe &middot; 250g &middot; $18</p>
-            <p style="margin-top:18px"><a class="cta" href="#order" style="height:48px; padding:0 26px; font-size:13px">Order the bag — $18</a></p>
+<header id="siteHeader">
+  <nav class="nav">
+    <a class="brand" href="#top">NJ <b>COFFEE</b></a>
+    <div class="nav-links">
+      <a href="#roast">Roast</a>
+      <a href="#menu">Menu</a>
+      <a href="#story">Our Story</a>
+      <a href="#order">Order</a>
+      <a class="cta nav-cta" href="#order" style="padding:11px 22px; font-size:14px">Order a drink</a>
+    </div>
+  </nav>
+</header>
+
+<main id="page">
+  <!-- ============ HERO: 300vh track, sticky photo stage; scenes cross-fade on scroll ============ -->
+  <section id="heroTrack" aria-label="NJ Coffee hero">
+    <div class="hero-sticky">
+      <div class="hero-stage" id="heroStage">
+        <div class="backdrop-type" id="backdropType">NJ COFFEE<small>Single Origin · Est. 2019</small></div>
+        <div class="hero-scenes" id="heroScenes">
+          <!-- Scene A — the takeaway cup (hero) + beans chip -->
+          <div class="hero-scene" id="sceneA" style="opacity:1">
+            <figure class="photo-card cup-hero-card">
+              <span class="pan"><img src="v18-assets/takeaway-cup.jpg" alt="NJ Coffee takeaway paper cup"></span>
+              <span class="photo-tint"></span>
+              <span class="price-chip">From $3.50</span>
+              <figcaption class="cap">The Cup · <b>Hot, to go</b></figcaption>
+            </figure>
+            <figure class="photo-card chip-card">
+              <span class="pan"><img src="v18-assets/beans-kraft-cream.jpg" alt="Roasted beans spilling onto cream"></span>
+              <span class="photo-tint"></span>
+            </figure>
           </div>
-          <div id="specPill" class="mono">250G &middot; Whole Bean &middot; $18</div>
-          <div id="heroDragCue" class="mono">Drag to rotate</div>
+          <!-- Scene B — the splash -->
+          <div class="hero-scene" id="sceneB">
+            <figure class="photo-card splash-card">
+              <span class="pan"><img src="v18-assets/coffee-splash.jpg" alt="Dramatic coffee splash erupting from a cup"></span>
+              <span class="photo-tint"></span>
+              <figcaption class="cap">The Splash · <b>Crema</b></figcaption>
+            </figure>
+            <figure class="photo-card side-card">
+              <span class="pan"><img src="v18-assets/latte-top.jpg" alt="Top-down latte art"></span>
+              <span class="photo-tint"></span>
+              <figcaption class="cap">Latte Art · <b>Leaf</b></figcaption>
+            </figure>
+          </div>
+          <!-- Scene C — the roastery room -->
+          <div class="hero-scene" id="sceneC">
+            <figure class="photo-card cafe-card">
+              <span class="pan"><img src="v18-assets/cafe-interior.jpg" alt="Warm cream cafe interior with an espresso machine"></span>
+              <span class="photo-tint"></span>
+              <figcaption class="cap">Roastery · <b>Golden hour</b></figcaption>
+            </figure>
+            <figure class="photo-card side-card">
+              <span class="pan"><img src="v18-assets/pour-over.jpg" alt="Barista pouring a gooseneck kettle over a pour-over dripper"></span>
+              <span class="photo-tint"></span>
+              <figcaption class="cap">Brew · <b>Slow spiral</b></figcaption>
+            </figure>
+          </div>
         </div>
-        <div class="hero-copy" id="heroCopy">
-          <p class="eyebrow mono" id="heroEyebrow">NJ Coffee — Single Origin</p>
-          <h1 class="display" id="heroLine">Good <em>coffee</em>, no shortcuts.</h1>
-          <p class="mono" id="heroSpec">Single Origin Yirgacheffe &middot; 250g &middot; $18</p>
-          <p id="heroCtaWrap"><a class="cta hero-cta" id="heroCta" href="#order">Order the bag — $18</a></p>
-          <p class="scroll-cue mono" id="scrollCue">Scroll &#8595;</p>
-          <div class="hero-meta mono" id="heroMeta">
-            <span class="hero-meta-row"><span class="hero-meta-label">Tasting</span> Bergamot &middot; Apricot &middot; Honey</span>
-            <span class="hero-meta-row"><span class="hero-meta-label">Roast</span> Medium <span class="roast-meter" aria-label="Roast level 3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></span>
-            <span class="hero-meta-badge">Est. 2019 &middot; Yirgacheffe, Ethiopia</span>
-            <svg class="est-seal" viewBox="0 0 120 120" aria-hidden="true">
-              <defs><path id="sealPath" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0"/></defs>
-              <circle cx="60" cy="60" r="57" fill="none" stroke="currentColor" stroke-opacity=".55" stroke-width="1"/>
-              <circle cx="60" cy="60" r="33" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1"/>
-              <g class="ring"><text font-family="ui-monospace,Menlo,monospace" font-size="9.5" letter-spacing="3.2" fill="currentColor"><textPath href="#sealPath">EST. 2019 &#183; SINGLE ORIGIN &#183; YIRGACHEFFE &#183;</textPath></text></g>
-              <text x="60" y="58" text-anchor="middle" font-family="Antonio,Arial Narrow,sans-serif" font-size="13" letter-spacing="1.5" fill="currentColor">EST.</text>
-              <text x="60" y="76" text-anchor="middle" font-family="Antonio,Arial Narrow,sans-serif" font-size="19" fill="currentColor">2019</text>
-            </svg>
-          </div>
+        <div class="stage-tint" aria-hidden="true"></div>
+        <div class="hero-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+      </div>
+      <div class="hero-copy" id="heroCopy">
+        <p class="hero-eyebrow mono" id="heroEyebrow">NJ Coffee — Single Origin · Yirgacheffe</p>
+        <p class="hero-eyebrow mono hero-eyebrow-short" id="heroEyebrowShort">NJ Coffee · Yirgacheffe</p>
+        <h1 class="display" id="heroLine">Roasted slow,<br><em>poured gold.</em></h1>
+        <p class="hero-sub" id="heroSub">One farm in the Ethiopian highlands. One small roast, every week. <b>Single Origin Yirgacheffe, poured fresh.</b> No shortcuts, no noise, just the cup.</p>
+        <div class="hero-ctas" id="heroCtaWrap">
+          <a class="cta gold" id="heroCta" href="#order">Order a drink — from $3.50</a>
+          <a class="cta ghost" href="#menu">See the menu ↓</a>
+        </div>
+        <div class="hero-meta" id="heroMeta">
+          <span class="pill"><i></i>Single Origin · Yirgacheffe</span>
+          <span class="pill"><i></i>Poured fresh · Daily</span>
+          <span class="pill gold-dot"><i></i>Roasted weekly</span>
         </div>
       </div>
+      <p class="scroll-cue mono" id="scrollCue">Scroll ↓</p>
+      <p class="drag-cue mono" id="heroDragCue">Drag the photo to pan</p>
+    </div>
+  </section>
+
+  <!-- ============ MARQUEE ============ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marqueeTrack">
+      <span>Roast <b>✦</b> Grind <b>✦</b> Brew <b>✦</b> Pour <b>✦</b> Single Origin <b>✦</b> Yirgacheffe <b>✦</b> Small Batch <b>✦</b> Est. 2019 <b>✦</b></span>
+      <span>Roast <b>✦</b> Grind <b>✦</b> Brew <b>✦</b> Pour <b>✦</b> Single Origin <b>✦</b> Yirgacheffe <b>✦</b> Small Batch <b>✦</b> Est. 2019 <b>✦</b></span>
     </div>
   </div>
 
-  <!-- S2 — Origin -->
-  <section class="on-cream" id="origin">
-    <div class="origin-band">
-      <img src="v14-assets/beans-macro.jpg" alt="Roasted coffee beans, close up" width="1600" height="900">
-    </div>
-    <div class="wrap origin-body">
-      <p class="caption mono reveal-view">Roasted beans — Single Origin &middot; Photo: Tima Miroshnichenko / Pexels</p>
-      <p class="eyebrow mono reveal-view" style="margin-top:36px">The Origin</p>
-      <h2 class="display reveal-view">One farm high in <span class="chip">Yirgacheffe</span>.</h2>
-      <p class="lede reveal-view">Single origin, roasted light. The bag in the hero is the bag you get — 250g, whole bean, $18.</p>
-      <p class="spec-row mono reveal-view" style="margin-top:22px"><span>Yirgacheffe &middot; Ethiopia &middot; 250g &middot; $18</span></p>
-      <p class="giant-numeral reveal-view" aria-label="Altitude 2,200 metres">2,200 m</p>
-    </div>
-  </section>
+  <!-- ============ ROASTERY (terracotta room — real cafe photo behind) ============ -->
+  <section id="roast">
+    <div class="roast-photo" aria-hidden="true"><img src="v18-assets/cafe-interior.jpg" alt="" loading="lazy"></div>
+    <div class="roast-inner">
+      <div class="wrap">
+        <p class="eyebrow rv">The Roastery · Golden Hour</p>
+        <h2 class="reveal-words rv" id="roastHeadline">Slow-roasted. <em>Poured with care.</em><br>Every bean, one small batch.</h2>
+        <p class="lede rv rv-d1" style="margin-top:20px">We roast twelve kilos at a time, in a drum that has run since 2019. The room smells of caramel and cherry by nine in the morning. Pick a roast — the whole scene turns with you.</p>
 
-  <!-- S3 — Roast & Process -->
-  <section class="on-green section-pad" id="roast">
-    <div class="wrap">
-      <div class="roast-grid">
-        <div style="min-width:0">
-          <p class="eyebrow mono reveal-view">The Roast</p>
-          <h2 class="display reveal-view">Roast. Grind. Brew.</h2>
-          <p class="lede reveal-view">Three steps. Zero shortcuts.</p>
-          <div class="process-cards">
-            <div class="process-card reveal-view">
-              <p class="num">01</p>
-              <h3>Roast</h3>
-              <p>Roasted light, in small batches, so the origin stays in the cup.</p>
-            </div>
-            <div class="process-card reveal-view-d1">
-              <p class="num">02</p>
-              <h3>Grind</h3>
-              <p>Ground fresh for the brew you choose — never ground days ahead.</p>
-              <img src="v14-assets/beans-pour.jpg" alt="Coffee beans being poured" width="736" height="1103">
-              <p class="caption mono">Beans, poured</p>
-            </div>
-            <div class="process-card reveal-view-d2">
-              <p class="num">03</p>
-              <h3>Brew</h3>
-              <p>Poured slow, served hot. One origin, five ways to drink it.</p>
-            </div>
+        <div class="roast-wheel rv rv-d2" role="group" aria-label="Roast level">
+          <button class="roast-btn" data-roast="light" type="button">Light<small>Floral · 196°C</small></button>
+          <button class="roast-btn active" data-roast="medium" type="button">Medium<small>Caramel · 205°C</small></button>
+          <button class="roast-btn" data-roast="dark" type="button">Dark<small>Cocoa · 214°C</small></button>
+        </div>
+        <p class="roast-note rv rv-d2">Roast: <b id="roastName">Medium — caramel, cherry, cocoa</b> · <span id="roastTemp">205°C</span> · The wheel turns <b>90°</b> with every change.</p>
+
+        <div class="hold-wrap rv rv-d3">
+          <button class="hold-btn" id="holdBtn" type="button"><span class="fill" id="holdFill"></span><span class="lbl">Hold to crack the bean ↓</span></button>
+          <div class="taste-waypoints" aria-label="Tasting notes">
+            <span class="taste" data-note="caramel">Caramel</span>
+            <span class="taste" data-note="cherry">Cherry</span>
+            <span class="taste" data-note="cocoa">Cocoa</span>
           </div>
         </div>
-        <div style="min-width:0">
-          <img class="roast-img reveal-view" src="v14-assets/roast-texture.jpg" alt="Freshly roasted coffee beans on burlap" width="768" height="1368">
-          <p class="caption mono reveal-view">Fresh roast — on burlap</p>
+        <div class="burst-frame rv rv-d3" id="burstFrame">
+          <img src="v18-assets/beans-kraft-cream.jpg" alt="Roasted beans spilling onto cream">
+          <img class="burst-splash" src="v18-assets/coffee-splash.jpg" alt="Coffee splash erupting from a cup">
+          <span class="burst-cap" id="burstCap">Hold the button — <b>the bean cracks open</b></span>
         </div>
-      </div>
-      <div class="marquee" aria-hidden="true">
-        <div class="marquee-track">
-          <span>Roast &#10022; Grind &#10022; Brew &#10022; Pour &#10022;&nbsp;</span><span>Roast &#10022; Grind &#10022; Brew &#10022; Pour &#10022;&nbsp;</span><span>Roast &#10022; Grind &#10022; Brew &#10022; Pour &#10022;&nbsp;</span><span>Roast &#10022; Grind &#10022; Brew &#10022; Pour &#10022;&nbsp;</span>
+
+        <div class="roast-meter rv rv-d3">
+          <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+          <div class="meter-labels"><span>Light · 196°C</span><span>Medium · 205°C</span><span>Dark · 214°C</span></div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- S4 — Menu: FULL GOLD band -->
-  <section class="menu-band section-pad" id="menu">
-    <div class="wrap">
-      <p class="eyebrow mono reveal-view">The Menu</p>
-      <h2 class="display reveal-view">Pick your pour.</h2>
-      <p class="lede reveal-view">Five drinks. One origin.</p>
-      <figure class="menu-photo reveal-view" style="margin-top:36px">
-        <img src="v14-assets/pour-over.jpg" alt="Barista pouring hot water over coffee grounds" width="1600" height="1067">
-        <figcaption class="caption mono">Pour over — brewed to order &middot; Photo: Michael Burrows / Pexels</figcaption>
-      </figure>
-      <div class="swiper" role="list" aria-label="Drinks menu" id="brewSwiper">
-        <article class="menu-card reveal-view" role="listitem">
-          <h3>Espresso</h3><p>Short, strong, straight up.</p><p class="price">$3.50</p>
-        </article>
-        <article class="menu-card reveal-view-d1" role="listitem">
-          <h3>Cappuccino</h3><p>Espresso, steamed milk, foam.</p><p class="price">$4.50</p>
-        </article>
-        <article class="menu-card reveal-view-d2" role="listitem">
-          <h3>Pour Over</h3><p>Slow, clean, brewed to order.</p><p class="price">$5.00</p>
-        </article>
-        <article class="menu-card reveal-view-d3" role="listitem">
-          <h3>Cold Brew</h3><p>Steeped cold, smooth and mellow.</p><p class="price">$5.50</p>
-        </article>
-        <article class="menu-card reveal-view-d4" role="listitem">
-          <h3>Flat White</h3><p>Double shot, silky microfoam.</p><p class="price">$5.00</p>
-        </article>
-      </div>
-      <div class="menu-cta-wrap">
-        <a class="cta cta-green" href="#order">Order the bag — $18</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- S5 — Brew & Inspect -->
-  <section class="on-cream section-pad" id="inspect">
-    <div class="wrap">
-      <p class="eyebrow mono reveal-view">Inspect the bag</p>
-      <h2 class="display reveal-view">Turn it around.</h2>
-      <p class="lede reveal-view">Drag to rotate — desktop only.</p>
-      <div id="inspectCanvasWrap" class="reveal-view" style="margin-top:32px">
-        <canvas id="inspectCanvas" aria-label="Finished NJ Coffee bag and cup — drag to rotate on desktop"></canvas>
-        <div id="dragCue" class="mono">Drag to rotate</div>
-        <div id="inspectFallback" aria-hidden="true">
-          <img src="v14-assets/takeaway-cup-unbranded.jpg" alt="Plain takeaway coffee cup">
-          <p class="mono" style="font-size:12px; color:rgba(30,61,47,.68)">Single Origin Yirgacheffe &middot; 250g &middot; $18</p>
+        <div class="stats-row rv rv-d4">
+          <div class="stat"><b><span class="tick" data-to="1200">0</span><i>+</i></b><span>Cups poured</span></div>
+          <div class="stat"><b><span class="tick" data-to="95">0</span><i>°</i></b><span>Brew temp</span></div>
+          <div class="stat"><b><span class="tick" data-to="12">0</span><i>kg</i></b><span>Per batch</span></div>
+          <div class="stat"><b><span class="tick" data-to="2019">0</span></b><span>Roasting since</span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- S6 — Order -->
-  <section class="on-cream section-pad" id="order" style="padding-top:24px">
+  <!-- ============ MENU (drink selector re-skins the featured photo) ============ -->
+  <section id="menu">
+    <div class="menu-inner">
+      <div class="wrap">
+        <p class="eyebrow rv">The Menu · Pick a drink, watch the photo change</p>
+        <h2 class="rv">Five ways to <em>drink it.</em></h2>
+        <p class="lede rv rv-d1" style="margin-top:14px">Every drink starts from the same Yirgacheffe. Choose one — the photo, the light and the price change with it.</p>
+        <div class="drink-tabs rv rv-d2" role="group" aria-label="Drink">
+          <button class="drink-tab active" data-drink="espresso" type="button">Espresso</button>
+          <button class="drink-tab" data-drink="cappuccino" type="button">Cappuccino</button>
+          <button class="drink-tab" data-drink="pourover" type="button">Pour Over</button>
+          <button class="drink-tab" data-drink="coldbrew" type="button">Cold Brew</button>
+          <button class="drink-tab" data-drink="flatwhite" type="button">Flat White</button>
+        </div>
+        <div class="menu-grid rv rv-d2" id="menuGrid">
+          <article class="menu-card active" data-drink="espresso" tabindex="0">
+            <span class="glow"></span><span class="tag">Hot</span>
+            <img src="v18-assets/coffee-splash.jpg" alt="Espresso with a dramatic coffee splash">
+            <h3>Espresso</h3><p class="notes">Double shot. Thick crema, dark cherry, a cocoa finish.</p><p class="price">$3.50</p>
+          </article>
+          <article class="menu-card" data-drink="cappuccino" tabindex="0">
+            <span class="glow"></span><span class="tag">Hot</span>
+            <img src="v18-assets/latte-top.jpg" alt="Cappuccino with leaf latte art">
+            <h3>Cappuccino</h3><p class="notes">Silky steamed milk, leaf art, dusted cocoa on top.</p><p class="price">$4.50</p>
+          </article>
+          <article class="menu-card" data-drink="pourover" tabindex="0">
+            <span class="glow"></span><span class="tag">Slow</span>
+            <img src="v18-assets/pour-over.jpg" alt="Barista pouring a gooseneck kettle over a pour-over dripper">
+            <h3>Pour Over</h3><p class="notes">Gooseneck, slow spiral. Floral, tea-like, bright.</p><p class="price">$5.00</p>
+          </article>
+          <article class="menu-card" data-drink="coldbrew" tabindex="0">
+            <span class="glow"></span><span class="tag cold">Iced</span>
+            <img src="v18-assets/beans-kraft-cream.jpg" alt="Roasted beans — cold brew, steeped 18 hours">
+            <h3>Cold Brew</h3><p class="notes">Steeped 18 hours, poured over ice. Smooth, sweet, cold.</p><p class="price">$5.50</p>
+          </article>
+          <article class="menu-card" data-drink="flatwhite" tabindex="0">
+            <span class="glow"></span><span class="tag">Hot</span>
+            <img src="v18-assets/pour-latte.jpg" alt="Barista pouring steamed milk into a flat white">
+            <h3>Flat White</h3><p class="notes">Velvet microfoam, double ristretto, honey sweetness.</p><p class="price">$5.00</p>
+          </article>
+        </div>
+        <div class="drink-detail rv rv-d3" id="drinkDetail">
+          <div class="drink-photo"><img id="drinkPhoto" src="v18-assets/coffee-splash.jpg" alt="Espresso with a dramatic coffee splash"><span class="photo-tint"></span></div>
+          <div>
+            <p class="mono" style="color:var(--gold); font-size:11px; letter-spacing:.26em">Now pouring</p>
+            <p class="big" id="detailName">Espresso — <em>double shot</em></p>
+            <p id="detailDesc" style="margin-top:8px">Thick crema, dark cherry, a cocoa finish. Served hot in the takeaway cup.</p>
+          </div>
+          <p class="dprice" id="detailPrice">$3.50</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STORY: scatter gallery + bento ============ -->
+  <section id="story" class="section-pad">
     <div class="wrap">
-      <hr style="border:0; border-top:1px solid rgba(30,61,47,.22); margin-bottom:56px">
-      <div class="order-grid">
-        <div style="min-width:0">
-          <p class="eyebrow mono reveal-view">Order</p>
-          <h2 class="display reveal-view">Take it <span class="chip">home</span>.</h2>
-          <p class="lede reveal-view">One bag — Single Origin Yirgacheffe, 250g — $18.</p>
-          <form id="orderForm" class="reveal-view" novalidate onsubmit="return false;">
-            <label for="fName">Your name</label>
-            <input id="fName" name="name" type="text" autocomplete="name" placeholder="Your name">
-            <label for="fEmail">Your email</label>
-            <input id="fEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com">
-            <label>Quantity</label>
-            <div class="qty-fixed">1 bag &middot; Single Origin Yirgacheffe 250g &middot; $18</div>
-            <button class="cta order-submit" type="button" id="orderSubmit">Order — $18</button>
-            <p class="demo-note mono">DEMO ONLY — NO ORDER HAS BEEN SENT</p>
+      <p class="eyebrow rv">Our Story · Bean to Cup</p>
+      <h2 class="rv">From a hillside in <em>Yirgacheffe.</em></h2>
+      <p class="lede rv rv-d1" style="margin-top:14px">Washed process, 1,900 metres up. The cherries are picked by hand, dried on raised beds, and shipped to our little roastery — where twelve kilos at a time become your morning cup.</p>
+      <div class="scatter rv rv-d2" id="scatter">
+        <figure class="s1"><img src="v18-assets/beans-kraft-cream.jpg" alt="Roasted beans spilling onto cream"><figcaption>Beans · Fresh Roast</figcaption></figure>
+        <figure class="s2"><img src="v18-assets/cafe-interior.jpg" alt="Warm cream cafe interior with an espresso machine"><figcaption>The Roastery · Warm Cream</figcaption></figure>
+        <figure class="s3"><img src="v18-assets/coffee-splash.jpg" alt="Dramatic coffee splash erupting from a cup"><figcaption>The Splash · Crema, mid-air</figcaption></figure>
+        <figure class="s4"><img src="v18-assets/pour-latte.jpg" alt="Barista pouring latte art"><figcaption>Craft · The Pour</figcaption></figure>
+        <figure class="s5"><img src="v18-assets/latte-top.jpg" alt="Top-down latte art"><figcaption>Latte Art · Leaf</figcaption></figure>
+      </div>
+      <div class="bento">
+        <div class="bento-cell big rv"><h3>One farm, <em>one roast.</em></h3><p>We buy the whole harvest of a single washing station in Yirgacheffe. When it is gone, it is gone — the next lot comes next season, and it will taste a little different. That is the point.</p></div>
+        <div class="bento-cell rv rv-d1"><p class="num">1,900<i>m</i></p><h3>Altitude</h3><p>High-grown, slow-ripening cherries. Denser beans, sweeter cup.</p></div>
+        <div class="bento-cell rv rv-d2"><p class="num">12<i>kg</i></p><h3>Batch size</h3><p>Twelve kilos at a time. Small enough to taste every batch.</p></div>
+        <div class="bento-cell rv rv-d3"><p class="num">18<i>h</i></p><h3>Cold brew steep</h3><p>Eighteen slow hours for the cold brew. No heat, no rush.</p></div>
+        <div class="bento-cell rv rv-d4"><p class="num">95<i>°C</i></p><h3>Brew temp</h3><p>Water at 95 degrees. Hot enough to open the bean, cool enough to keep it sweet.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ JOURNEY: card stack (Source -> Roast -> Brew -> Pour) ============ -->
+  <section id="journey" class="section-pad">
+    <div class="wrap">
+      <p class="eyebrow rv" style="color:var(--gold)">How it works · Four steps</p>
+      <h2 class="rv">Source. Roast. <em>Brew. Pour.</em></h2>
+      <p class="lede rv rv-d1" style="margin-top:14px">Four cards, four steps. Scroll and each one peels away to the next — the same way the bean becomes the cup.</p>
+      <div class="stack" id="stack">
+        <article class="stack-card" data-i="0"><span class="step">01</span><div><p class="mono">Source</p><h3>Yirgacheffe, Ethiopia</h3><p>Washed process, hand-picked cherries from one washing station, dried on raised beds under the highland sun.</p></div></article>
+        <article class="stack-card" data-i="1"><span class="step">02</span><div><p class="mono">Roast</p><h3>Twelve kilos, one drum</h3><p>Roasted in small batches at golden hour. Light is floral, medium is caramel, dark is cocoa — you choose the wheel.</p></div></article>
+        <article class="stack-card" data-i="2"><span class="step">03</span><div><p class="mono">Brew</p><h3>95 degrees, no rush</h3><p>Water at 95°C, ground fresh for the method — espresso in seconds, pour-over in slow spirals, cold brew in eighteen hours.</p></div></article>
+        <article class="stack-card" data-i="3"><span class="step">04</span><div><p class="mono">Pour</p><h3>Into your cup</h3><p>Into the takeaway paper cup, kraft sleeve, glossy lid — or over ice in the clear glass. Take it home, or drink it on the walk.</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ORDER (local only — DEMO ONLY) ============ -->
+  <section id="order" class="section-pad">
+    <div class="wrap">
+      <p class="eyebrow rv">Order · Demo only</p>
+      <h2 class="rv">Order a <em>drink.</em></h2>
+      <p class="lede rv rv-d1" style="margin-top:14px">Single Origin Yirgacheffe, poured fresh — from Espresso <b>$3.50</b> to Cold Brew <b>$5.50</b>. Fill the form and we will pretend very hard that your cup is on its way.</p>
+      <div class="order-grid" style="margin-top:44px">
+        <div class="order-card rv rv-d2">
+          <span class="bb" aria-hidden="true"></span>
+          <form id="orderForm" novalidate onsubmit="return false;">
+            <div class="row">
+              <div><label for="fName">Your name</label><input id="fName" name="name" type="text" autocomplete="name" placeholder="Your name"></div>
+              <div><label for="fEmail">Email</label><input id="fEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com"></div>
+            </div>
+            <div class="row">
+              <div><label for="fDrink">Drink</label>
+                <select id="fDrink" name="drink">
+                  <option value="Espresso — $3.50">Espresso — $3.50</option>
+                  <option value="Cappuccino — $4.50">Cappuccino — $4.50</option>
+                  <option value="Pour Over — $5.00">Pour Over — $5.00</option>
+                  <option value="Cold Brew — $5.50">Cold Brew — $5.50</option>
+                  <option value="Flat White — $5.00">Flat White — $5.00</option>
+                </select>
+              </div>
+              <div><label for="fQty">Cups</label>
+                <select id="fQty" name="qty">
+                  <option value="1">1 cup</option>
+                  <option value="2">2 cups</option>
+                  <option value="3">3 cups</option>
+                </select>
+              </div>
+            </div>
+            <div class="row"><div class="full"><label for="fNote">Note (optional)</label><input id="fNote" name="note" type="text" placeholder="Grind it for pour-over, please"></div></div>
+            <p style="margin-top:24px"><button class="cta gold" type="button" id="orderSubmit">Order — $3.50</button></p>
+            <p class="mono" style="font-size:11px; letter-spacing:.18em; color:var(--espresso-soft); margin-top:16px">Demo only — nothing is sent anywhere. No account, no payment.</p>
           </form>
           <div id="orderResult" role="status">
-            <p class="big">DEMO ONLY — NO ORDER HAS BEEN SENT</p>
+            <h3>Order received — <em>almost.</em></h3>
+            <p id="orderSummary">Thank you! Your cup is on its way (in this demo, at least).</p>
+            <span class="demo-flag">DEMO ONLY — NO ORDER HAS BEEN SENT</span>
           </div>
         </div>
-        <div class="order-photo" style="min-width:0">
-          <img class="reveal-view" src="v14-assets/takeaway-cup-unbranded.jpg" alt="Plain takeaway coffee cup" width="840" height="1134">
-          <p class="caption mono reveal-view">Takeaway — your cup, your ritual. &middot; Photo: Cup of Couple / Pexels</p>
+        <div class="order-side rv rv-d3">
+          <img src="v18-assets/takeaway-cup.jpg" alt="NJ Coffee takeaway paper cup">
+          <p class="spec"><b>Single Origin Yirgacheffe</b> · Poured fresh<br><b>Espresso $3.50 – Cold Brew $5.50</b> · Roasted weekly · Est. 2019<br>Washed process · 1,900m · Floral, caramel, cocoa</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- S7 — Footer -->
+  <!-- ============ FOOTER ============ -->
   <footer>
     <div class="wrap">
-      <p class="display">NJ COFFEE</p>
-      <p>Single Origin Yirgacheffe &middot; 250g &middot; $18 &middot; Demo site — no orders are sent.</p>
-      <p class="credits mono">Photos — Pexels: Tima Miroshnichenko, Michael Burrows, Cup of Couple &middot; Pinterest pins: &ldquo;Freshly roasted coffee beans&rdquo; (Sadafsadiq / Nature Canvas), &ldquo;Coffee beans being poured into grinder&rdquo; (Alaamalsharaya, Caff&egrave; Toscano)</p>
+      <p class="display">NJ <b>COFFEE</b></p>
+      <p>Single Origin Yirgacheffe · Slow roast, golden pour.</p>
+      <p class="mono" style="font-size:12px; letter-spacing:.2em">Roast ✦ Grind ✦ Brew ✦ Pour — Est. 2019</p>
+      <p class="credits mono">Demo site — no orders are sent. Photos — Pexels: Michael Burrows, Cup of Couple, Anastasia Ilina-Makarova · Pinterest pins (beans, latte, cafe). Photo hero — real photography, Lenis smooth scroll, GSAP ScrollTrigger, and vanilla CSS/JS recreations of Vengeance UI, Magic UI and Smooth UI motion.</p>
     </div>
   </footer>
 </main>
 
-<script type="importmap">
-{ "imports": {
-    "three": "./three.module.min.js",
-    "three/addons/": "./jsm/"
-} }
-</script>
-<script type="module">
-import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-
-document.querySelectorAll('.cta').forEach(el => { const w = document.createElement('span'); w.className = 'bb'; w.setAttribute('aria-hidden', 'true'); el.appendChild(w); });
-
-/* NJ Coffee v16 — "Highland Reserve"
-   Deep-green roastery at golden hour. One lerp x0.18 is the only
-   smoothing layer. Real Three.js product: cream bag + takeaway cup. */
-
-const FOREST = 0x1E3D2F, CREAM = 0xF4EFE4, GOLD = 0xE9B44C;
-const CANOPY = 0x122A1F, MOSS = 0x2A4A38, SAGE = 0x8FA98F, BRASS = 0xC08A2E, KRAFT = 0xC9A876;
-const BEAN = 0x4A2E1B;
+<script src="vendor/lenis.min.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script>
+/* NJ Coffee v18 — "Terracotta Roast" PHOTO HERO (built from scratch)
+   Cream #F6EDE0 / Terracotta #C0562F / Espresso #2A170E / Honey Gold #E9A94B.
+   No 3D, no WebGL: real photos, layered cards, parallax, Ken Burns, drag-to-pan,
+   scroll-driven cross-fades. No fetch/XHR/WebSocket. Lenis + GSAP ScrollTrigger local. */
 
 const params = new URLSearchParams(location.search);
 const pParam = params.has('p') ? Math.min(1, Math.max(0, parseFloat(params.get('p')) || 0)) : null;
@@ -534,39 +707,20 @@ const stillMode = params.get('still') === '1';
 const noLoader = params.get('noloader') === '1';
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isMobile = () => innerWidth < 768;
-const lowMem = (navigator.deviceMemory || 8) <= 4;
+const finePointer = matchMedia('(pointer: fine)').matches;
 
-/* Camera distances — beat sheet: 6.4 -> 5.0 -> 5.6 -> 6.4 desktop;
-   mobile pulled back (7.0 base) so bag + cup + steam fit. */
-const LAYOUT = isMobile()
-  ? { baseDist: 7.8, d1: 6.2, d2: 6.9, d3: 7.8 }
-  : { baseDist: 6.4, d1: 5.0, d2: 5.6, d3: 6.4 };
+/* ---------- helpers ---------- */
+const clamp01 = v => Math.min(1, Math.max(0, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = t => { t = clamp01(t); return t * t * (3 - 2 * t); };
+function seg(p, a, b) { return smooth((p - a) / (b - a)); }
 
-const FLOOR_Y = -0.70;
-const CAM_Y = isMobile() ? 3.5 : 3.6, LOOK0 = 1.3, FOV0 = isMobile() ? 52 : 48;   /* raised camera: sees the bag's crimped top + the lid ellipse */
-const SCALE = isMobile() ? 1.45 : 1.6;                 /* product scale: bag fills 60-70% viewport height at 6.4 / FOV 48 */
-const PROD_Y = FLOOR_Y + 0.715 * SCALE;   /* bag base AND cup base both rest exactly on FLOOR_Y */
-const BAG_POS = new THREE.Vector3(-0.55, 0.31, 0);   /* bag bottom sits on the floor (was 0.35 — floated 0.07) */
-const CUP_POS = new THREE.Vector3(0.95, -0.715, 0.15);
-/* World-space mouths (scaled product): bag top seal, cup rim. */
-const bagMouth = new THREE.Vector3(BAG_POS.x * SCALE, PROD_Y + (BAG_POS.y + 1.15) * SCALE, 0);
-const cupMouth = new THREE.Vector3(CUP_POS.x * SCALE, PROD_Y + (CUP_POS.y + 1.55) * SCALE, CUP_POS.z * SCALE);
-
-/* Floor/wall junction = the horizon line. Solved so that in the first frame it projects
-   exactly 1/3 up from the bottom of the canvas (camera pitch + fov), on desktop and mobile. */
-const WALL_Z0 = (() => {
-  const pitch = Math.atan((CAM_Y - LOOK0) / LAYOUT.baseDist);
-  const below = Math.atan(Math.tan(FOV0 * Math.PI / 360) / 3);
-  return Math.min(-1.15, LAYOUT.baseDist - (CAM_Y - FLOOR_Y) / Math.tan(pitch + below));
-})();
-const WALL_Z1 = -4.4;   /* wall retreats once the camera orbits so the product never clips it */
-
-/* Kinetic text loader: max 800ms, then gone. 9s absolute safety timeout. */
+/* ---------- loader ---------- */
 const loaderEl = document.getElementById('loader');
 const loaderCount = document.getElementById('loaderCount');
 let loaderHidden = false;
 function hideLoader(){ if (loaderHidden) return; loaderHidden = true; if (loaderEl) { loaderEl.classList.add('hide'); setTimeout(() => { if (loaderEl) loaderEl.remove(); }, 450); } }
-if (noLoader) { hideLoader(); }
+if (noLoader) hideLoader();
 else {
   const t0 = performance.now();
   const tick = () => {
@@ -582,664 +736,117 @@ setTimeout(hideLoader, 9000);
 
 window.__auroraSceneReady = false;
 
-const track = document.getElementById('track');
-const canvas = document.getElementById('scene');
-
-/* ---------- helpers ---------- */
-const clamp01 = v => Math.min(1, Math.max(0, v));
-const lerp = (a, b, t) => a + (b - a) * t;
-const smooth = t => { t = clamp01(t); return t * t * (3 - 2 * t); };
-function seg(p, a, b) { return smooth((p - a) / (b - a)); }
-
-function canvasTexture(w, h, draw) {
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
-  draw(c.getContext('2d'), w, h);
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
-  return t;
+/* ---------- smooth scroll (Lenis) ---------- */
+let lenis = null;
+if (typeof Lenis !== 'undefined' && !reducedMotion) {
+  try { lenis = new Lenis({ duration: 1.15, smoothWheel: true }); } catch (e) { lenis = null; }
 }
 
-/* ---------- label + sleeve artwork (drawn, original) ----------
-   Label: Forest Green block on the cream bag, cream text, $18 in gold.
-   Label zone (bag-local): x [-0.55, 0.55], y [0.10, 0.95]. */
-const labelTex = canvasTexture(512, 384, (g, w, h) => {
-  g.fillStyle = '#1E3D2F'; g.fillRect(0, 0, w, h);
-  g.fillStyle = '#E9B44C'; g.fillRect(0, 0, w, 14);            /* gold seal echo */
-  g.fillStyle = '#F4EFE4'; g.textAlign = 'center';
-  g.font = '600 84px Georgia, serif'; g.fillText('NJ', w / 2, 128);
-  g.font = '600 58px Georgia, serif'; g.fillText('COFFEE', w / 2, 196);
-  g.fillStyle = '#E9B44C'; g.fillRect(w / 2 - 80, 224, 160, 4);
-  g.fillStyle = '#F4EFE4'; g.font = '500 28px monospace';
-  g.fillText('SINGLE ORIGIN', w / 2, 272);
-  g.fillText('YIRGACHEFFE · 250G', w / 2, 312);
-  g.fillStyle = '#E9B44C'; g.font = '600 40px monospace';
-  g.fillText('$18', w / 2, 352);
-  /* Degassing valve: small gold-ringed vent, top-right of the label. */
-  g.strokeStyle = '#E9B44C'; g.lineWidth = 3;
-  g.beginPath(); g.arc(w - 52, 52, 15, 0, Math.PI * 2); g.stroke();
-  g.fillStyle = '#122A1F';
-  g.beginPath(); g.arc(w - 52, 52, 10, 0, Math.PI * 2); g.fill();
-  g.fillStyle = '#F4EFE4'; g.font = '500 13px monospace';
-  g.fillText('ROASTED ON · NOV 2026', w / 2, 378);
-});
-/* Sleeve art, 2048x512 for crispness. The whole print block is smaller and sits in the
-   upper-middle of the UV space (rows ~120-300 of 512) so BOTH lines clear the sleeve edges. */
-const sleeveTex = canvasTexture(2048, 512, (g, w, h) => {
-  g.fillStyle = '#C9A876'; g.fillRect(0, 0, w, h);
-  g.fillStyle = 'rgba(90,62,32,.22)';
-  for (let i = 0; i < 90; i++) g.fillRect(Math.random() * w, Math.random() * h, 40 + Math.random() * 120, 1.5);
-  g.fillStyle = 'rgba(244,239,228,.14)';
-  for (let i = 0; i < 60; i++) g.fillRect(Math.random() * w, Math.random() * h, 30 + Math.random() * 80, 1.5);
-  g.fillStyle = '#1E3D2F'; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
-  g.font = '700 76px Georgia, serif'; g.fillText('NJ COFFEE', w / 2, 205);
-  g.fillRect(w / 2 - 110, 232, 220, 4);
-  g.font = '700 40px ui-monospace, Menlo, monospace'; g.fillText('SINGLE ORIGIN', w / 2, 296);
-  g.fillRect(w - 52, 0, 16, h);        /* overlap seam, at the back */
-});
-/* Bag body: MATTE paper, not stucco — a very subtle vertical gradient
-   (lighter at the top, faintly deeper at the bottom) + a faint horizontal
-   sheen. Flat cream is banned; popcorn bump is banned. */
-const bagTex = canvasTexture(512, 512, (g, w, h) => {
-  g.fillStyle = '#F4EFE4'; g.fillRect(0, 0, w, h);
-  const vgrad = g.createLinearGradient(0, 0, 0, h);
-  vgrad.addColorStop(0, 'rgba(255,255,255,.10)'); vgrad.addColorStop(0.55, 'rgba(255,255,255,0)'); vgrad.addColorStop(1, 'rgba(30,61,47,.07)');
-  g.fillStyle = vgrad; g.fillRect(0, 0, w, h);
-  /* faint horizontal sheen band, like a satin-matte paper stock */
-  const sheen = g.createLinearGradient(0, 0, w, 0);
-  sheen.addColorStop(0, 'rgba(255,255,255,0)'); sheen.addColorStop(0.30, 'rgba(255,255,255,.07)'); sheen.addColorStop(0.55, 'rgba(255,255,255,0)'); sheen.addColorStop(1, 'rgba(30,61,47,.05)');
-  g.fillStyle = sheen; g.fillRect(0, 0, w, h);
-  /* crimped-top artwork: corner gusset shading, two crease lines, fold shadow */
-  const sh = (x0, dir) => { const t = g.createLinearGradient(x0, 0, x0 + dir * 120, 0); t.addColorStop(0, 'rgba(60,50,30,.16)'); t.addColorStop(1, 'rgba(60,50,30,0)');
-    g.fillStyle = t; g.beginPath(); g.moveTo(x0, 0); g.lineTo(x0 + dir * 120, 118); g.lineTo(x0, 118); g.closePath(); g.fill(); };
-  sh(0, 1); sh(w, -1);
-  [[44, .20], [84, .26]].forEach(([y, a]) => {
-    g.fillStyle = 'rgba(70,56,32,' + a + ')'; g.fillRect(0, y, w, 2);
-    g.fillStyle = 'rgba(255,255,255,.45)'; g.fillRect(0, y + 2, w, 1.5);
-  });
-  const fs = g.createLinearGradient(0, 86, 0, 150);
-  fs.addColorStop(0, 'rgba(40,40,25,.14)'); fs.addColorStop(1, 'rgba(40,40,25,0)');
-  g.fillStyle = fs; g.fillRect(0, 86, w, 64);
-});
-const shadowTex = canvasTexture(256, 256, (g, w, h) => {
-  const r = g.createRadialGradient(w/2, h/2, 8, w/2, h/2, w/2);
-  r.addColorStop(0, 'rgba(3,10,6,.85)'); r.addColorStop(.5, 'rgba(3,10,6,.42)'); r.addColorStop(1, 'rgba(3,10,6,0)');
-  g.fillStyle = r; g.fillRect(0, 0, w, h);
-});
-/* Steam wisp: a soft S-curved tendril (stacked radial puffs along a sine path), white. */
-const steamTex = canvasTexture(128, 256, (g, w, h) => {
-  for (let i = 0; i < 46; i++) {
-    const t = i / 45, x = w / 2 + Math.sin(t * 5.2) * w * 0.20 * (0.25 + t), y = h * (0.94 - t * 0.88), r = 9 + t * 22;
-    const gr = g.createRadialGradient(x, y, 0, x, y, r);
-    gr.addColorStop(0, 'rgba(255,255,255,' + (0.30 * (1 - t * 0.55)).toFixed(3) + ')'); gr.addColorStop(1, 'rgba(255,255,255,0)');
-    g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
-  }
-});
-/* Stage floor: Deep Canopy at the edges, Forest at the centre, only a faint
-   warm pool under the product — never a muddy mustard wash. Matte, not glossy. */
-const floorTex = canvasTexture(512, 512, (g, w, h) => {
-  const grad = g.createRadialGradient(w/2, h/2, 10, w/2, h/2, w * 0.5);
-  grad.addColorStop(0, '#2B4C39'); grad.addColorStop(.5, '#1F402F'); grad.addColorStop(1, '#122A1F');
-  g.fillStyle = grad; g.fillRect(0, 0, w, h);
-});
-/* Back wall (cyclorama): Canopy at the top, lifting to Moss at the floor junction so the
-   horizon line READS; a warm gold glow sits behind-right of the bag (the rim light's halo). */
-const wallTex = canvasTexture(1024, 512, (g, w, h) => {
-  const grad = g.createLinearGradient(0, 0, 0, h);
-  grad.addColorStop(0, '#122A1F'); grad.addColorStop(.62, '#1B382A'); grad.addColorStop(1, '#2F5A43');
-  g.fillStyle = grad; g.fillRect(0, 0, w, h);
-  for (let i = 0; i < 40; i++) { g.fillStyle = i % 2 ? 'rgba(18,42,31,.10)' : 'rgba(42,74,56,.10)'; g.fillRect(Math.random() * w, 0, 10 + Math.random() * 34, h); }
-  const gl = g.createRadialGradient(w * 0.545, h * 0.62, 6, w * 0.545, h * 0.62, 150);
-  gl.addColorStop(0, 'rgba(255,214,150,.30)'); gl.addColorStop(.5, 'rgba(233,180,76,.11)'); gl.addColorStop(1, 'rgba(233,180,76,0)');
-  g.fillStyle = gl; g.fillRect(0, 0, w, h);
-  const hl = g.createLinearGradient(0, 0, w, 0);
-  hl.addColorStop(0, 'rgba(233,180,76,0)'); hl.addColorStop(.5, 'rgba(233,180,76,.55)'); hl.addColorStop(1, 'rgba(233,180,76,0)');
-  g.fillStyle = hl; g.fillRect(0, h - 3, w, 3);   /* thin warm horizon line at the junction */
-});
-/* Warm gold glow behind the product (in-scene, reads as light) — kept soft. */
-const glowTex = canvasTexture(512, 512, (g, w, h) => {
-  const r = g.createRadialGradient(w / 2, h * 0.55, 10, w / 2, h * 0.55, w * 0.62);
-  r.addColorStop(0, 'rgba(233,180,76,.55)'); r.addColorStop(.55, 'rgba(233,180,76,.20)'); r.addColorStop(1, 'rgba(233,180,76,0)');
-  g.fillStyle = r; g.fillRect(0, 0, w, h);
-});
-/* Treeline horizon backdrop: Deep Canopy sky, Forest mid-band, a dark
-   canopy silhouette along the horizon, gold sun-glow through the trees. */
-const treelineTex = canvasTexture(1024, 512, (g, w, h) => {
-  const grad = g.createLinearGradient(0, 0, 0, h);
-  grad.addColorStop(0, '#122A1F'); grad.addColorStop(.55, '#1E3D2F'); grad.addColorStop(1, '#2A4A38');
-  g.fillStyle = grad; g.fillRect(0, 0, w, h);
-  const sun = g.createRadialGradient(w * 0.42, h * 0.52, 6, w * 0.42, h * 0.52, w * 0.30);
-  sun.addColorStop(0, 'rgba(233,180,76,.50)'); sun.addColorStop(1, 'rgba(233,180,76,0)');
-  g.fillStyle = sun; g.fillRect(0, 0, w, h);
-  /* canopy silhouette: overlapping dark crowns along the horizon */
-  g.fillStyle = '#122A1F';
-  let x = -20;
-  while (x < w + 40) {
-    const rw = 90 + Math.random() * 130, rh = 60 + Math.random() * 90;
-    g.beginPath(); g.ellipse(x + rw / 2, h * 0.62, rw / 2, rh / 2, 0, Math.PI, 0); g.fill();
-    g.fillRect(x, h * 0.62 - rh * 0.12, rw * 0.5, rh * 0.3);
-    x += rw * 0.55;
-  }
-  /* second, nearer treeline row, slightly lighter moss */
-  g.fillStyle = '#1E3D2F';
-  x = -40;
-  while (x < w + 40) {
-    const rw = 70 + Math.random() * 100, rh = 40 + Math.random() * 60;
-    g.beginPath(); g.ellipse(x + rw / 2, h * 0.78, rw / 2, rh / 2, 0, Math.PI, 0); g.fill();
-    x += rw * 0.6;
-  }
-});
-/* Moss roastery-wall panels: vertical streaks, Forest / Moss. */
-const mossTex = canvasTexture(256, 512, (g, w, h) => {
-  g.fillStyle = '#2A4A38'; g.fillRect(0, 0, w, h);
-  for (let i = 0; i < 60; i++) {
-    g.fillStyle = i % 2 ? 'rgba(18,42,31,.35)' : 'rgba(30,61,47,.35)';
-    g.fillRect(Math.random() * w, 0, 6 + Math.random() * 18, h);
-  }
-  g.fillStyle = 'rgba(233,180,76,.06)';
-  g.fillRect(0, 0, 10, h);
-});
-
-/* ---------- renderer ---------- */
-let renderer;
-try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
-} catch (e) { renderer = null; }
-if (renderer) {
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, lowMem ? 1.75 : 2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-}
-
-function showFallback() {
-  document.getElementById('webgl-fallback').classList.add('show');
-  document.getElementById('webgl-fallback').setAttribute('aria-hidden', 'false');
-  canvas.style.display = 'none';
-  const hc = document.getElementById('heroCopy'); if (hc) hc.style.display = 'none';
-  const wrap = document.getElementById('inspectCanvasWrap');
-  if (wrap) {
-    const c2 = document.getElementById('inspectCanvas'); if (c2) c2.style.display = 'none';
-    const cue = document.getElementById('dragCue'); if (cue) cue.style.display = 'none';
-    const fb = document.getElementById('inspectFallback');
-    if (fb) { fb.style.display = 'block'; fb.setAttribute('aria-hidden', 'false'); }
-  }
-}
-if (!renderer) { document.body.classList.add('ready'); hideLoader(); showFallback(); }
-
-/* ---------- scene, camera, lights ---------- */
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(FOREST);
-scene.fog = new THREE.FogExp2(FOREST, 0.025);   /* crisper horizon — floor meets backdrop cleanly */
-const camera = new THREE.PerspectiveCamera(isMobile() ? 52 : 48, 1, 0.1, 60);
-const pmrem = renderer ? new THREE.PMREMGenerator(renderer) : null;
-if (pmrem) { scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture; }
-
-/* Dramatic, directional golden-hour light: warm gold key upper-left,
-   cool green fill, gold rim back-right, warm ember low behind. */
-const key = new THREE.DirectionalLight(0xFFE9C4, 2.5);
-key.position.set(-6, 5, 3); key.castShadow = true;
-key.shadow.mapSize.set(2048, 2048);
-key.shadow.camera.left = -5; key.shadow.camera.right = 5;
-key.shadow.camera.top = 5; key.shadow.camera.bottom = -5;
-key.shadow.camera.far = 20; key.shadow.bias = -0.0005;
-key.shadow.radius = 8;
-scene.add(key);
-const rig = new THREE.Group(); scene.add(rig);                    /* wall + rim light orbit with the camera so they stay behind the product */
-const rim = new THREE.SpotLight(GOLD, 60, 18, 0.5, 0.9, 2);     /* warm gold, behind-right: separates the bag from the dark-green field */
-rim.position.set(3.6, 2.9, -2.4);
-const rimTarget = new THREE.Object3D(); rimTarget.position.set(-0.2, 1.3, 0);
-rig.add(rim, rimTarget); rim.target = rimTarget;
-const fill = new THREE.HemisphereLight(CREAM, FOREST, 0.5);      /* cool green fill */
-scene.add(fill);
-const ember = new THREE.PointLight(GOLD, 1.2, 10, 2);              /* warm ember, low behind — kept faint */
-ember.position.set(0, -0.2, -1.5); scene.add(ember);
-const cursorLight = new THREE.PointLight(0xFFE9C4, 0, 8, 2);      /* mouse-follow light, fine-pointer only */
-cursorLight.position.set(0, 1, 3); scene.add(cursorLight);
-
-/* ---------- materials (per-material envMapIntensity; r160) ---------- */
-const bagMat   = new THREE.MeshPhysicalMaterial({ map: bagTex, roughness: 0.86, metalness: 0, sheen: 0.35, sheenRoughness: 0.7, sheenColor: new THREE.Color(0xFFF3DC), envMapIntensity: 0.4 });   /* matte paper, no bump */
-const finMat   = new THREE.MeshStandardMaterial({ color: 0xEBE3D0, roughness: 0.9, metalness: 0, side: THREE.DoubleSide, envMapIntensity: 0.35 });
-const labelMat = new THREE.MeshStandardMaterial({ map: labelTex, roughness: 0.8, metalness: 0, envMapIntensity: 0.5 });
-const sealMat  = new THREE.MeshStandardMaterial({ color: GOLD, roughness: 0.25, metalness: 0.9, envMapIntensity: 1.2 });
-const kraftMat = new THREE.MeshStandardMaterial({ map: sleeveTex, roughness: 0.85, metalness: 0, envMapIntensity: 0.5 });
-const lidMat   = new THREE.MeshPhysicalMaterial({ color: 0x111111, roughness: 0.15, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 1.0 });
-const cupMat   = new THREE.MeshPhysicalMaterial({ color: CREAM, roughness: 0.32, clearcoat: 0.7, clearcoatRoughness: 0.25, envMapIntensity: 0.8 });
-const leafDarkMat = new THREE.MeshStandardMaterial({ color: 0x4F8A5C });
-const leafMossMat = new THREE.MeshStandardMaterial({ color: 0x78AE68 });
-
-/* ---------- product builders (original procedural geometry) ---------- */
-/* Roasted bean: matte mottled surface; the centre crease is real geometry (an S-curved groove
-   pressed into the flat side), so it reads as a coffee bean, not a smooth chocolate egg. */
-const beanTex = canvasTexture(128, 128, (g, w, h) => {
-  g.fillStyle = '#4A2E1B'; g.fillRect(0, 0, w, h);
-  for (let i = 0; i < 300; i++) {
-    const v = 48 + Math.floor(Math.random() * 40);
-    g.fillStyle = 'rgba(' + v + ',' + Math.floor(v * 0.62) + ',' + Math.floor(v * 0.38) + ',.55)';
-    g.fillRect(Math.random() * w, Math.random() * h, 2 + Math.random() * 6, 2 + Math.random() * 6);
-  }
-});
-const beanMats = [0x4A2E1B, 0x3C2515, 0x573720].map(c => new THREE.MeshStandardMaterial({ color: c, map: beanTex, roughness: 0.92, metalness: 0, envMapIntensity: 0.2 }));
-const beanGeo = (() => {
-  const g = new THREE.SphereGeometry(0.075, 30, 22), P = g.attributes.position;
-  for (let i = 0; i < P.count; i++) {
-    let x = P.getX(i) * 1.25, y = P.getY(i) * 0.62, z = P.getZ(i) * 0.82;
-    if (y > 0) {
-      const xn = x / (0.075 * 1.25), dz = z - Math.sin(xn * 2.6) * 0.010;
-      y -= Math.exp(-(dz * dz) / (0.012 * 0.012)) * 0.015 * (1 - xn * xn) ;
-    }
-    P.setXYZ(i, x, y, z);
-  }
-  g.computeVertexNormals();
-  return g;
-})();
-function makeBean(scale = 1) {
-  const m = new THREE.Mesh(beanGeo, beanMats[Math.floor(Math.random() * beanMats.length)]);
-  m.scale.set(scale * (0.86 + Math.random() * 0.28), scale * (0.86 + Math.random() * 0.28), scale * (0.86 + Math.random() * 0.28));
-  m.castShadow = true; m.receiveShadow = true;
-  return m;
-}
-function beanShadow(x, z, s) {
-  const d = new THREE.Mesh(new THREE.PlaneGeometry(0.40 * s, 0.26 * s), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: 0.8, depthWrite: false }));
-  d.rotation.x = -Math.PI / 2; d.position.set(x + 0.03, FLOOR_Y + 0.008, z + 0.025);
-  return d;
-}
-function leafTex(hex) {
-  /* Backlit foliage: light mid-green to pale sage, strong cream midrib, curved side veins,
-     secondary veins, edge shading and mottling — reads as a real leaf, not a silhouette. */
-  const base = new THREE.Color(hex), c1 = '#' + base.clone().multiplyScalar(0.55).getHexString(), c2 = '#' + base.clone().lerp(new THREE.Color(0xD2E0B4), 0.45).getHexString();
-  return canvasTexture(256, 512, (g, w, h) => {
-    const gr = g.createLinearGradient(0, h, 0, 0); gr.addColorStop(0, c1); gr.addColorStop(0.5, '#' + base.getHexString()); gr.addColorStop(1, c2);
-    g.fillStyle = gr; g.fillRect(0, 0, w, h);
-    for (let i = 0; i < 70; i++) { g.fillStyle = Math.random() > .5 ? 'rgba(210,235,160,.07)' : 'rgba(10,40,20,.08)'; g.beginPath(); g.arc(Math.random() * w, Math.random() * h, 8 + Math.random() * 26, 0, 6.3); g.fill(); }
-    g.lineCap = 'round';
-    for (let i = 1; i < 15; i++) {
-      const y0 = h - i * (h / 15.6), L = 150 - i * 4;
-      [-1, 1].forEach(sd => {
-        g.strokeStyle = 'rgba(244,239,228,.42)'; g.lineWidth = 2.6; g.beginPath(); g.moveTo(w / 2, y0); g.quadraticCurveTo(w / 2 + sd * L * 0.55, y0 - 8, w / 2 + sd * L, y0 - 62 - i * 1.5); g.stroke();
-        g.strokeStyle = 'rgba(244,239,228,.17)'; g.lineWidth = 1;
-        for (let k = 1; k < 4; k++) { const tx = w / 2 + sd * L * (0.25 + k * 0.2), ty = y0 - 8 - k * 12; g.beginPath(); g.moveTo(tx, ty); g.lineTo(tx + sd * 16, ty - 26); g.stroke(); }
+/* ---------- GSAP ScrollTrigger: menu-card + bento stagger entrances ---------- */
+if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+  try {
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.utils.toArray('.menu-card').forEach((card, i) => {
+      gsap.from(card, {
+        y: 34, opacity: 0, duration: .6, delay: (i % 5) * .06, ease: 'power3.out',
+        scrollTrigger: { trigger: card, start: 'top 88%', once: true }
       });
-    }
-    g.strokeStyle = 'rgba(244,239,228,.72)'; g.lineWidth = 6; g.beginPath(); g.moveTo(w / 2, h); g.quadraticCurveTo(w / 2 + 6, h * 0.5, w / 2, 8); g.stroke();
-    const eg = g.createLinearGradient(0, 0, w, 0);
-    eg.addColorStop(0, 'rgba(8,30,16,.34)'); eg.addColorStop(0.22, 'rgba(8,30,16,0)'); eg.addColorStop(0.78, 'rgba(8,30,16,0)'); eg.addColorStop(1, 'rgba(8,30,16,.34)');
-    g.fillStyle = eg; g.fillRect(0, 0, w, h);
-  });
-}
-function makeLeaf(scale = 1, mat = leafMossMat) {
-  const geo = new THREE.PlaneGeometry(1, 1, 10, 22), P = geo.attributes.position;
-  for (let i = 0; i < P.count; i++) {
-    const u = P.getX(i) + 0.5, v = P.getY(i) + 0.5, e = (u - 0.5) * 2;
-    const hw = Math.pow(Math.sin(Math.PI * Math.pow(v, 0.7)), 0.8) * 0.21;      /* lanceolate outline */
-    const fold = Math.abs(e) * hw * 1.1;                                          /* V-fold along the midrib */
-    const roll = Math.pow(Math.abs(e), 3) * 0.07 * Math.sin(Math.PI * Math.min(1, v * 1.1)); /* curled-up margins */
-    const wav = Math.sin(v * 13 + e * 2) * 0.016 * Math.abs(e);                  /* wavy edge */
-    P.setXYZ(i, e * hw, v * 0.78 - 0.3 - Math.pow(v, 3) * 0.10, fold + roll + wav + v * v * 0.30);   /* tip curls over */
-  }
-  geo.computeVertexNormals();
-  const tex = leafTex(mat.color.getHex());
-  const lm = new THREE.MeshStandardMaterial({ map: tex, emissiveMap: tex, emissive: new THREE.Color(0x9FD08A), emissiveIntensity: 0.22, roughness: 0.55, metalness: 0, side: THREE.DoubleSide, envMapIntensity: 0.6 });  /* emissive = back-lit translucency */
-  const m = new THREE.Mesh(geo, lm);
-  m.scale.setScalar(scale); m.castShadow = true;
-  return m;
+    });
+    gsap.utils.toArray('.bento-cell').forEach((cell, i) => {
+      gsap.from(cell, {
+        y: 30, opacity: 0, duration: .6, delay: (i % 4) * .07, ease: 'power3.out',
+        scrollTrigger: { trigger: cell, start: 'top 90%', once: true }
+      });
+    });
+  } catch (e) { /* IO reveals below still cover entrances */ }
 }
 
-/* Pillow-pouch bag: subdivided box, vertex bulge + real side gussets (V-tucks pressed into
-   the side walls), a gathered/crimped fin at the top held by a gold tin-tie, and a rounded
-   base that sits flat on the floor — no flat slab on top, no plinth underneath. */
-function makeBag() {
-  const group = new THREE.Group();
-  const geo = new THREE.BoxGeometry(1.5, 2.05, 0.55, 14, 18, 6);
-  const pos = geo.attributes.position;
-  for (let i = 0; i < pos.count; i++) {
-    const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-    const nx = x / 0.75, ny = y / 1.025;
-    const bulge = (1 - nx * nx) * (1 - ny * ny);
-    const pinch = 1 - 0.2 * Math.pow(Math.abs(ny), 3);
-    const topPinch = ny > 0.55 ? (ny - 0.55) / 0.45 : 0;
-    const pinchX = 1 - topPinch * 0.38, pinchZ = 1 - topPinch * 0.72;
-    let gx = x;
-    if (Math.abs(nx) > 0.98 && ny > 0.05) {                       /* side gusset: V-tuck, deepest at the top */
-      gx = x - Math.sign(x) * smooth((ny - 0.05) / 0.95) * 0.11 * Math.max(0, 1 - Math.abs(z) / 0.22);
-    }
-    let bz = 1; if (ny < -0.82) { const k = (-0.82 - ny) / 0.18; bz = 1 - 0.14 * k * k; }   /* softly rounded base edge */
-    pos.setX(i, gx * pinch * pinchX);
-    pos.setZ(i, (z + Math.sign(z || 1) * bulge * 0.16) * pinchZ * bz);
-  }
-  geo.computeVertexNormals();
-  /* faces: +x, -x, +y(top), -y(bottom), +z, -z — top/bottom get plain paper, not the printed texture */
-  const body = new THREE.Mesh(geo, [bagMat, bagMat, finMat, finMat, bagMat, bagMat]);
-  body.castShadow = true; body.receiveShadow = true;
-  group.add(body);
-  /* Crimped top: a gathered fin with pleat ribs, flared at the lip, wavy edge, leaning back a touch. */
-  const finGeo = new THREE.PlaneGeometry(0.78, 0.36, 40, 8), FP = finGeo.attributes.position;
-  for (let i = 0; i < FP.count; i++) {
-    const u = FP.getX(i) / 0.39, v = (FP.getY(i) + 0.18) / 0.36, fx = u * 0.39 * (1 + v * 0.10);
-    FP.setXYZ(i, fx, FP.getY(i) + Math.sin(u * 9 + 1) * 0.012 * v, Math.sin(fx * 58 + v * 1.2) * (0.010 + 0.016 * v) - v * v * 0.02);
-  }
-  finGeo.computeVertexNormals();
-  const fin = new THREE.Mesh(finGeo, finMat);
-  fin.position.set(0, 1.205, 0); fin.rotation.x = -0.10; fin.castShadow = true; fin.receiveShadow = true;
-  group.add(fin);
-  /* Gold tin-tie: a flattened rounded wire across the gather, its ends poking past the fin. */
-  const tie = new THREE.Mesh(new THREE.CapsuleGeometry(0.02, 0.86, 4, 10), sealMat);
-  tie.rotation.z = Math.PI / 2; tie.scale.set(1, 1, 0.5); tie.position.set(0, 1.07, 0.035); tie.castShadow = true;
-  group.add(tie);
-  const label = new THREE.Mesh(new THREE.PlaneGeometry(1.10, 0.80), labelMat);
-  label.position.set(0, 0.50, 0.46); group.add(label);            /* green label block */
-  return group;
-}
-
-/* Takeaway cup: lathe with real wall thickness + kraft sleeve + glossy black lid. */
-function makeCup() {
-  const group = new THREE.Group();
-  const pts = [];
-  pts.push(new THREE.Vector2(0.001, 0));
-  pts.push(new THREE.Vector2(0.30, 0));
-  pts.push(new THREE.Vector2(0.34, 0.08));
-  pts.push(new THREE.Vector2(0.47, 1.38));
-  pts.push(new THREE.Vector2(0.49, 1.44));
-  pts.push(new THREE.Vector2(0.44, 1.44));
-  pts.push(new THREE.Vector2(0.42, 1.30));
-  pts.push(new THREE.Vector2(0.40, 1.28));
-  const cup = new THREE.Mesh(new THREE.LatheGeometry(pts, 40), cupMat);
-  cup.castShadow = true; cup.receiveShadow = true; group.add(cup);
-  const sleevePts = [];
-  /* Sleeve radius follows the cup wall + 0.016, so it can never sink inside the cup
-     (it used to, which hid the lower half of every printed letter). */
-  for (let i = 0; i <= 12; i++) {
-    const t = i / 12, y = 0.42 + t * 0.62;
-    sleevePts.push(new THREE.Vector2(0.34 + (y - 0.08) * (0.13 / 1.30) + 0.016, y));
-  }
-  const sleeve = new THREE.Mesh(new THREE.LatheGeometry(sleevePts, 40, 0, Math.PI * 2), kraftMat);
-  sleeve.castShadow = true;
-  sleeve.rotation.y = Math.PI;                                    /* print faces the Beat-0 camera */
-  group.add(sleeve);
-  const lidPts = [
-    new THREE.Vector2(0.001, 1.66), new THREE.Vector2(0.16, 1.66), new THREE.Vector2(0.34, 1.62),
-    new THREE.Vector2(0.47, 1.56), new THREE.Vector2(0.50, 1.50), new THREE.Vector2(0.50, 1.44),
-    new THREE.Vector2(0.47, 1.44)
-  ];
-  const lid = new THREE.Mesh(new THREE.LatheGeometry(lidPts, 40), lidMat);
-  lid.castShadow = true; group.add(lid);
-  return group;
-}
-
-/* ---------- hero scene assembly ---------- */
-const product = new THREE.Group();
-const bag = makeBag();
-bag.position.copy(BAG_POS);
-const cup = makeCup();
-cup.position.copy(CUP_POS);
-product.add(bag, cup);
-product.scale.setScalar(SCALE);
-product.position.set(isMobile() ? -0.1 : 0, PROD_Y, 0);
-scene.add(product);
-
-/* Backdrop: treeline horizon plane + moss roastery-wall panels at the sides
-   + dark canopy crowns overhead — layered depth, never a flat field. */
-const backdrop = new THREE.Mesh(
-  new THREE.PlaneGeometry(34, 17),
-  new THREE.MeshBasicMaterial({ map: treelineTex, toneMapped: false, fog: false })
-);
-backdrop.position.set(0, 3.2, -7);
-scene.add(backdrop);
-const panelL = new THREE.Mesh(new THREE.PlaneGeometry(5, 12), new THREE.MeshBasicMaterial({ map: mossTex, toneMapped: false }));
-panelL.position.set(-6.2, 2.2, -4); panelL.rotation.y = 0.35; scene.add(panelL);
-const panelR = new THREE.Mesh(new THREE.PlaneGeometry(5, 12), new THREE.MeshBasicMaterial({ map: mossTex, toneMapped: false }));
-panelR.position.set(6.2, 2.2, -4); panelR.rotation.y = -0.35; scene.add(panelR);
-[[-4.5, 5.4, -5, 2.6], [0.5, 6.0, -6, 3.4], [4.8, 5.2, -5, 2.4], [-1.8, 6.4, -6.5, 2.0]].forEach(([x, y, z, s]) => {
-  const crown = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 12), new THREE.MeshStandardMaterial({ color: CANOPY, roughness: 1, envMapIntensity: 0.2 }));
-  crown.scale.set(s, s * 0.45, 1); crown.position.set(x, y, z); scene.add(crown);
-});
-
-/* Real floor: a large matte ground plane (radial pool of light, no gloss) + a back wall that
-   meets it on a horizon line 1/3 up from the bottom (WALL_Z0), + a live shadow catcher. */
-const floorGeo = new THREE.PlaneGeometry(80, 80, 1, 1);
-{ const UV = floorGeo.attributes.uv, FP2 = floorGeo.attributes.position; for (let i = 0; i < UV.count; i++) UV.setXY(i, FP2.getX(i) / 26 + 0.5, FP2.getY(i) / 26 + 0.5); }
-const floor = new THREE.Mesh(floorGeo, new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.92, metalness: 0, envMapIntensity: 0.15 }));
-floor.rotation.x = -Math.PI / 2; floor.position.y = FLOOR_Y; floor.receiveShadow = true;
-scene.add(floor);
-const catcher = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ opacity: 0.5 }));
-catcher.rotation.x = -Math.PI / 2; catcher.position.y = FLOOR_Y + 0.005; catcher.receiveShadow = true;
-scene.add(catcher);
-const wall = new THREE.Mesh(new THREE.PlaneGeometry(36, 7.2), new THREE.MeshBasicMaterial({ map: wallTex, toneMapped: false, fog: false }));
-wall.position.set(0, FLOOR_Y + 3.6, WALL_Z0);
-rig.add(wall);
-const glow = new THREE.Mesh(
-  new THREE.PlaneGeometry(26, 14),
-  new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, opacity: 0.22, toneMapped: false, depthWrite: false })
-);
-glow.position.set(0, 1.6, -4.5);
-scene.add(glow);
-
-/* Soft ambient pool under the pair + tight contact/cast decals that ride WITH the product
-   (children of it), so the shadows follow the turntable instead of drifting off. */
-const contactShadow = new THREE.Mesh(
-  new THREE.PlaneGeometry(6.5, 3.2),
-  new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: 0.3, depthWrite: false })
-);
-contactShadow.rotation.x = -Math.PI / 2; contactShadow.position.set(0.5, FLOOR_Y + 0.01, 0.2);
-scene.add(contactShadow);
-function addContactDecals(group) {
-  const yL = BAG_POS.y - 1.025 + 0.012;
-  const mk = (w, d, op, x, z) => {
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: op, depthWrite: false }));
-    m.rotation.x = -Math.PI / 2; m.position.set(x, yL, z); group.add(m);
-  };
-  mk(1.9, 0.95, 0.85, BAG_POS.x, 0.02);              /* contact under the bag */
-  mk(2.7, 1.1, 0.36, BAG_POS.x + 0.8, -0.30);        /* soft cast, falling back-right */
-  mk(1.35, 1.1, 0.85, CUP_POS.x, CUP_POS.z);         /* contact under the cup */
-  mk(2.1, 0.9, 0.34, CUP_POS.x + 0.6, CUP_POS.z - 0.25);
-}
-addContactDecals(product);
-
-/* Scattered roasted beans on the floor: 20-30% smaller, varied size + yaw, lying flat
-   crease-up, each with a cast shadow. */
-[[-1.9, 1.3, .85], [-1.5, 1.6, .7], [2.0, 1.4, .9], [2.4, 1.1, .75], [0.1, 1.7, .8], [-2.3, .9, .95], [-1.2, 1.9, .7], [1.2, 1.7, .85], [0.8, 2.0, .7], [-0.5, 1.8, .9]].forEach(([x, z, s], i) => {
-  const b = makeBean(s); b.position.set(x, FLOOR_Y + 0.05 * s, z); b.rotation.set((i % 3) * 0.05, i * 2.17, (i % 2) * 0.06); scene.add(b); scene.add(beanShadow(x, z, s));
-});
-
-/* Foreground beans + leaves — low in the frame, drifting slowly. */
-const fgBeans = [];
-[[-1.7, 1.5, .95], [2.1, 1.4, .85], [0.3, 1.8, 1.0]].forEach(([x, z, s], i) => {
-  const b = makeBean(s);
-  b.position.set(x, FLOOR_Y + 0.05 * s, z);
-  b.rotation.set(0.05, i * 2.4, 0.04);
-  b.userData.baseX = x;
-  scene.add(b); fgBeans.push(b);
-});
-const fgLeaves = [];
-const leafA = makeLeaf(1.35, leafDarkMat); leafA.position.set(-2.0, -0.245, 1.0); leafA.rotation.set(0.55, 0.5, 0.45); leafA.userData.baseX = -2.0; scene.add(leafA); fgLeaves.push(leafA);
-const leafB = makeLeaf(1.1, leafMossMat); leafB.position.set(2.1, -0.32, 0.95); leafB.rotation.set(0.45, -0.6, -0.4); leafB.userData.baseX = 2.1; scene.add(leafB); fgLeaves.push(leafB);
-const leafC = makeLeaf(0.9, leafMossMat); leafC.position.set(-2.6, -0.38, -0.4); leafC.rotation.set(0.2, 0.9, 0.3); scene.add(leafC);
-const leafD = makeLeaf(0.85, leafMossMat); leafD.position.set(2.7, -0.39, -0.3); leafD.rotation.set(0.25, -0.9, 0.35); scene.add(leafD);
-const leafE = makeLeaf(1.0, leafDarkMat); leafE.position.set(-2.5, -0.35, -0.7); leafE.rotation.set(0.3, 0.6, -0.3); scene.add(leafE);
-
-/* 16 beans that pour from the bag in Beat 1: arc over the cup, pass behind
-   the rim, land in the fenced floor zone and stay there.
-   Landing zone (floor): x in [-2.2,-1.1] U [1.1,2.2], z in [1.1,1.9]. */
-const LANDINGS = [
-  [-1.7, 1.3], [-1.35, 1.6], [1.5, 1.5], [1.85, 1.2], [-1.65, 1.1],
-  [1.75, 1.7], [-1.8, 1.55], [1.25, 1.2], [1.8, 1.5], [-1.2, 1.4],
-  [1.75, 1.1], [-1.65, 1.8], [-1.9, 1.4], [1.4, 1.85], [-1.4, 1.95], [1.95, 1.65]
-];
-const pourBeans = [];
-for (let i = 0; i < 16; i++) {
-  const b = makeBean(0.95); b.visible = false; scene.add(b); pourBeans.push(b);
-}
-
-/* Steam — 14 soft sprites rising from the cup, parented to the cup so the
-   column moves with it through every beat. Warm cream, low opacity. */
-const steam = [];
-for (let i = 0; i < 16; i++) {
-  const sm = new THREE.SpriteMaterial({ map: steamTex, color: 0xFFFFFF, transparent: true, opacity: 0, depthWrite: false, toneMapped: false, fog: false });
-  sm.rotation = (Math.random() - 0.5) * 0.8;
-  const s = new THREE.Sprite(sm);
-  s.position.set(0, 1.74, 0); s.scale.set(0.3, 0.55, 1); s.userData.jx = (Math.random() - 0.5) * 0.12; s.userData.jz = (Math.random() - 0.5) * 0.10;
-  cup.add(s); steam.push(s);
-}
-
-/* ---------- scroll mapping: native scroll + ONE lerp ---------- */
-let target = 0, smoothed = 0, lastScrollY = -1, lastScrollT = 0;
-let heroDragAz = 0, heroDragVel = 0, heroDragging = false;
-function trackProgress() {
-  const rect = track.getBoundingClientRect();
-  const travel = track.offsetHeight - innerHeight;
-  return clamp01(-rect.top / Math.max(1, travel));
-}
-
-const heroLine = document.getElementById('heroLine');
-const heroEyebrow = document.getElementById('heroEyebrow');
-const heroSpec = document.getElementById('heroSpec');
-const heroCtaWrap = document.getElementById('heroCtaWrap');
+/* ---------- hero: scene cross-fades, parallax, copy fade, drag-to-pan ---------- */
+const heroTrack = document.getElementById('heroTrack');
+const heroScenes = document.getElementById('heroScenes');
+const sceneA = document.getElementById('sceneA');
+const sceneB = document.getElementById('sceneB');
+const sceneC = document.getElementById('sceneC');
+const heroCopy = document.getElementById('heroCopy');
 const scrollCue = document.getElementById('scrollCue');
-const heroMeta = document.getElementById('heroMeta');
-const specPill = document.getElementById('specPill');
-const LINE_BEAT0 = 'Good <em>coffee</em>, no shortcuts.';
-const LINE_BEAT1 = 'Grown high, roasted <em>gold</em>.';
-const LINE_BEAT2 = 'Turn it <em>around</em>.';
-const LINE_BEAT3 = 'Take it <em>home</em>.';
+const dragCue = document.getElementById('heroDragCue');
+const siteHeader = document.getElementById('siteHeader');
+const dots = Array.from(document.querySelectorAll('.hero-dots i'));
+if (dragCue && !finePointer) dragCue.textContent = 'Swipe the photo to pan';
 
-/* Tilt is a closed loop: 0 -> 12 deg over p 0.25-0.40, hold to 0.55,
-   ease 12 -> 0 over p 0.55-0.65, exactly 0 from 0.65 to 1.0. */
-function tiltDegAt(p) { return 12 * (seg(p, 0.25, 0.40) - seg(p, 0.55, 0.65)); }
-window.__auroraDebug = {
-  tiltAt: tiltDegAt,
-  state: () => ({ p: smoothed, tiltDeg: tiltDegAt(smoothed) })
-};
-
-/* Beat sheet (progress 0->1 across the 150vh track) — camera flights:
-   0: first sight, 6.4, orbit 0 deg · 1: dolly to 5.0, orbit to +35 deg
-   (pour lean 12 deg, beans arc behind the cup rim) · 2: orbit to +90 deg,
-   dolly 5.0 -> 5.6, lookAt drifts to the cup · 3: settle back to +35 deg,
-   dolly to 6.4, tilt exactly 0 at p=1.0.
-   The turntable biases the product back toward the camera as the orbit
-   grows, so the combined angle never passes ~62 deg and the label stays
-   readable (foreshortened, never hidden) at every p. */
-function applyScene(p, t, scrolling) {
-  let dist = LAYOUT.baseDist, azDeg = 0, lookX = 0, lookY = LOOK0;
-  if (p < 0.25) { dist = LAYOUT.baseDist; azDeg = 0; }
-  else if (p < 0.55) { const u = seg(p, 0.25, 0.55); dist = lerp(LAYOUT.baseDist, LAYOUT.d1, u); azDeg = lerp(0, 35, u); }
-  else if (p < 0.80) { const u = seg(p, 0.55, 0.80); dist = lerp(LAYOUT.d1, LAYOUT.d2, u); azDeg = lerp(35, 90, u); lookX = lerp(0, 0.6, u); lookY = lerp(LOOK0, LOOK0 - 0.1, u); }
-  else { const u = seg(p, 0.80, 1); dist = lerp(LAYOUT.d2, LAYOUT.d3, u); azDeg = lerp(90, 35, u); lookX = lerp(0.6, 0, u); lookY = lerp(LOOK0 - 0.1, LOOK0, u); }
-  const az = azDeg * Math.PI / 180;
-  /* Camera sits higher (y 1.5) and looks slightly down, so the first frame
-     already shows the bag's folded top and the lid ellipse — never a flat
-     straight-on elevation. */
-  camera.position.set(Math.sin(az) * dist, CAM_Y, Math.cos(az) * dist);
-  camera.lookAt(lookX, lookY, 0);
-  /* wall + rim light stay behind the product from the camera's point of view; the wall
-     retreats once the orbit starts so the cup/bag never clip into it. */
-  rig.rotation.y = az;
-  wall.position.z = lerp(WALL_Z0, WALL_Z1, seg(p, 0.18, 0.45));
-
-  /* Continuous turntable at rest: +/-35 deg on a 12s sine, never paused
-     by scrolling. Amplitude tapers and the product biases toward the camera
-     as the orbit grows, keeping the label readable at every beat.
-     BASE_AZ keeps the product 12 deg off straight-on even at the sine's
-     zero crossing, so the first frame is already a 3/4 view. */
-  const BASE_AZ = 11.5;
-  const ampDeg = (reducedMotion || stillMode) ? 0 : Math.max(0, 3.5 - 0.03 * Math.abs(azDeg));   /* idle sway stays inside 8-15 deg off straight-on */
-  const biasDeg = 0.4 * azDeg;
-  if (!heroDragging) { heroDragVel *= 0.92; heroDragAz += heroDragVel; heroDragAz += (0 - heroDragAz) * 0.06; }
-  cup.rotation.y = 0;
-  product.rotation.y = (BASE_AZ + biasDeg + Math.sin(t * Math.PI * 2 / 12) * ampDeg) * Math.PI / 180 + heroDragAz;
-  cup.rotation.y = -product.rotation.y * 0.7;                    /* cup turns to keep the sleeve print facing camera */
-  const breathe = 1 + (reducedMotion || stillMode ? 0 : Math.sin(t * Math.PI * 2 / 12) * 0.006);
-  product.scale.setScalar(SCALE * breathe);
-
-  /* Beat 1: bag tilts and pours (closed loop — back to exactly 0 by p=0.65). */
-  const tilt = tiltDegAt(p) * Math.PI / 180;
-  bag.rotation.z = -tilt;
-  bag.position.y = BAG_POS.y + (seg(p, 0.25, 0.40) - seg(p, 0.55, 0.65)) * 0.10;
-  const pour = seg(p, 0.25, 0.55);
-  pourBeans.forEach((b, i) => {
-    const u = clamp01((pour - i * 0.030) / 0.55);
-    if (u <= 0) { b.visible = false; return; }
-    b.visible = true;
-    const [lx, lz] = LANDINGS[i];
-    const a = (1 - u) * (1 - u), c = 2 * (1 - u) * u, d = u * u;
-    b.position.set(
-      a * bagMouth.x + c * cupMouth.x + d * lx,
-      a * bagMouth.y + c * cupMouth.y + d * (FLOOR_Y + 0.045) + Math.sin(u * Math.PI) * 0.35,
-      a * bagMouth.z + c * cupMouth.z + d * lz
-    );
-    b.rotation.set((1 - u) * 6, u * 4, 0);
+let heroTarget = 0, heroSmoothed = 0;
+/* drag-to-pan: both axes, momentum on release, spring snap-back to rest */
+let panX = 0, panY = 0, panVelX = 0, panVelY = 0, panning = false, lastPX = 0, lastPY = 0;
+const PAN_MAX = () => isMobile() ? 26 : 42;
+function heroProgress() {
+  const r = heroTrack.getBoundingClientRect();
+  const total = r.height - innerHeight;
+  return clamp01(-r.top / Math.max(1, total));
+}
+function applyHero(hp) {
+  /* scene cross-fades: A (cup) 0–0.30 · A→B 0.30–0.50 · B 0.50–0.70 · B→C 0.70–0.90 · C 0.90–1 */
+  const oA = 1 - seg(hp, 0.30, 0.50);
+  const oB = seg(hp, 0.30, 0.50) * (1 - seg(hp, 0.70, 0.90));
+  const oC = seg(hp, 0.70, 0.90);
+  sceneA.style.opacity = oA.toFixed(3);
+  sceneB.style.opacity = oB.toFixed(3);
+  sceneC.style.opacity = oC.toFixed(3);
+  sceneA.classList.toggle('on', oA > 0.5);
+  sceneB.classList.toggle('on', oB > 0.5);
+  sceneC.classList.toggle('on', oC > 0.5);
+  const dotIdx = hp < 0.4 ? 0 : hp < 0.8 ? 1 : 2;
+  dots.forEach((d, i) => d.classList.toggle('on', i === dotIdx));
+  /* parallax: layers drift at different speeds (hero slow, side fast, chip fastest) */
+  heroScenes.style.setProperty('--hero-py', (hp * -34).toFixed(1) + 'px');
+  heroScenes.style.setProperty('--side-py', (hp * 46).toFixed(1) + 'px');
+  heroScenes.style.setProperty('--chip-py', (hp * -58).toFixed(1) + 'px');
+  heroScenes.style.setProperty('--type-py', (hp * 24).toFixed(1) + 'px');
+  /* drag-to-pan: momentum decay + spring snap-back when released */
+  if (!panning) {
+    panVelX *= 0.94; panX += panVelX;
+    panVelY *= 0.94; panY += panVelY;
+    panX += (0 - panX) * 0.045;
+    panY += (0 - panY) * 0.045;
+  }
+  const m = PAN_MAX();
+  panX = Math.max(-m * 1.6, Math.min(m * 1.6, panX));
+  panY = Math.max(-m * 1.6, Math.min(m * 1.6, panY));
+  heroScenes.style.setProperty('--pan-x', panX.toFixed(1) + 'px');
+  heroScenes.style.setProperty('--pan-y', panY.toFixed(1) + 'px');
+  /* hero copy fades out over hp 0.10–0.26, before the scenes change */
+  const copyOpacity = 1 - seg(hp, 0.10, 0.26);
+  if (heroCopy) heroCopy.style.opacity = copyOpacity;
+  if (scrollCue) scrollCue.style.opacity = hp < 0.12 ? 1 : 0;
+  if (dragCue) dragCue.style.opacity = hp < 0.15 ? 1 : 0;
+  if (siteHeader) siteHeader.classList.toggle('scrolled', scrollY > 40);
+}
+if (heroScenes) {
+  heroScenes.addEventListener('pointerdown', e => {
+    panning = true; lastPX = e.clientX; lastPY = e.clientY;
+    panVelX = 0; panVelY = 0;
+    heroScenes.classList.add('grabbing');
   });
-  const land = seg(p, 0.48, 0.58);
-  product.position.y = PROD_Y - land * 0.04 + (pour > 0 && pour < 1 ? Math.sin(pour * Math.PI) * 0.02 : 0);
-  const shadowTight = 1 - land * 0.22;
-  contactShadow.scale.set(shadowTight, shadowTight, 1);
-  contactShadow.material.opacity = 0.3 + land * 0.1;
-
-  /* Steam: a white wisp loop from the first frame, parented to the cup; swaying S-curve
-     tendrils that widen and fade as they rise. */
-  steam.forEach((s, i) => {
-    const ph = i / steam.length;
-    if (reducedMotion || stillMode) {
-      const c = ph;
-      s.position.set(s.userData.jx + Math.sin(c * 6 + i) * 0.07 * c - 0.02, 1.78 + c * 1.0, s.userData.jz);
-      s.scale.set(0.30 + c * 0.25, 0.55 + c * 0.5, 1); s.material.opacity = 0.5 * (1 - c) * Math.min(1, c / 0.1 + 0.15); return;
-    }
-    const cyc = ((t * 0.22 + ph) % 1);
-    s.position.set(s.userData.jx + Math.sin(cyc * 7 + i * 1.7) * 0.09 * cyc - cyc * 0.10, 1.74 + cyc * 1.15, s.userData.jz);
-    const sw = 0.30 + cyc * 0.42;
-    s.scale.set(sw, sw * 1.8, 1);
-    s.material.opacity = 0.62 * (1 - cyc) * (1 - cyc * 0.3) * Math.min(1, cyc / 0.10);
+  addEventListener('pointermove', e => {
+    if (!panning) return;
+    const dx = e.clientX - lastPX, dy = e.clientY - lastPY;
+    lastPX = e.clientX; lastPY = e.clientY;
+    panX += dx * 0.9; panVelX = dx * 0.9;
+    panY += dy * 0.9; panVelY = dy * 0.9;
   });
-
-  /* Parallax: foreground beans/leaves slide with scroll while the backdrop
-     glow drifts the other way, slower — depth reads at different speeds. */
-  fgBeans.forEach((b, i) => {
-    if (reducedMotion || stillMode) return;
-    b.position.x = b.userData.baseX + Math.sin(t * 0.08 + i * 2.1) * 0.12 + (p - 0.5) * 1.2;
-    b.rotation.y += 0.0015;
-  });
-  fgLeaves.forEach((l, i) => {
-    if (reducedMotion || stillMode) return;
-    l.position.x = l.userData.baseX + Math.sin(t * 0.06 + i * 1.7) * 0.15 + (p - 0.5) * 0.9;
-    l.rotation.z += 0.0006;
-  });
-  glow.position.x = (p - 0.5) * -0.6;
-
-  /* Hero copy: fades out over p 0.15-0.30 before the camera moves, returns
-     in Beat 3. The display line changes per beat; the spec line sits in a
-     cream scrim pill only — no bare text ever crosses the canvas. */
-  const fadeOut = seg(p, 0.15, 0.30);
-  const fadeIn = seg(p, 0.80, 0.95);
-  const copyOpacity = p < 0.80 ? (1 - fadeOut) : fadeIn;
-  heroLine.style.opacity = copyOpacity;
-  heroEyebrow.style.opacity = copyOpacity;
-  heroSpec.style.opacity = copyOpacity;
-  heroCtaWrap.style.opacity = copyOpacity;
-  if (heroMeta) heroMeta.style.opacity = copyOpacity;
-  heroLine.innerHTML = p < 0.22 ? LINE_BEAT0 : p < 0.55 ? LINE_BEAT1 : p < 0.80 ? LINE_BEAT2 : LINE_BEAT3;
-  scrollCue.style.opacity = p < 0.25 ? 1 : 0;
-  const pillIn = seg(p, 0.55, 0.62), pillOut = seg(p, 0.74, 0.80);
-  specPill.style.opacity = pillIn * (1 - pillOut);
+  const endPan = () => { panning = false; heroScenes.classList.remove('grabbing'); };
+  addEventListener('pointerup', endPan);
+  addEventListener('pointercancel', endPan);
 }
 
-/* ---------- render loop ---------- */
-let firstFrame = false;
-function resize() {
-  const w = canvas.clientWidth || innerWidth, h = canvas.clientHeight || innerHeight;
-  if (renderer) renderer.setSize(w, h, false);
-  camera.aspect = w / h;
-  camera.fov = isMobile() ? 52 : 48;
-  camera.updateProjectionMatrix();
-}
+/* ---------- render loop (ONE lerp x0.18 is the only scroll smoothing) ---------- */
+let firstFrame = false, lastT = 0;
 function render(now) {
   const t = (now || 0) / 1000;
-  target = trackProgress();
-  const scrolling = Math.abs(scrollY - lastScrollY) > 0.5;
-  if (scrolling) { lastScrollY = scrollY; lastScrollT = t; }
-  const idlePaused = (t - lastScrollT) < 1.5;
-  smoothed += (target - smoothed) * 0.18;              /* THE only smoothing layer */
-  applyScene(smoothed, t, scrolling || idlePaused);
-  if (renderer) renderer.render(scene, camera);
+  const dt = Math.min(0.05, t - lastT || 0.016); lastT = t;
+  if (lenis) lenis.raf(now);
+  heroTarget = heroProgress();
+  heroSmoothed += (heroTarget - heroSmoothed) * 0.18;
+  applyHero(heroSmoothed);
   if (!firstFrame) {
     firstFrame = true;
     window.__auroraSceneReady = true;
@@ -1248,191 +855,281 @@ function render(now) {
   }
   if (!stillMode) requestAnimationFrame(render);
 }
-if (renderer) {
-  resize();
-  addEventListener('resize', resize);
-  /* ?p= jumps to a scroll progress state; ?still=1 renders one static frame */
-  if (pParam !== null) {
-    const y = track.offsetTop + pParam * (track.offsetHeight - innerHeight);
-    scrollTo(0, y);
-    target = smoothed = pParam;
-    requestAnimationFrame(() => { render(performance.now()); });
-  } else if (reducedMotion) {
-    target = smoothed = 1;
-    render(performance.now());
+if (pParam !== null) {
+  const y = pParam * (document.documentElement.scrollHeight - innerHeight);
+  if (lenis) { try { lenis.scrollTo(y, { immediate: true }); } catch (e) { scrollTo(0, y); } }
+  else scrollTo(0, y);
+  heroTarget = heroSmoothed = heroProgress();
+  if (stillMode) {
+    let n = 0;
+    const step = () => { render(performance.now()); if (++n < 8) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
   } else {
-    requestAnimationFrame(render);
+    requestAnimationFrame(() => { render(performance.now()); });
   }
-  /* WebGL failsafe: if the first frame never lands in 4s, show the DOM fallback */
-  setTimeout(() => { if (!window.__auroraSceneReady) showFallback(); }, 4000);
+} else if (reducedMotion) {
+  heroTarget = heroSmoothed = 1;
+  render(performance.now());
+} else {
+  requestAnimationFrame(render);
 }
 
-/* ---------- cursor light: warm, follows the mouse, fine-pointer only ---------- */
-if (matchMedia('(pointer: fine)').matches && !reducedMotion) {
-  canvas.addEventListener('pointermove', e => {
-    const r = canvas.getBoundingClientRect();
-    cursorLight.position.set(((e.clientX - r.left) / r.width - 0.5) * 6, 1.2, 3);
-    cursorLight.intensity = 1.5;
+/* ---------- roast wheel (90 deg turn feel, 1.0s, 800ms throttle, isAnimating guard) ---------- */
+let currentRoast = 'medium';
+let wheelAnimating = false, lastWheelAt = 0;
+const ROAST_INFO = {
+  light: { name: 'Light — floral, citrus, tea-like', temp: '196°C', meter: 22 },
+  medium: { name: 'Medium — caramel, cherry, cocoa', temp: '205°C', meter: 52 },
+  dark: { name: 'Dark — cocoa, smoke, molasses', temp: '214°C', meter: 86 }
+};
+document.querySelectorAll('.roast-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const roast = btn.dataset.roast;
+    if (wheelAnimating || roast === currentRoast) return;
+    const nowMs = performance.now();
+    if (nowMs - lastWheelAt < 800) return;
+    lastWheelAt = nowMs;
+    wheelAnimating = true;
+    document.querySelectorAll('.roast-btn').forEach(b => b.classList.toggle('active', b === btn));
+    currentRoast = roast;
+    document.body.dataset.roast = roast; /* re-skins every photo tint + the stage wash */
+    const info = ROAST_INFO[roast];
+    document.getElementById('roastName').textContent = info.name;
+    document.getElementById('roastTemp').textContent = info.temp;
+    document.getElementById('meterFill').style.width = info.meter + '%';
+    setTimeout(() => { wheelAnimating = false; }, 1000);
   });
-  canvas.addEventListener('pointerleave', () => { cursorLight.intensity = 0; });
+});
+
+/* ---------- drink selector (featured photo + name + price cross-fade) ---------- */
+const DRINKS = {
+  espresso: { name: 'Espresso', big: 'Espresso — <em>double shot</em>', desc: 'Thick crema, dark cherry, a cocoa finish. Served hot in the takeaway cup.', price: '$3.50', photo: 'v18-assets/coffee-splash.jpg', alt: 'Espresso with a dramatic coffee splash' },
+  cappuccino: { name: 'Cappuccino', big: 'Cappuccino — <em>leaf art</em>', desc: 'Silky steamed milk, leaf art, dusted cocoa. Extra steam, extra foam.', price: '$4.50', photo: 'v18-assets/latte-top.jpg', alt: 'Cappuccino with leaf latte art' },
+  pourover: { name: 'Pour Over', big: 'Pour Over — <em>slow spiral</em>', desc: 'Gooseneck, slow spiral. Floral, tea-like, bright. The patient cup.', price: '$5.00', photo: 'v18-assets/pour-over.jpg', alt: 'Barista pouring a gooseneck kettle over a pour-over dripper' },
+  coldbrew: { name: 'Cold Brew', big: 'Cold Brew — <em>over ice</em>', desc: 'Steeped 18 hours, poured over ice. Smooth, sweet, cold. No steam — it is iced.', price: '$5.50', photo: 'v18-assets/beans-kraft-cream.jpg', alt: 'Roasted beans on cream — cold brew, steeped 18 hours' },
+  flatwhite: { name: 'Flat White', big: 'Flat White — <em>velvet foam</em>', desc: 'Velvet microfoam, double ristretto, honey sweetness. Served hot.', price: '$5.00', photo: 'v18-assets/pour-latte.jpg', alt: 'Barista pouring steamed milk into a flat white' }
+};
+let currentDrink = 'espresso';
+function selectDrink(key2) {
+  const d = DRINKS[key2];
+  if (!d || key2 === currentDrink) return;
+  currentDrink = key2;
+  document.querySelectorAll('.drink-tab').forEach(b => b.classList.toggle('active', b.dataset.drink === key2));
+  document.querySelectorAll('.menu-card').forEach(c => c.classList.toggle('active', c.dataset.drink === key2));
+  const detail = document.getElementById('drinkDetail');
+  const photo = document.getElementById('drinkPhoto');
+  detail.style.opacity = 0;
+  if (photo) photo.style.opacity = 0;
+  setTimeout(() => {
+    document.getElementById('detailName').innerHTML = d.big;
+    document.getElementById('detailDesc').textContent = d.desc;
+    document.getElementById('detailPrice').textContent = d.price;
+    if (photo) { photo.src = d.photo; photo.alt = d.alt; photo.style.opacity = 1; }
+    detail.style.opacity = 1;
+  }, 180);
+  const sel = document.getElementById('fDrink');
+  if (sel) sel.value = d.name + ' — ' + d.price;
+  if (typeof updateOrderTotal === 'function') updateOrderTotal();
+}
+document.querySelectorAll('.drink-tab').forEach(b => b.addEventListener('click', () => selectDrink(b.dataset.drink)));
+document.querySelectorAll('.menu-card').forEach(c => {
+  c.addEventListener('click', () => selectDrink(c.dataset.drink));
+  c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectDrink(c.dataset.drink); } });
+  c.addEventListener('pointermove', e => {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+    c.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+});
+const menuGrid = document.getElementById('menuGrid');
+if (menuGrid) menuGrid.addEventListener('pointermove', e => {
+  const r = menuGrid.getBoundingClientRect();
+  menuGrid.style.setProperty('--gx', ((e.clientX - r.left) / r.width * 100) + '%');
+  menuGrid.style.setProperty('--gy', ((e.clientY - r.top) / r.height * 100) + '%');
+});
+
+/* ---------- hold-to-burst (Scrolltide Ephyra: hold to crack the bean, splash revealed) ---------- */
+const holdBtn = document.getElementById('holdBtn');
+const holdFill = document.getElementById('holdFill');
+const burstFrame = document.getElementById('burstFrame');
+const burstCap = document.getElementById('burstCap');
+let holdStart = 0, holdRaf = null, holdDone = false, holdTimer = null;
+function burst() {
+  if (burstFrame) burstFrame.classList.add('cracked');
+  if (burstCap) burstCap.innerHTML = 'Cracked! <b>Caramel · Cherry · Cocoa</b>';
+  document.querySelectorAll('.taste').forEach((el, i) => {
+    setTimeout(() => el.classList.add('lit'), i * 160);
+    setTimeout(() => el.classList.remove('lit'), 1400 + i * 160);
+  });
+  holdBtn.querySelector('.lbl').textContent = 'Cracked! Caramel · Cherry · Cocoa';
+  setTimeout(() => {
+    holdBtn.querySelector('.lbl').textContent = 'Hold to crack the bean ↓';
+    if (burstFrame) burstFrame.classList.remove('cracked');
+    if (burstCap) burstCap.innerHTML = 'Hold the button — <b>the bean cracks open</b>';
+  }, 2600);
+}
+function holdTick(now) {
+  if (!holdStart) return;
+  const u = (now - holdStart) / 600;
+  holdFill.style.width = Math.min(100, u * 100) + '%';
+  if (u >= 1 && !holdDone) { holdDone = true; burst(); cancelHold(); return; }
+  holdRaf = requestAnimationFrame(holdTick);
+}
+function startHold(e) {
+  /* No preventDefault — the button has touch-action:none in CSS, which is what
+     stops scrolling while holding. */
+  holdStart = performance.now(); holdDone = false;
+  holdBtn.classList.add('holding');
+  holdRaf = requestAnimationFrame(holdTick);
+  /* Fallback timer: if rAF is starved (slow/software rendering) the burst still
+     fires at 600ms — the fill is rAF-driven, the burst is not rAF-dependent. */
+  if (holdTimer) clearTimeout(holdTimer);
+  holdTimer = setTimeout(() => {
+    if (holdStart && !holdDone) { holdDone = true; holdFill.style.width = '100%'; burst(); cancelHold(); }
+  }, 600);
+}
+function cancelHold() {
+  holdStart = 0; holdBtn.classList.remove('holding');
+  if (holdRaf) cancelAnimationFrame(holdRaf);
+  if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+  holdFill.style.width = '0%';
+}
+if (holdBtn) {
+  holdBtn.addEventListener('pointerdown', startHold);
+  holdBtn.addEventListener('pointerup', cancelHold);
+  holdBtn.addEventListener('pointerleave', cancelHold);
+  holdBtn.addEventListener('pointercancel', cancelHold);
 }
 
-/* ---------- hero drag-to-rotate: MOUSE ONLY ----------
-   Fine-pointer devices only; touch pointers are ignored and the canvas keeps
-   touch-action:pan-y, so a touch swipe always scrolls the page. No
-   preventDefault anywhere — nothing here can block scrolling. Drag rotates
-   the PRODUCT; the camera orbit and turntable are independent. */
-(function heroDrag() {
-  const cue = document.getElementById('heroDragCue');
-  const enabled = !!renderer && matchMedia('(pointer: fine)').matches && !reducedMotion && !stillMode;
-  if (!enabled) { if (cue) cue.style.display = 'none'; return; }
-  canvas.style.cursor = 'grab';
-  let lastX = 0;
-  canvas.addEventListener('pointerdown', e => {
-    if (e.pointerType !== 'mouse') return;
-    heroDragging = true; lastX = e.clientX; heroDragVel = 0;
-    canvas.style.cursor = 'grabbing';
-  });
-  addEventListener('pointermove', e => {
-    if (!heroDragging || e.pointerType !== 'mouse') return;
-    const dx = e.clientX - lastX; lastX = e.clientX;
-    heroDragAz += dx * 0.008; heroDragVel = dx * 0.008;
-  });
-  addEventListener('pointerup', () => { heroDragging = false; canvas.style.cursor = 'grab'; });
-})();
-
-/* ---------- brew swiper ripple: centre card full size, neighbours smaller ---------- */
-(function ripple() {
-  const sw = document.getElementById('brewSwiper');
-  if (!sw) return;
-  const cards = Array.from(sw.querySelectorAll('.menu-card'));
-  function update() {
-    const mid = sw.scrollLeft + sw.clientWidth / 2;
-    cards.forEach(c => {
-      const cc = c.offsetLeft + c.offsetWidth / 2;
-      const d = Math.min(1, Math.abs(mid - cc) / Math.max(1, sw.clientWidth * 0.6));
-      const s = 1 - 0.22 * d;
-      c.style.transform = 'scale(' + s.toFixed(3) + ')';
-      c.style.opacity = (1 - 0.6 * d).toFixed(2);
+/* ---------- magnetic CTA (Smooth UI, fine-pointer only) ---------- */
+if (finePointer && !reducedMotion) {
+  document.querySelectorAll('.cta.gold').forEach(el => {
+    el.addEventListener('pointermove', e => {
+      const r = el.getBoundingClientRect();
+      const dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+      const d = Math.hypot(dx, dy);
+      if (d < 150) el.style.transform = 'translate(' + (dx * 0.3).toFixed(1) + 'px,' + (dy * 0.3).toFixed(1) + 'px)';
     });
-  }
-  sw.addEventListener('scroll', update, { passive: true });
-  addEventListener('resize', update);
-  update();
+    el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+  });
+}
+
+/* ---------- reveals (IO) + text-reveal words + number tickers ---------- */
+const io = new IntersectionObserver(en => {
+  en.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.15 });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+/* Split the roastery headline into word spans that ignite one by one. */
+(function splitWords() {
+  const h = document.getElementById('roastHeadline');
+  if (!h) return;
+  const walk = node => {
+    const out = [];
+    node.childNodes.forEach(n => {
+      if (n.nodeType === 3) {
+        n.textContent.split(/\s+/).filter(Boolean).forEach(w => {
+          const s = document.createElement('span'); s.textContent = w; out.push(s); out.push(document.createTextNode(' '));
+        });
+      } else if (n.nodeName === 'EM') {
+        const em = document.createElement('em');
+        n.textContent.split(/\s+/).filter(Boolean).forEach(w => {
+          const s = document.createElement('span'); s.textContent = w; em.appendChild(s); em.appendChild(document.createTextNode(' '));
+        });
+        out.push(em); out.push(document.createTextNode(' '));
+      } else if (n.nodeName === 'BR') { out.push(document.createElement('br')); }
+    });
+    return out;
+  };
+  const parts = walk(h);
+  h.innerHTML = '';
+  parts.forEach(p => h.appendChild(p));
+  const spans = Array.from(h.querySelectorAll('span'));
+  spans.forEach((s, i) => { s.style.transitionDelay = (i * 55) + 'ms'; });
+  const wio = new IntersectionObserver(en => {
+    en.forEach(e => { if (e.isIntersecting) { spans.forEach(s => s.classList.add('lit')); wio.disconnect(); } });
+  }, { threshold: 0.4 });
+  wio.observe(h);
 })();
+const tio = new IntersectionObserver(en => {
+  en.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target, to = parseInt(el.dataset.to, 10), t0 = performance.now();
+    const step = now => {
+      const u = Math.min(1, (now - t0) / 1200);
+      const v = Math.round(to * (1 - Math.pow(1 - u, 3)));
+      el.textContent = v.toLocaleString('en-US');
+      if (u < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+    tio.unobserve(el);
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.tick').forEach(el => tio.observe(el));
+
+/* ---------- journey card stack (peels one by one with scroll) ---------- */
+const stackEl = document.getElementById('stack');
+const stackCards = Array.from(document.querySelectorAll('.stack-card'));
+function stackUpdate() {
+  if (!stackEl || !stackCards.length) return;
+  const r = stackEl.getBoundingClientRect();
+  const q = clamp01((innerHeight * 0.92 - r.top) / (innerHeight * 0.55 + r.height));
+  stackCards.forEach((c, i) => {
+    const peel = clamp01(q * 3.2 - i * 0.9);
+    c.style.transform = 'translateY(' + (-peel * 130) + 'px) rotate(' + (-peel * 4) + 'deg) scale(' + (1 - peel * 0.06) + ')';
+    c.style.opacity = (1 - peel * 0.92).toFixed(2);
+  });
+}
+addEventListener('scroll', stackUpdate, { passive: true });
+addEventListener('resize', stackUpdate);
+stackUpdate();
+
+/* ---------- scatter gallery parallax (desktop only) ---------- */
+const scatterFigs = Array.from(document.querySelectorAll('.scatter figure'));
+const scatterRots = [-4, 2, -2, 3, -3];
+const scatterSpeeds = [0.03, -0.04, 0.05, -0.03, 0.04];
+function scatterUpdate() {
+  if (innerWidth <= 900) { scatterFigs.forEach(f => { f.style.transform = ''; }); return; }
+  const sc = document.getElementById('scatter');
+  if (!sc) return;
+  const r = sc.getBoundingClientRect();
+  const off = (innerHeight / 2 - (r.top + r.height / 2)) / innerHeight;
+  scatterFigs.forEach((f, i) => {
+    f.style.transform = 'rotate(' + scatterRots[i] + 'deg) translateY(' + (off * scatterSpeeds[i] * 1000).toFixed(1) + 'px)';
+  });
+}
+addEventListener('scroll', scatterUpdate, { passive: true });
+addEventListener('resize', scatterUpdate);
+scatterUpdate();
 
 /* ---------- order form: local only, nothing sent anywhere ---------- */
-document.getElementById('orderSubmit').addEventListener('click', () => {
+const orderSubmit = document.getElementById('orderSubmit');
+const fQty = document.getElementById('fQty');
+const fDrink = document.getElementById('fDrink');
+/* order total = selected drink price × cups (drinks only — the bag is gone) */
+function drinkPrice() {
+  const v = (fDrink && fDrink.value) || '';
+  const m = v.match(/\$([\d.]+)/);
+  return m ? parseFloat(m[1]) : 3.50;
+}
+function updateOrderTotal() {
+  if (!orderSubmit) return;
+  const qty = parseInt((fQty && fQty.value) || '1', 10) || 1;
+  orderSubmit.textContent = 'Order — $' + (drinkPrice() * qty).toFixed(2);
+}
+if (fQty && orderSubmit) fQty.addEventListener('change', updateOrderTotal);
+if (fDrink && orderSubmit) fDrink.addEventListener('change', updateOrderTotal);
+if (orderSubmit) orderSubmit.addEventListener('click', () => {
+  const name = (document.getElementById('fName').value || 'Friend').trim();
+  const drink = document.getElementById('fDrink').value;
+  const qty = parseInt(fQty.value, 10) || 1;
+  const total = (drinkPrice() * qty).toFixed(2);
+  document.getElementById('orderSummary').textContent =
+    'Thank you, ' + name + '! ' + qty + ' × ' + drink +
+    ' — total $' + total + '. This is a demo, so no cup is actually on its way — but the roast is real.';
   document.getElementById('orderResult').style.display = 'block';
   document.getElementById('orderForm').style.display = 'none';
   document.getElementById('orderResult').scrollIntoView({ block: 'nearest' });
 });
-
-/* ---------- inspect section: finished product, drag-to-rotate, MOUSE ONLY ---------- */
-(function inspect() {
-  if (!renderer) return;
-  const wrap = document.getElementById('inspectCanvasWrap');
-  const c2 = document.getElementById('inspectCanvas');
-  const cue = document.getElementById('dragCue');
-  const finePointer = matchMedia('(pointer: fine)').matches;
-  if (!finePointer) { if (cue) cue.style.display = 'none'; }
-  let r2;
-  try { r2 = new THREE.WebGLRenderer({ canvas: c2, antialias: true, alpha: false }); }
-  catch (e) { return; }
-  r2.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
-  r2.toneMapping = THREE.ACESFilmicToneMapping; r2.toneMappingExposure = 1.0;
-  r2.outputColorSpace = THREE.SRGBColorSpace;
-  r2.shadowMap.enabled = true; r2.shadowMap.type = THREE.PCFSoftShadowMap;
-
-  const s2 = new THREE.Scene();
-  s2.background = new THREE.Color(FOREST);
-  s2.fog = new THREE.FogExp2(FOREST, 0.04);
-  const pm2 = new THREE.PMREMGenerator(r2);
-  s2.environment = pm2.fromScene(new RoomEnvironment(), 0.04).texture;
-  const cam2 = new THREE.PerspectiveCamera(45, 1, 0.1, 60);
-  cam2.position.set(0, 2.3, isMobile() ? 5.6 : 5.8); cam2.lookAt(0, 0.55, 0);   /* raised: top of bag + lid ellipse visible */
-  const k2 = new THREE.DirectionalLight(0xFFE9C4, 2.8);
-  k2.position.set(-6, 5, 3); k2.castShadow = true;
-  k2.shadow.mapSize.set(2048, 2048); k2.shadow.radius = 8;
-  s2.add(k2);
-  const rim2 = new THREE.SpotLight(GOLD, 50, 18, 0.5, 0.9, 2); rim2.position.set(3.5, 2.6, -2.2); rim2.target.position.set(-0.2, 0.9, 0); s2.add(rim2, rim2.target);
-  s2.add(new THREE.HemisphereLight(CREAM, FOREST, 0.5));
-  const emb2 = new THREE.PointLight(GOLD, 1.5, 10, 2); emb2.position.set(0, -0.2, -1.5); s2.add(emb2);
-  const prod2 = new THREE.Group();
-  const bag2 = makeBag(); bag2.position.copy(BAG_POS);
-  const cup2 = makeCup(); cup2.position.copy(CUP_POS);
-  prod2.add(bag2, cup2);
-  prod2.scale.setScalar(1.3);
-  const P2Y = FLOOR_Y + 0.715 * 1.3;
-  prod2.position.y = P2Y;
-  addContactDecals(prod2);
-  s2.add(prod2);
-  const back2 = new THREE.Mesh(
-    new THREE.PlaneGeometry(34, 17),
-    new THREE.MeshBasicMaterial({ map: treelineTex, toneMapped: false, fog: false })
-  );
-  back2.position.set(0, 3.2, -7); s2.add(back2);
-  const fl2 = new THREE.Mesh(
-    new THREE.PlaneGeometry(60, 60),
-    new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.92, metalness: 0, envMapIntensity: 0.15 })
-  );
-  fl2.rotation.x = -Math.PI / 2; fl2.position.y = FLOOR_Y; fl2.receiveShadow = true; s2.add(fl2);
-  const cat2 = new THREE.Mesh(
-    new THREE.PlaneGeometry(60, 60),
-    new THREE.ShadowMaterial({ opacity: 0.5 })
-  );
-  cat2.rotation.x = -Math.PI / 2; cat2.position.y = FLOOR_Y + 0.005; cat2.receiveShadow = true; s2.add(cat2);
-  LANDINGS.slice(0, 5).forEach(([x, z], i) => {
-    const b = makeBean(1.0); b.position.set(x, FLOOR_Y + 0.05, z); b.rotation.set(0.05, i * 2.3, 0.04); s2.add(b);
-  });
-  /* settled pose: steam rises from the cup (cup world pos in inspect scene) */
-  const cup2World = new THREE.Vector3(CUP_POS.x * 1.3, P2Y + CUP_POS.y * 1.3, CUP_POS.z * 1.3);
-  const stm2 = [];
-  for (let i = 0; i < 8; i++) {
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: steamTex, color: 0xFFFFFF, transparent: true, opacity: 0.35, depthWrite: false, toneMapped: false, fog: false }));
-    s.position.set(cup2World.x - 0.05, cup2World.y + 1.60 + i * 0.09, cup2World.z);
-    s.scale.set(0.3 + i * 0.03, 0.55 + i * 0.05, 1); s2.add(s); stm2.push(s);
-  }
-
-  let az = 0, vel = 0, dragging = false, lastX = 0, raf = null, visible = false;
-  function size2() {
-    const w = wrap.clientWidth, h = wrap.clientHeight;
-    r2.setSize(w, h, false); cam2.aspect = w / h; cam2.updateProjectionMatrix();
-  }
-  function draw2(now) {
-    const t = (now || 0) / 1000;
-    if (!dragging) { vel *= 0.92; az += vel; az += (0 - az) * 0.06; }  /* snap-back to the 3/4 rest pose */
-    prod2.rotation.y = az + (30 + Math.sin(t * Math.PI * 2 / 12) * 10) * Math.PI / 180;
-    stm2.forEach((s, i) => {
-      const cyc = ((t * 0.33 + i / 8) % 1);
-      s.position.set(cup2World.x - cyc * 0.30, cup2World.y + 1.60 + cyc * 0.65, cup2World.z);
-      const sw2 = 0.18 + cyc * 0.24;
-      s.scale.set(sw2, sw2 * 1.9, 1);
-      s.material.opacity = 0.6 * (1 - cyc) * (cyc < 0.12 ? cyc / 0.12 : 1);
-    });
-    r2.render(s2, cam2);
-    if (Math.abs(vel) > 0.0005 || Math.abs(az) > 0.001 || dragging) raf = requestAnimationFrame(draw2);
-    else raf = null;
-  }
-  function kick() { if (!raf) raf = requestAnimationFrame(draw2); }
-  size2(); addEventListener('resize', size2);
-  new IntersectionObserver(en => {
-    en.forEach(e => { if (e.isIntersecting && !visible) { visible = true; kick(); } });
-  }, { threshold: 0.1 }).observe(wrap);
-
-  if (finePointer) {
-    c2.style.cursor = 'grab';
-    c2.addEventListener('pointerdown', e => {
-      dragging = true; lastX = e.clientX; vel = 0; c2.style.cursor = 'grabbing'; kick();
-    });
-    addEventListener('pointermove', e => {
-      if (!dragging) return;
-      const dx = e.clientX - lastX; lastX = e.clientX;
-      az += dx * 0.008; vel = dx * 0.008;
-    });
-    addEventListener('pointerup', () => { dragging = false; c2.style.cursor = 'grab'; kick(); });
-  }
-})();
 </script>
 </body>
 </html>
